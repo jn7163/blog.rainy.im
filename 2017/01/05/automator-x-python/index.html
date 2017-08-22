@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>Automator + Python</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/python.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2017/01/05/automator-x-python/" rel="canonical" />
+
+        <meta name="description" content="在 Automator 中执行 Python 脚本">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Python">
+        <meta name="tags" content="工具">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="Automator + Python"/>
+<meta property="og:description" content="在 Automator 中执行 Python 脚本"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2017/01/05/automator-x-python/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-01-05 13:46:36+08:00"/>
+<meta property="article:modified_time" content="2017-01-05 13:46:36+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Python"/>
+<meta property="article:tag" content="Python"/>
+<meta property="article:tag" content="工具"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "Automator + Python",
+  "headline": "Automator + Python",
+  "datePublished": "2017-01-05 13:46:36+08:00",
+  "dateModified": "2017-01-05 13:46:36+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2017/01/05/automator-x-python/",
+  "description": "在 Automator 中执行 Python 脚本"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Automator + Python</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Thu 05 January 2017">Thu 05 January 2017</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Thu 05 January 2017</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <blockquote>
+<p>基于 macOS 及其 Automator。</p>
+</blockquote>
+<p>由于需要经常处理某些拍摄或下载的图片、素材，针对不同的处理需求编写了很多不同的脚本（例如<a href="http://blog.rainy.im/2015/11/25/extract-color-themes-from-images/">图像主题色提取算法</a>、<a href="http://blog.rainy.im/2015/05/13/natural-scene-image-toolkits-2/">自然场景实验材料处理工具（2）</a> 等），一般的做法是将脚本保存到系统环境目录下，然后在命令行中执行。但是对于图片文件，最方便的方式当然是可以在 Finder 中直接选中并通过右键菜单执行相应的操作。</p>
+<p><img alt="Screen Shot 2017-01-05 at 8.25.05 PM.png" src="http://qcdn.rainy.im/A173147D600AB51ACA3312D71D6A0F2B.png"></p>
+<p>在 macOS 系统中，要做到这一点非常容易，甚至不需要额外的代码，只需要系统自带的辅助工具 Automator 即可：</p>
+<blockquote>
+<p>Automator是苹果公司为他们的Mac OS X系统开发的一款软件。只要通过点击拖拽鼠标等操作就可以将一系列动作组合成一个工作流，从而帮助你自动的（可重复的）完成一些复杂的工作。</p>
+</blockquote>
+<p><img alt="Auto.png" src="http://qcdn.rainy.im/92ABAA93E58A554F1A9EEEEAE769C0AC.png"></p>
+<p>上图的右键菜单中最下方有一栏 Services 子选项，可以通过 Automator 的 Services 服务添加：</p>
+<p><img alt="Untitled.jpg" src="http://qcdn.rainy.im/85FC32E2322B803FE9C1B51366DF2F7B.jpg"></p>
+<p>在 Automator 的工作界面中，可以从左侧选择对应的动作（Actions）， 多个动作组成我们想要触发的工作流程（Workflow）。在工作流程编辑区上方选择 Service 对象为<strong>图片文件</strong>，所在的应用环境是 <strong>Finder</strong>：</p>
+<p><img alt="Screen_Shot_2017-01-05_at_8_42_11_PM.jpg" src="http://qcdn.rainy.im/E807234AFDED96171A8B9EE11A74314A.jpg"></p>
+<p>接下来选择针对这一文件想要执行的脚本，可以在 Actions 搜索框中搜索 <code>shell</code>，然后将 <strong>Run Shell Script</strong> 拖入 Workflow，可以在 Shell 选项下面选择你想要执行的脚本，并直接在输入框中输入脚本，当然更好的方法是在系统 Shell 环境下执行已经保存好的 Python 脚本：</p>
+<p><img alt="Screen_Shot_2017-01-05_at_8_48_27_PM.jpg" src="http://qcdn.rainy.im/B178A46E18F7240CAEE567268081D98F.jpg"></p>
+<div class="highlight"><pre><span class="ch">#!/usr/local/bin/python3</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="p">:</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="c1"># some operations here</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Image {} not found!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+</pre></div>
+
+
+<p>保存脚本并添加可执行权限。为了看到执行结果，可以添加<strong>Display Notification</strong>动作，同时可以插入一个<strong>Set Value of Variable</strong>来传递脚本输出的结果：</p>
+<p><img alt="Pix_-_啥也没干.jpg" src="http://qcdn.rainy.im/E2461FFF6ABF835D6760851925541AE0.jpg"></p>
+<p>最后保存这一工作流，即可在右键菜单中显示该选项，执行完之后可以在通知栏提示执行结果。</p>
+<p><img alt="2017-01-05 21_32_39.gif" src="http://qcdn.rainy.im/3153E665FF4CBAF6C4AAD8F121A456B5.gif"></p>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=Automator + Python&amp;url=http://blog.rainy.im/2017/01/05/automator-x-python/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2017/01/05/automator-x-python/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2017/01/05/automator-x-python/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/python.html">Python</a><a href="http://blog.rainy.im/tag/gong-ju.html">工具</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Yu's Tech Lab - Lua</title><link href="http://blog.rainy.im/" rel="alternate"></link><link href="http://blog.rainy.im/feeds/lua.atom.xml" rel="self"></link><id>http://blog.rainy.im/</id><updated>2016-12-16T08:41:32+08:00</updated><entry><title>Mac 多屏幕窗口管理神器</title><link href="http://blog.rainy.im/2016/12/16/hammerspoon-the-manager-of-macos-windows/" rel="alternate"></link><published>2016-12-16T08:41:32+08:00</published><updated>2016-12-16T08:41:32+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2016-12-16:/2016/12/16/hammerspoon-the-manager-of-macos-windows/</id><summary type="html">&lt;p&gt;与 Windows 上贴边停靠、甩一甩甩掉其它窗口的功能相比，macOS 窗口左上角红黄绿的三个小圆点几乎毫无存在感，抛开面积太小不易点击不说，绿色的放大按钮只能进入或退出全屏模式，虽然后来加入了长按进入双全屏模式，也基本上是个鸡肋：在小屏幕笔记本上没什么用，有扩展屏的时候更没必要用。&lt;/p&gt;</summary><content type="html">&lt;p&gt;使用多个显示器可以避免在任务窗口或应用之间来回切换，从而提高效率。然而随着工作空间的扩大，同时也带来了其它问题，包括：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;使用鼠标的效率进一步降低；&lt;/li&gt;
+&lt;li&gt;活动窗口过多容易失去焦点；&lt;/li&gt;
+&lt;li&gt;更多时候是以上两点同时发生：找半天不知道鼠标指针在哪，多屏幕之间拖动、管理窗口变得更加困难。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;不管你是不是 VIM 党，不停地在鼠标与键盘之间切换绝对是一件分心且低效的事，很多“懒人”宁可花时间记住数量庞大的组合快捷键（当然如果记不住也没关系，有一款作弊神器可以帮助你快速查看当前应用的快捷键：Cheatsheet），也不愿让自己的右手离开键盘。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="http://qncdn.rainy.im/blog/cheatsheet.png"&gt;&lt;/p&gt;
+&lt;p&gt;虽然为了避免使用鼠标你甚至可以给 Chrome 装上 VIM 映射的插件，但总有些时候不得不依赖鼠标完成一些精确的点击、拖动等操作，然而根据心理物理学中著名的费茨定律（Fitt's law），鼠标移动时间与目标距离成正比，与目标大小成反比：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="http://qncdn.rainy.im/blog/fitts_law.gif"&gt;&lt;/p&gt;
+&lt;p&gt;也就是说随着工作空间的扩大，使用鼠标的效率将会越来越低。除了鼠标的问题之外，当同时有多个应用窗口在你面前打开的时候，即使想要通过组合快捷键操作，也容易搞混当前捕获焦点的应用是哪个。当然就算有多个窗口重叠出现，你可以通过查看左上角工具栏所显示的应用名称来确定当前焦点，不过费茨定律对于视觉搜索也是同样适用的，对于连眼睛都懒得抬起来的人来说宁可通过 Command+Tab 尝试切换来找到当前焦点的应用。&lt;/p&gt;
+&lt;p&gt;不过这个问题可以通过另外一款作弊神器来解决：&lt;a href="https://hazeover.com/"&gt;HazeOver&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="http://qncdn.rainy.im/blog/hazeover.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;它可以让当前出于焦点的窗口正常显示，而其它所有窗口都蒙上一层半透明的黑纱：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="http://qncdn.rainy.im/blog/hazeover_show.png"&gt;&lt;/p&gt;
+&lt;p&gt;macOS 提供了一个有趣的小功能，只要快速晃动鼠标就可以让指针放大，从而让你快速定位自己的鼠标。然而这点微小的工作远远无法弥补它在窗口管理上的不足。与 Windows 上贴边停靠、甩一甩甩掉其它窗口的功能相比，macOS 窗口左上角红黄绿的三个小圆点几乎毫无存在感，抛开面积太小不易点击不说，绿色的放大按钮只能进入或退出全屏模式，虽然后来加入了长按进入双全屏模式，也基本上是个鸡肋：在小屏幕笔记本上没什么用，有扩展屏的时候更没必要用。于是乎在苹果强大的生态号召力之下出现了许多第三方解决方案，但是我的需求很简单，我觉得将一块屏幕划分成皿、田之类的格局没有任何必要，我只需要最简单的功能：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;可以最大化但不是全屏；&lt;/li&gt;
+&lt;li&gt;可以占据左半边或右半边；&lt;/li&gt;
+&lt;li&gt;可以在不同显示器之间快速移动。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;前两条根本就是 Windows 的基本功能，我尝试了一些窗口管理应用之后，最终选择可以通过代码精确配置的 &lt;a href="http://www.hammerspoon.org/"&gt;Hammerspoon&lt;/a&gt;，与一般的工具不同，首先它是开源的，其次使用 Lua 脚本作为配置文件。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="http://qncdn.rainy.im/blog/hammerspoon.png"&gt;&lt;/p&gt;
+&lt;p&gt;我的配置文件在 &lt;a href="https://gist.github.com/rainyear/2ec3b464cda37573c240e1ded78c176b"&gt;这里 Gist-hammerspoon.init.lua&lt;/a&gt;，保存到本地&lt;code&gt;~/.hammerspoon/init.lua&lt;/code&gt;，然后 &lt;code&gt;Reload Config&lt;/code&gt; 即可。Hammerspoon 还提供一个 Console 界面，可以方便调试：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="http://qncdn.rainy.im/blog/hammerspoon_show.png"&gt;&lt;/p&gt;
+&lt;h3&gt;配置文件说明&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;-- 一般组合键为 Shift + Command + ?&lt;/span&gt;
+&lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;hyper&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="s"&gt;shift&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="s"&gt;cmd&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="c1"&gt;-- 最大化窗口&lt;/span&gt;
+&lt;span class="c1"&gt;-- 快捷键为 Shift + Command + ↑&lt;/span&gt;
+&lt;span class="n"&gt;hs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;hotkey&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bind&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;hyper&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="s"&gt;up&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="n"&gt;hs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;grid&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;maximizeWindow&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;-- 让窗口占据左半边（Windows 下面的向左贴边停靠）&lt;/span&gt;
+&lt;span class="c1"&gt;-- 快捷键为 Shift + Command + ←&lt;/span&gt;
+&lt;span class="n"&gt;hs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;hotkey&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bind&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;hyper&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="s"&gt;Left&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;win&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;hs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;window&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;focusedWindow&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;win&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;frame&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;screen&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;win&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;screen&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;max&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;screen&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;frame&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+    &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;max&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;
+    &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;max&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;
+    &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;max&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;
+    &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;max&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt;
+    &lt;span class="n"&gt;win&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;setFrame&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;-- 向右停靠类似&lt;/span&gt;
+
+&lt;span class="c1"&gt;-- 将当前窗口移动到第 n 个屏幕&lt;/span&gt;
+&lt;span class="c1"&gt;-- 并最大化窗口&lt;/span&gt;
+&lt;span class="c1"&gt;-- 快捷键为 Ctrl + Command + 屏幕数字&lt;/span&gt;
+&lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;hyper2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="s"&gt;ctrl&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="s"&gt;cmd&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="n"&gt;moveto&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;win&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;screens&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;hs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;screen&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;allScreens&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;screens&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+    &lt;span class="n"&gt;hs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;alert&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;show&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="s"&gt;No enough screens &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;..&lt;/span&gt; &lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;screens&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="k"&gt;else&lt;/span&gt;
+    &lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;toWin&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;hs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;screen&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;allScreens&lt;/span&gt;&lt;span class="p"&gt;()[&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="n"&gt;hs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;alert&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;show&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="s"&gt;Move &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;..&lt;/span&gt; &lt;span class="n"&gt;win&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;application&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;..&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="s"&gt; to &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;..&lt;/span&gt; &lt;span class="n"&gt;toWin&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;hs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;layout&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;apply&lt;/span&gt;&lt;span class="p"&gt;({{&lt;/span&gt;&lt;span class="kc"&gt;nil&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;win&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;title&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="n"&gt;toWin&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;hs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;layout&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;maximized&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;nil&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;nil&lt;/span&gt;&lt;span class="p"&gt;}})&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="n"&gt;hs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;hotkey&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bind&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;hyper2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="s"&gt;1&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;win&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;hs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;window&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;focusedWindow&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="n"&gt;moveto&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;win&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;hs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;hotkey&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bind&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;hyper2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="s"&gt;2&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;win&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;hs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;window&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;focusedWindow&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="n"&gt;moveto&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;win&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;hs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;hotkey&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bind&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;hyper2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="s"&gt;3&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;win&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;hs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;window&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;focusedWindow&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="n"&gt;moveto&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;win&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</content><category term="Lua"></category><category term="工具"></category></entry></feed>

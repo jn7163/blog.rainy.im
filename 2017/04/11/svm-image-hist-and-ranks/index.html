@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>如何通过直方图判断照片的曝光</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/python.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2017/04/11/svm-image-hist-and-ranks/" rel="canonical" />
+
+        <meta name="description" content="拿到一张照片，不管是黑白还是彩色，它的明暗分布总是最先刺激视觉系统的特征，无论是在拍摄还是后期处理过程中，我们都可以通过直方图直观地了解当前照片的明暗分布情况。">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Python">
+        <meta name="tags" content="ML">
+        <meta name="tags" content="图像">
+        <meta name="tags" content="摄影">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="如何通过直方图判断照片的曝光"/>
+<meta property="og:description" content="拿到一张照片，不管是黑白还是彩色，它的明暗分布总是最先刺激视觉系统的特征，无论是在拍摄还是后期处理过程中，我们都可以通过直方图直观地了解当前照片的明暗分布情况。"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2017/04/11/svm-image-hist-and-ranks/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-04-11 09:08:00+08:00"/>
+<meta property="article:modified_time" content="2017-04-11 09:08:00+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Python"/>
+<meta property="article:tag" content="Python"/>
+<meta property="article:tag" content="ML"/>
+<meta property="article:tag" content="图像"/>
+<meta property="article:tag" content="摄影"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "如何通过直方图判断照片的曝光",
+  "headline": "如何通过直方图判断照片的曝光",
+  "datePublished": "2017-04-11 09:08:00+08:00",
+  "dateModified": "2017-04-11 09:08:00+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2017/04/11/svm-image-hist-and-ranks/",
+  "description": "拿到一张照片，不管是黑白还是彩色，它的明暗分布总是最先刺激视觉系统的特征，无论是在拍摄还是后期处理过程中，我们都可以通过直方图直观地了解当前照片的明暗分布情况。"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">如何通过直方图判断照片的曝光</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Tue 11 April 2017">Tue 11 April 2017</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Tue 11 April 2017</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>拿到一张照片，不管是黑白还是彩色，它的明暗分布总是最先刺激视觉系统的特征，无论是在拍摄还是后期处理过程中，我们都可以通过直方图直观地了解当前照片的明暗分布情况。</p>
+<p>所谓的直方图其实就是一张照片中亮度值的统计分布结果。当下电子设备中常用的 RGB 色彩模式通常采用24比特模式（24 bits per pixel），即每个像素的 R、G、B 通道各由 8 bit 表示，因此 RGB 的取值范围是（0~255），通过统计一张照片中所有像素亮度值的分布，就可以获得其亮度直方图（对于黑白照片是亮度直方图，彩色照片则可以是三个通道各有一个直方图，不过彩色与黑白之间本来就是可以相互转换的）。</p>
+<p><img alt="RGB_color_solid_cube.png" src="http://qcdn.rainy.im/2DA29AAF7CF637CEEC1EC89EAC94AF3C.png"></p>
+<p>直方图只是粗暴地统计了所有像素的亮度水平，通过它很难直接推断出一张照片的曝光水平，一些大概的准则也只有在实践中结合经验才能有效运用。为了找到其中的关联，我去抓去了某摄影爱好者网站上的图片，其中每张图片会有不同的标签及点赞数，点赞数可以看做是对一张照片的评价，当然这一评价不只是针对曝光水平的，照片的主题、构图、色彩等等可能占有更大的比重，更有甚者，有些照片可能拥有非常诡异的曝光数据然而却具有更高的艺术价值。</p>
+<p>考虑到这些原因，想要用点赞数量作为曝光水平好坏的指标本身就是一个大胆的假设，但是不试试怎么知道你错得有多离谱呢？（最后也证明这个假设是行不通的，本文权当是失败经验总结，不过还是有不少收获）</p>
+<p>这次的尝试过程很简单，首先抓取数据和图片，然后提取直方图，最后找个机器学习算法进行分类。</p>
+<h2>数据</h2>
+<p>数据记录共 7.8w 条，粗略估算了一下，如果下载所有图片可能有近20G，考虑到这并不是一个非常严格的实验而且电脑容量有限，只过滤了点赞数超过50的照片，共约 1w 张，图片下载下来一共2G 左右。</p>
+<h2>预处理</h2>
+<p>NumPy 和 SciPy 来处理图片数据，Pandas 用作数据结构化存储与操作。</p>
+<p>首先是提取图片的直方图信息，matplotlib 可以直接通过 <code>hist</code> 方法将直方图绘制出来，我们先看看评价排名靠前和靠后的照片有什么不同：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.gridspec</span> <span class="kn">as</span> <span class="nn">gridspec</span>
+
+<span class="k">def</span> <span class="nf">display_images</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)))</span>
+    <span class="n">grd</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">img</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
+        <span class="n">isGray</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">isGray</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">grd</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">isGray</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">gray</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">grd</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">fc</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mi">256</span><span class="p">))</span>  
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">isGray</span><span class="p">:</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">grd</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">img</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">img</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">img</span><span class="p">[:,:,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="WX20170411-154931@2x.png" src="http://qcdn.rainy.im/D57F111500970CED21D2A7AFEC099373.png"></p>
+<p><img alt="WX20170411-155456@2x.png" src="http://qcdn.rainy.im/B309BE5B0ED4CC9628DAAF3C3E9D8205.png"></p>
+<p>前两张和后两张，评价数量2000和50好像还是有点差别的。</p>
+<h3>导入到 Pandas</h3>
+<p>计算直方图并更新到 DataFrame 中：</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">normalize</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">misc</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="k">def</span> <span class="nf">cal_lum_hist</span><span class="p">(</span><span class="n">imgid</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="s2">&quot;images/{}.jpg&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">imgid</span><span class="p">)</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">hist</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">256</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">normalize</span><span class="p">(</span><span class="n">hist</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+<span class="n">ImageDF</span> <span class="o">=</span> <span class="n">ImageDF</span><span class="o">.</span><span class="n">imgid</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">cal_lum_hist</span><span class="p">)</span>
+</pre></div>
+
+
+<p>根据点赞数量计算分数，即给训练数据设定标签。这是比较重要的一步，直接决定了分类结果的好坏。最直接的方法是将样本平均分为两类（或多类），这样可以保持不同类别下样本数量的平衡。我第一次选择了分为三类（挺好、很好、非常好）：</p>
+<div class="highlight"><pre><span class="n">ImageDF</span><span class="o">.</span><span class="n">fav</span><span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">])</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">0.3     81</span>
+<span class="sd">0.6    153</span>
+<span class="sd">Name: fav, dtype: float64</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+
+<p>于是分别以此界线设定分数：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">cal_score</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">fav</span><span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="n">b</span><span class="p">,</span> <span class="n">u</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">_inner</span><span class="p">(</span><span class="n">fav</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">fav</span> <span class="o">&gt;=</span> <span class="n">s</span><span class="p">[</span><span class="n">u</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="mi">2</span>
+        <span class="k">elif</span> <span class="n">fav</span> <span class="o">&gt;=</span> <span class="n">s</span><span class="p">[</span><span class="n">b</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">_inner</span>
+<span class="c1"># 展示划分后样本数量</span>
+<span class="k">def</span> <span class="nf">score_size</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Score = {}, Size = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span class="n">ImageDF</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ImageDF</span><span class="o">.</span><span class="n">fav</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">cal_score</span><span class="p">(</span><span class="n">ImageDF</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">))</span>
+<span class="n">score_size</span><span class="p">(</span><span class="n">imageDF</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Score = 0, Size = 3080</span>
+<span class="sd">Score = 1, Size = 3102</span>
+<span class="sd">Score = 2, Size = 4163</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+
+<p>然后分离训练样本和测试样本：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">data_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[:</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;norm_hist&#39;</span><span class="p">]),</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[:</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;score&#39;</span><span class="p">])),</span>
+        <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">n</span><span class="p">:][</span><span class="s1">&#39;norm_hist&#39;</span><span class="p">]),</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">n</span><span class="p">:][</span><span class="s1">&#39;score&#39;</span><span class="p">])))</span>
+
+<span class="c1"># 随机打乱顺序</span>
+<span class="n">ImageDF</span> <span class="o">=</span> <span class="n">ImageDF</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">ImageDF</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
+
+<span class="c1"># 十折交叉验证</span>
+<span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">data_split</span><span class="p">(</span><span class="n">ImageDF</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ImageDF</span><span class="p">)</span> <span class="o">//</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">9</span><span class="p">)</span>
+
+<span class="c1"># SVM</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">svm</span>
+<span class="n">clf</span> <span class="o">=</span> <span class="n">svm</span><span class="o">.</span><span class="n">SVC</span><span class="p">()</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="o">*</span><span class="n">train</span><span class="p">)</span>
+<span class="n">clf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="o">*</span><span class="n">test</span><span class="p">)</span>
+</pre></div>
+
+
+<p>以上就是一次训练、测试的流程，结果发现，准确率最高的情况也只是在50%附近徘徊。</p>
+<p><img alt="Picture1.png" src="http://qcdn.rainy.im/2AEB844B83DE0452F1DB201F5A108F2F.png"></p>
+<p><em>注：2:0:2和1:0:1 是二分类的结果。</em></p>
+<h2>总结</h2>
+<p>根据上面的结果来看，根据直方图推断图片曝光的假设是失败了。其中得到较高准确率的2:6:2（实际上如果是1:9:1准确率更是可以高达80%）明显是因为样本偏差。现在再来看一下点赞数量的分布情况：</p>
+<p><img alt="download (1).png" src="http://qcdn.rainy.im/75CCF3C6CD987025D989E0D5846961C1.png"></p>
+<p>很明显绝大部分点赞数量集中在我所截取的50左右，统计所有记录的评价结果：</p>
+<div class="highlight"><pre><span class="n">AllRecordDF</span><span class="o">.</span><span class="n">fav</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">count    78779.000000</span>
+<span class="sd">mean        33.258470</span>
+<span class="sd">std        101.544808</span>
+<span class="sd">min          0.000000</span>
+<span class="sd">25%          2.000000</span>
+<span class="sd">50%          5.000000</span>
+<span class="sd">75%         20.000000</span>
+<span class="sd">max       2933.000000</span>
+<span class="sd">Name: fav, dtype: float64</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+
+<p>75%的评价分数不过20，而平均分被拉到33，这本身就是一个非常不平衡的样本，而我又只截取了其中的一部分。</p>
+<p>既然不能只考虑曝光水平，那就应该将整张图片的所有特征考虑在内，也许通过神经网络模型可以得到一个更好的预测结果，用来评价你新拍的照片水平如何，虽然这已经失去了直方图在拍摄过程中的实时指导意义。</p>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=如何通过直方图判断照片的曝光&amp;url=http://blog.rainy.im/2017/04/11/svm-image-hist-and-ranks/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2017/04/11/svm-image-hist-and-ranks/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2017/04/11/svm-image-hist-and-ranks/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/python.html">Python</a><a href="http://blog.rainy.im/tag/ml.html">ML</a><a href="http://blog.rainy.im/tag/tu-xiang.html">图像</a><a href="http://blog.rainy.im/tag/she-ying.html">摄影</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

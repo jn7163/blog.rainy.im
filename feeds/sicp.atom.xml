@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Yu's Tech Lab - SICP</title><link href="http://blog.rainy.im/" rel="alternate"></link><link href="http://blog.rainy.im/feeds/sicp.atom.xml" rel="self"></link><id>http://blog.rainy.im/</id><updated>2015-08-27T13:54:05+08:00</updated><entry><title>Miller-Rabin 算法与 RSA 算法</title><link href="http://blog.rainy.im/2015/08/27/miller-rabin-n-rsa/" rel="alternate"></link><published>2015-08-27T13:54:05+08:00</published><updated>2015-08-27T13:54:05+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2015-08-27:/2015/08/27/miller-rabin-n-rsa/</id><summary type="html">&lt;p&gt;Miller-Rabin算法是目前主流的基于概率的素数测试算法）RSA加密算法是计算机世界中最重要的一种[非对称加密算法]，主要介绍两种算法的数学原理以及Scheme的简单实现。&lt;/p&gt;</summary><content type="html">&lt;p&gt;Miller-Rabin算法是目前主流的基于概率的素数测试算法）RSA加密算法是计算机世界中最重要的一种&lt;a href="https://zh.wikipedia.org/wiki/%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E6%BC%94%E7%AE%97%E6%B3%95"&gt;非对称加密算法&lt;/a&gt;。本文从SICP 习题1.28出发，主要介绍两种算法的数学原理以及Scheme的简单实现，代码保存在 &lt;a href="https://gist.github.com/rainyear/15d23b044861d211ce52"&gt;Gist&lt;/a&gt;。&lt;/p&gt;
+&lt;h3&gt;1. Miller-Rabin 素数检验算法&lt;/h3&gt;
+&lt;p&gt;一个数是素数（也叫质数），当且仅当它的约数只有1和它本身。为了检验 $n$ 是否为素数，最直接的方法就是逐一检验 $[2, n-1]$ 能否整除 $n$：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;prime-iter&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="nv"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;cond &lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nb"&gt;= &lt;/span&gt;&lt;span class="nv"&gt;i&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="no"&gt;#t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nb"&gt;= &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;remainder &lt;/span&gt;&lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="nv"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="no"&gt;#f&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;else &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;prime-iter&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;+ &lt;/span&gt;&lt;span class="nv"&gt;i&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)))))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;prime?&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;prime-iter&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;但是当数字较大的时候，这一算法的效率非常低下。于是就有了基于费马小定理的概率算法：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;费马小定理：&lt;/strong&gt;如果 $p$ 是素数，$a$ 是小于 $p$ 的正整数，那么：$a^{p-1}\ mod\ p = 1$。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;所有素数都满足费马小定理的条件，因此从小于$p$的整数中随机抽取$a$，只要有一个$a$不满足上述条件则$p$为合数，抽取次数越多，全部通过费马小定理之后我们准确判定$p$为质数的概率越高：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;expmod&lt;/span&gt; &lt;span class="nv"&gt;base&lt;/span&gt; &lt;span class="nv"&gt;exp&lt;/span&gt; &lt;span class="nv"&gt;m&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;cond &lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nb"&gt;= &lt;/span&gt;&lt;span class="nv"&gt;exp&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nb"&gt;even? &lt;/span&gt;&lt;span class="nv"&gt;exp&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; 
+           &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;remainder &lt;/span&gt;
+             &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;square&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;expmod&lt;/span&gt; &lt;span class="nv"&gt;base&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;/ &lt;/span&gt;&lt;span class="nv"&gt;exp&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;m&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; 
+             &lt;span class="nv"&gt;m&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;else &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;remainder &lt;/span&gt;
+                &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;* &lt;/span&gt;&lt;span class="nv"&gt;base&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;expmod&lt;/span&gt; &lt;span class="nv"&gt;base&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;- &lt;/span&gt;&lt;span class="nv"&gt;exp&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;m&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; 
+                &lt;span class="nv"&gt;m&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;fermat-test&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;try-it&lt;/span&gt; &lt;span class="nv"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;= &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;expmod&lt;/span&gt; &lt;span class="nv"&gt;a&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;a&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;try-it&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;+ &lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;random&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;- &lt;/span&gt;&lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)))))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;fast-prime?&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="nv"&gt;times&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;cond &lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nb"&gt;= &lt;/span&gt;&lt;span class="nv"&gt;times&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="no"&gt;#t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nf"&gt;fermat-test&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+             &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;fast-prime?&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;- &lt;/span&gt;&lt;span class="nv"&gt;times&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;else &lt;/span&gt;&lt;span class="no"&gt;#f&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;然而费马小定理只是质数的必要而非充分条件，有些数字每一个比它小的整数都能通过费马测试，但却是合数，这种数字称为卡迈克尔数（Carmichael numbers）。最小的卡迈克尔数是 $561$，$[1, 10^17]$ 之间有$585,355$ 个卡迈克尔数，这使得费马测试变得不可靠，于是就有了Miller-Rabin算法。&lt;/p&gt;
+&lt;p&gt;Miller-Rabin算法基于如下定理：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;若 $p$ 是素数，$a$ 是小于 $p$ 的正整数，且 $a^2\ mod\ p = 1$，那么要么 $a=1$，要么 $a=p-1$。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;证明：&lt;/strong&gt; $a^2\ mod\ p = 1$，则说明 $a^2 - 1 = (a+1)(a-1)$ 能够整除 $p$，由于 $p$ 是素数，能够整除它的只有 $1$ 和 $p$ 本身，因此 $a$ 的解只能是 $a=1$ 或 $a=p-1$。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;基于上面的定理我们来检验最小的卡迈克尔数 $561$：首先 $2^{560}\ mod\ 561 = 1$，通过了费马测试；进而考虑到 $2^{560} = (2^{280})^2$，根据规律 $[1]$：&lt;/p&gt;
+&lt;p&gt;$$
+\begin{align}
+if, &amp;amp;\ a\ mod\ p = k \\
+then, &amp;amp;\ a^2\ mod\ p = k^2\ mod\ p
+\end{align}
+$$&lt;/p&gt;
+&lt;p&gt;结合上面的定理，那么 $2^{280}\ mod\ 561$ 也应该是 $1$ 或 $560$，经验证 $2^{280}\ mod\ 561 = 1$；继续我们发现 $2^{140}\ mod\ 561 = 67$，于是马上可以得到 $67^2\ mod\ 561 = 1$，违反了上面的定理，由此可以判断 $561$ 不是质数。&lt;/p&gt;
+&lt;p&gt;在Miller-Rabin算法中，我们将 $p-1$ （一定是偶数）不断提取因子2，最终分解为：$2^sd$（其中 $d$ 是奇数），对于所有的 $r \in [0, s-1]$，只要存在 $r$ 使得 $a^d\ mod\ p = 1$ 或 $a^{2^rd}\ mod\ p = p-1$，即可推断 $p$ 有可能为素数；反之则一定为合数。&lt;/p&gt;
+&lt;p&gt;有趣的是在上面Scheme实现的费马测试算法中，计算 $a^{n-1}$ 所用的正是类似将指数不断除2的递归方法，因此我们只需要对&lt;code&gt;(expmod base exp n)&lt;/code&gt;方法中的递归调用&lt;code&gt;(remainder (square (expmod base (/ exp 2) m)) m)&lt;/code&gt;（恰好是规律 $[1]$）进行检验：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;;; miller-rabin algorithm&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;remainder-square&lt;/span&gt; &lt;span class="nv"&gt;a&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;cond &lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="k"&gt;or &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;= &lt;/span&gt;&lt;span class="nv"&gt;a&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;= &lt;/span&gt;&lt;span class="nv"&gt;a&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;- &lt;/span&gt;&lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nb"&gt;= &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;remainder &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;square&lt;/span&gt; &lt;span class="nv"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;else &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;remainder &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;square&lt;/span&gt; &lt;span class="nv"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;expmod&lt;/span&gt; &lt;span class="nv"&gt;base&lt;/span&gt; &lt;span class="nv"&gt;exp&lt;/span&gt; &lt;span class="nv"&gt;m&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;cond &lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nb"&gt;= &lt;/span&gt;&lt;span class="nv"&gt;exp&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nb"&gt;even? &lt;/span&gt;&lt;span class="nv"&gt;exp&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;remainder-square&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;expmod&lt;/span&gt; &lt;span class="nv"&gt;base&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;/ &lt;/span&gt;&lt;span class="nv"&gt;exp&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;m&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;m&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;else &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;remainder &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;* &lt;/span&gt;&lt;span class="nv"&gt;base&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;expmod&lt;/span&gt; &lt;span class="nv"&gt;base&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;- &lt;/span&gt;&lt;span class="nv"&gt;exp&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;m&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="nv"&gt;m&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;mr-test&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="nv"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;= &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;expmod&lt;/span&gt; &lt;span class="nv"&gt;a&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;- &lt;/span&gt;&lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;miller-rabin&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="nv"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;cond &lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nb"&gt;= &lt;/span&gt;&lt;span class="nv"&gt;t&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="no"&gt;#t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nf"&gt;mr-test&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;+ &lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;random&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;- &lt;/span&gt;&lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;miller-rabin&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;- &lt;/span&gt;&lt;span class="nv"&gt;t&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;else &lt;/span&gt;&lt;span class="no"&gt;#f&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;miller-rabin&lt;/span&gt; &lt;span class="mi"&gt;561&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;;;=&amp;gt; #f&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;2. RSA 加密算法&lt;/h3&gt;
+&lt;p&gt;RSA 算法被评为&lt;a href="http://blog.jobbole.com/70639/"&gt;真正统治世界的十大算法&lt;/a&gt;之一，虽然并非经过严格的权威性论证与投票表决，但大部分人应该不会对此存在异议。RSA 算法的数学原理简而言之就是：利用对大数进行因数分解的困难，实现以公开密钥对明文进行加密，而只能以私有密钥进行解密。具体的数学推导过程可以参考文章最后的链接深入了解，这里我们需要了解一个新的数学定理：&lt;a href="https://zh.wikipedia.org/wiki/%E6%AC%A7%E6%8B%89%E5%87%BD%E6%95%B0"&gt;欧拉函数&lt;/a&gt;。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;对整数 $n$，欧拉函数 $\varphi (n)$ 是小于或等于 $n$ 的正整数中与 $n$ 互质的数的数量。特别的，如果 $n$ 是素数，$\varphi (n) = n - 1$。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;下面我们来看Scheme简单实现的 RSA 算法及加密解密过程的实例：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;;; 1. 随意选择两个大的质数p和q，p不等于q&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="nv"&gt;p&lt;/span&gt; &lt;span class="mi"&gt;61&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="nv"&gt;q&lt;/span&gt; &lt;span class="mi"&gt;53&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;;; 计算N=pq&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="nv"&gt;N&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;* &lt;/span&gt;&lt;span class="nv"&gt;p&lt;/span&gt; &lt;span class="nv"&gt;q&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="c1"&gt;;; 2. 根据欧拉函数，求得r=(p-1)(q-1)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="nv"&gt;r&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;* &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;- &lt;/span&gt;&lt;span class="nv"&gt;p&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;- &lt;/span&gt;&lt;span class="nv"&gt;q&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+
+&lt;span class="c1"&gt;;; 3. 选择一个小于r的整数e，e与r互质&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="nv"&gt;e&lt;/span&gt; &lt;span class="mi"&gt;17&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;;; 求得e关于r的模反元素&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="nv"&gt;d&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;modular-multiplicative-inverse&lt;/span&gt; &lt;span class="nv"&gt;e&lt;/span&gt; &lt;span class="nv"&gt;r&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="c1"&gt;;; 模反元素计算过程&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;dividable?&lt;/span&gt; &lt;span class="nv"&gt;x&lt;/span&gt; &lt;span class="nv"&gt;y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;= &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;remainder &lt;/span&gt;&lt;span class="nv"&gt;x&lt;/span&gt; &lt;span class="nv"&gt;y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;mmii&lt;/span&gt; &lt;span class="nv"&gt;a&lt;/span&gt; &lt;span class="nv"&gt;m&lt;/span&gt; &lt;span class="nv"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;dividable?&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;+ &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;* &lt;/span&gt;&lt;span class="nv"&gt;k&lt;/span&gt; &lt;span class="nv"&gt;m&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;/ &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;+ &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;* &lt;/span&gt;&lt;span class="nv"&gt;k&lt;/span&gt; &lt;span class="nv"&gt;m&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;mmii&lt;/span&gt; &lt;span class="nv"&gt;a&lt;/span&gt; &lt;span class="nv"&gt;m&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;+ &lt;/span&gt;&lt;span class="nv"&gt;k&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))))&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;modular-multiplicative-inverse&lt;/span&gt; &lt;span class="nv"&gt;a&lt;/span&gt; &lt;span class="nv"&gt;m&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;mmii&lt;/span&gt; &lt;span class="nv"&gt;a&lt;/span&gt; &lt;span class="nv"&gt;m&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="c1"&gt;;; RSA 加密需要公钥(N, e)&lt;/span&gt;
+&lt;span class="c1"&gt;;; RSA 解密需要私钥(N, d)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;rsa&lt;/span&gt; &lt;span class="nv"&gt;m&lt;/span&gt; &lt;span class="nv"&gt;KNN&lt;/span&gt; &lt;span class="nv"&gt;Ked&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;expmod&lt;/span&gt; &lt;span class="nv"&gt;m&lt;/span&gt; &lt;span class="nv"&gt;Ked&lt;/span&gt; &lt;span class="nv"&gt;KNN&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="c1"&gt;;; 4. 利用公钥对明文m进行加密&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="nv"&gt;m&lt;/span&gt; &lt;span class="mi"&gt;1990&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;display &lt;/span&gt;&lt;span class="s"&gt;&amp;quot;PlaintText: &amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;display &lt;/span&gt;&lt;span class="nv"&gt;m&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;newline&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;display &lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Encrypted: &amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="nv"&gt;cipher&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;rsa&lt;/span&gt; &lt;span class="nv"&gt;m&lt;/span&gt; &lt;span class="nv"&gt;N&lt;/span&gt; &lt;span class="nv"&gt;e&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;display &lt;/span&gt;&lt;span class="nv"&gt;cipher&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;newline&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;;;=&amp;gt; PlaintText: 1990&lt;/span&gt;
+&lt;span class="c1"&gt;;;=&amp;gt; Encrypted: 1806&lt;/span&gt;
+
+&lt;span class="c1"&gt;;; 5. 根据私钥对密文进行解密&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;display &lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Decrypted: &amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;display &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;rsa&lt;/span&gt; &lt;span class="nv"&gt;cipher&lt;/span&gt; &lt;span class="nv"&gt;N&lt;/span&gt; &lt;span class="nv"&gt;d&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="c1"&gt;;;=&amp;gt; Decrypted: 1990&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;想要根据公钥 $(N, e)$ 推算出私钥 $(N, d)$ ，需要对 $N$ 进行因数分解，推导出原始的 $p$ 和 $q$。上例中用到的 $p = 61, q = 53$ 很容易就可以从 $N = 3233$ 推导出来，然而当 $N$ 非常大（1024或2048位二进制）时，对其进行因数分解在当下看来几乎是不可能实现的。这也是密码学中的一个基本原理，如果解密所需的成本高于该信息的价值，那么这种加密就被认为是安全的。&lt;/p&gt;
+&lt;h3&gt;参考&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://www.matrix67.com/blog/archives/234"&gt;数论部分第一节：素数与素性测试&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://zh.wikipedia.org/wiki/%E7%B1%B3%E5%8B%92-%E6%8B%89%E5%AE%BE%E6%A3%80%E9%AA%8C"&gt;米勒-拉宾素性检验&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://www.matrix67.com/blog/archives/5100"&gt;跨越千年的RSA算法&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://zh.wikipedia.org/wiki/RSA%E5%8A%A0%E5%AF%86%E6%BC%94%E7%AE%97%E6%B3%95"&gt;RSA加密算法&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://www.ruanyifeng.com/blog/2013/06/rsa_algorithm_part_one.html"&gt;RSA算法原理（一）&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://www.ruanyifeng.com/blog/2013/07/rsa_algorithm_part_two.html"&gt;RSA算法原理（二）&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="SICP"></category><category term="Scheme"></category><category term="算法"></category></entry><entry><title>线性同余法生成伪随机数</title><link href="http://blog.rainy.im/2015/08/21/lcg-random-number-generator/" rel="alternate"></link><published>2015-08-21T04:56:45+08:00</published><updated>2015-08-21T04:56:45+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2015-08-21:/2015/08/21/lcg-random-number-generator/</id><summary type="html">&lt;p&gt;计算机生成随机数的方法一般是采用数学法，即根据某一（递推）公式产生一个周期性足够大的数列，满足一定的均匀分布的特性，其优点在于可以迅速产生大量伪随机数，缺点是所产生的并非真正的随机数，只是近似随机。&lt;/p&gt;</summary><content type="html">&lt;p&gt;SICP中1.2.6素数检验一节中采用概率算法，通过随机抽样的方法利用费马小定理测试来检验给出的整数是否为素数。这里需要用到随机数生成的方法&lt;code&gt;(random n)&lt;/code&gt;，即：随机返回0到n之间的任意整数，而我用的&lt;a href="https://github.com/Calysto/calysto_scheme"&gt;Calysto Scheme Kernel&lt;/a&gt;恰好没有相应的随机数生成方法的实现。之前有遇到Matlab进行随机模拟的时候，由于没有设定seed，导致运行了很久的程序一直在周期性地重复固定的“随机数”，刚好借此机会研究一下随机数生成的原理及方法。&lt;/p&gt;
+&lt;p&gt;计算机生成随机数的方法一般是采用数学法，即根据某一（递推）公式产生一个周期性足够大的数列，满足一定的均匀分布的特性，其优点在于可以迅速产生大量伪随机数，缺点是所产生的并非真正的随机数，只是近似随机。不同的公式能够产生性质不同的伪随机数（列），一种简单常用的方法称为线性同余发生器（Linear Congruence Generator, LCG），其公式如下：&lt;/p&gt;
+&lt;p&gt;$$
+\begin{cases}
+X_0 = SEED, &amp;amp; \text{设定初始值}\\X_n = (A * X_{n-1} + B) (Mod M)\\ R_n = X_n/M
+\end{cases}
+$$&lt;/p&gt;
+&lt;p&gt;显然LCG方法产生的随机数列周期小于$M$，同时在保证周期尽量大的情况下，还需要适时地重设初始值，一般以系统时间作为“种子”设定初始值。Scheme的实现如下，假设将常量设定为 $A = 3, B = 0, M = 5$：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;;; random.scm&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="nv"&gt;SEED&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;seed&lt;/span&gt; &lt;span class="nv"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;set! &lt;/span&gt;&lt;span class="nv"&gt;SEED&lt;/span&gt; &lt;span class="nv"&gt;i&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="nv"&gt;A&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="nv"&gt;B&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="nv"&gt;M&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;LCG&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;begin&lt;/span&gt;
+   &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;seed&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;remainder &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;+ &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;* &lt;/span&gt;&lt;span class="nv"&gt;A&lt;/span&gt; &lt;span class="nv"&gt;SEED&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;B&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="nv"&gt;M&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+      &lt;span class="nv"&gt;SEED&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;random&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;round &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;* &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;/ &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;LCG&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;- &lt;/span&gt;&lt;span class="nv"&gt;M&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;将初始值设定为系统时间后，检验10次$[0, 100]$随机数产生结果：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;;; test your random&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;define &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;test-rands&lt;/span&gt; &lt;span class="nv"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;if &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;= &lt;/span&gt;&lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;display &lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Done!&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;begin&lt;/span&gt;
+       &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;display &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;random&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+       &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;newline&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+       &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;test-rands&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;- &lt;/span&gt;&lt;span class="nv"&gt;n&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)))))&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;seed&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;round &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;current-time&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nf"&gt;test-rands&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;;; 75&lt;/span&gt;
+&lt;span class="c1"&gt;;; 100&lt;/span&gt;
+&lt;span class="c1"&gt;;; 50&lt;/span&gt;
+&lt;span class="c1"&gt;;; 25&lt;/span&gt;
+&lt;span class="c1"&gt;;; 75&lt;/span&gt;
+&lt;span class="c1"&gt;;; 100&lt;/span&gt;
+&lt;span class="c1"&gt;;; 50&lt;/span&gt;
+&lt;span class="c1"&gt;;; 25&lt;/span&gt;
+&lt;span class="c1"&gt;;; 75&lt;/span&gt;
+&lt;span class="c1"&gt;;; 100&lt;/span&gt;
+&lt;span class="c1"&gt;;; Done!&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;可以发现，在$A = 3, B = 0, M = 5$的条件下，LCG产生的随机数列周期仅为4，若要得到最大周期，需要满足：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;$B, M$互质；&lt;/li&gt;
+&lt;li&gt;$M$的所有质因数都能整除$A-1$；&lt;/li&gt;
+&lt;li&gt;若$M$是4的倍数，$A-1$也是；&lt;/li&gt;
+&lt;li&gt;$A,B,X_0$都比$M$小；&lt;/li&gt;
+&lt;li&gt;$A,B$是正整数。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;参考&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://www.math.pku.edu.cn/teachers/jjia/Computational%20Statistics/CS.pdf"&gt;统计计算 - 贾金柱&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://zh.wikipedia.org/wiki/%E7%B7%9A%E6%80%A7%E5%90%8C%E9%A4%98%E6%96%B9%E6%B3%95"&gt;线性同余方法 - Wikipedia&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="SICP"></category><category term="Scheme"></category><category term="算法"></category></entry></feed>

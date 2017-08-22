@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>Python 异步调用命令行工具</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/python.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2016/11/17/asyncio-create_subprocess_shell/" rel="canonical" />
+
+        <meta name="description" content="当你在自己的 Python 程序中采用了基于事件循环的异步编程方法之后，你就会发现自己不自觉地被其牢牢吸引住，并不是说这一方法多么棒，而是因为你不得不想办法保证程序中的任意环节都不能是阻塞的！">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Python">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="Python 异步调用命令行工具"/>
+<meta property="og:description" content="当你在自己的 Python 程序中采用了基于事件循环的异步编程方法之后，你就会发现自己不自觉地被其牢牢吸引住，并不是说这一方法多么棒，而是因为你不得不想办法保证程序中的任意环节都不能是阻塞的！"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2016/11/17/asyncio-create_subprocess_shell/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-11-17 15:55:38+08:00"/>
+<meta property="article:modified_time" content="2016-11-17 15:55:38+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Python"/>
+<meta property="article:tag" content="Python"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "Python 异步调用命令行工具",
+  "headline": "Python 异步调用命令行工具",
+  "datePublished": "2016-11-17 15:55:38+08:00",
+  "dateModified": "2016-11-17 15:55:38+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2016/11/17/asyncio-create_subprocess_shell/",
+  "description": "当你在自己的 Python 程序中采用了基于事件循环的异步编程方法之后，你就会发现自己不自觉地被其牢牢吸引住，并不是说这一方法多么棒，而是因为你不得不想办法保证程序中的任意环节都不能是阻塞的！"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Python 异步调用命令行工具</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Thu 17 November 2016">Thu 17 November 2016</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Thu 17 November 2016</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>当你在自己的 Python 程序中采用了基于事件循环的异步编程方法之后，你就会发现自己不自觉地被其牢牢吸引住，并不是说这一方法多么棒，而是因为你不得不想办法保证程序中的任意环节都不能是阻塞的！</p>
+<p>例如当前的场景是希望从 MongoDB 中读取每一条未处理过的数据，下载并保存其中的图片信息，然后更新数据库的内容。Python 常用的 MongoDB 异步驱动是 <a href="https://motor.readthedocs.io/en/stable/tutorial-asyncio.html#iteration-in-python-3-3-and-3-4">Motor</a>:</p>
+<p><img alt="" src="http://qncdn.rainy.im/blog/motor.png-wm"></p>
+<p>结合 <code>asyncio</code> 使用方法如下：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">motor.motor_asyncio</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">motor</span><span class="o">.</span><span class="n">motor_asyncio</span><span class="o">.</span><span class="n">AsyncIOMotorClient</span><span class="p">()</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">test_database</span>
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
+    <span class="n">async</span> <span class="k">for</span> <span class="n">mm</span> <span class="ow">in</span> <span class="n">db</span><span class="o">.</span><span class="n">test_database</span><span class="o">.</span><span class="n">find</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}):</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">mm</span><span class="p">[</span><span class="s1">&#39;img_src&#39;</span><span class="p">])</span>
+        <span class="c1"># Download Image Here</span>
+        <span class="c1"># dl_img(mm[&#39;img_src&#39;])</span>
+
+        <span class="n">await</span> <span class="n">db</span><span class="o">.</span><span class="n">test_database</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="n">mm</span><span class="p">[</span><span class="s1">&#39;_id&#39;</span><span class="p">]},</span> <span class="p">{</span><span class="s2">&quot;$set&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}})</span>
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">run</span><span class="p">())</span>
+</pre></div>
+
+
+<p>此时如果 <code>dl_img()</code> 处的操作是阻塞的，那么异步处理就没有意义了。当然这里依然可以借助异步网络请求库 <code>aiohttp</code> 来实现图片下载：</p>
+<div class="highlight"><pre><span class="n">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="k">as</span> <span class="n">resp</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">chunk</span> <span class="o">=</span> <span class="n">await</span> <span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+</pre></div>
+
+
+<p>当然也可以不需要自己动手下载，直接调用系统命令行工具（例如 <code>wget</code>）来完成下载任务。Python 通过 <a href="http://tips.pyhub.cc/zh/latest/2016-03-14-Command-Line-tools-in-Python/"><code>subprocess</code></a> 标准库实现系统命令调用（取代旧的<code>os.system(cmd)</code>），执行下载任务只需要：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">subprocess</span> <span class="kn">as</span> <span class="nn">sb</span>
+
+<span class="n">sb</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;wget&#39;</span><span class="p">,</span> <span class="n">img</span><span class="p">],</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+
+<p>但是这种调用方式是无法直接在<code>asyncio</code>的事件循环中使用的，但是<code>asyncio</code>提供了对应的 <a href="https://docs.python.org/3/library/asyncio-subprocess.html"><code>subprocess</code>接口</a>：</p>
+<div class="highlight"><pre><span class="n">asyncio</span><span class="o">.</span><span class="n">create_subprocess_exec</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="n">asyncio</span><span class="o">.</span><span class="n">create_subprocess_shell</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+
+
+<p>这两个方法均返回一个 <code>asyncio.subprocess.Process</code> 实例，而它的接口设计完全模仿了 <code>subprocess.Popen</code>（上面提到 <code>subprocess.run()</code>的底层实现），因此很容易将其用法移植到事件循环中：</p>
+<div class="highlight"><pre><span class="n">async</span> <span class="k">def</span> <span class="nf">dl_img</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+    <span class="n">dl</span> <span class="o">=</span> <span class="n">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_subprocess_shell</span><span class="p">(</span><span class="s1">&#39;wget {} -O {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">src</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">await</span> <span class="n">dl</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+</pre></div>
+
+
+<p>除了上面场景中的用法，也可以直接将命令行的执行作为任务放入事件循环：</p>
+<div class="highlight"><pre><span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+<span class="n">sb</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_subprocess_shell</span><span class="p">(</span><span class="s1">&#39;exit 7&#39;</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="n">loop</span><span class="p">)</span>
+<span class="n">proc</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">sb</span><span class="p">)</span>
+<span class="n">exitcode</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">())</span>
+</pre></div>
+
+
+<h3>小结</h3>
+<p>在 Python 异步编程的意义就在于不要让 CPU 堵在 IO 上，因此需要在每一处涉及到阻塞的操作都需要注意使用正确的异步方法，而一旦这些操作被封装成异步的 Task 之后，其后续的调度执行就无需再顾虑了。</p>
+<blockquote>
+<p>相关阅读：<a href="http://mp.weixin.qq.com/s?__biz=MzI0NjIxMzE5OQ==&amp;mid=2656697915&amp;idx=1&amp;sn=953ca8c2ce925d318814535b29eaaec8&amp;chksm=f2efe11bc598680db8b658e16bdf975621d573880c3e23db6a6e18882b6d005457b41185a999#rd">Python 异步网络爬虫 I</a> | <a href="http://mp.weixin.qq.com/s?__biz=MzI0NjIxMzE5OQ==&amp;mid=2656697929&amp;idx=1&amp;sn=dda0effb59865a3de02e47c70c3ba24a&amp;chksm=f2efe169c598687fefaeb5a375497a59965565224519cdad42755d5e177af35cd062e8536613#rd">Python 异步网络爬虫 II</a></p>
+</blockquote>
+<hr>
+<p>【<a href="http://mm.pyhub.cc">福利时间到，没时间解释了，赶紧上车！</a>】</p>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=Python 异步调用命令行工具&amp;url=http://blog.rainy.im/2016/11/17/asyncio-create_subprocess_shell/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2016/11/17/asyncio-create_subprocess_shell/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2016/11/17/asyncio-create_subprocess_shell/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/python.html">Python</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

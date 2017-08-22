@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>Jupyter上的Lua与torch7</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/python.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2016/01/02/lua-and-torch7-on-jupyter/" rel="canonical" />
+
+        <meta name="description" content="Torch 7 in Jupyter Notebook.">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Python">
+        <meta name="tags" content="Lua">
+        <meta name="tags" content="torch">
+        <meta name="tags" content="ML">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="Jupyter上的Lua与torch7"/>
+<meta property="og:description" content="Torch 7 in Jupyter Notebook."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2016/01/02/lua-and-torch7-on-jupyter/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-01-02 12:14:39+08:00"/>
+<meta property="article:modified_time" content="2016-01-02 12:14:39+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Python"/>
+<meta property="article:tag" content="Python"/>
+<meta property="article:tag" content="Lua"/>
+<meta property="article:tag" content="torch"/>
+<meta property="article:tag" content="ML"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "Jupyter上的Lua与torch7",
+  "headline": "Jupyter上的Lua与torch7",
+  "datePublished": "2016-01-02 12:14:39+08:00",
+  "dateModified": "2016-01-02 12:14:39+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2016/01/02/lua-and-torch7-on-jupyter/",
+  "description": "Torch 7 in Jupyter Notebook."
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Jupyter上的Lua与torch7</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Sat 02 January 2016">Sat 02 January 2016</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Sat 02 January 2016</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <h3>Jupyter &amp; IPython</h3>
+<p><a href="https://jupyter.org/about.html">Jupyter</a>是一个基于<a href="http://ipython.org/notebook.html">IPython Notebook</a>的项目，我记得最开始Jupyter的目标还是致力于在IPython Notebook上通过扩展各种内核实现对不同编程语言的支持，但是现在再来看已经变成了“支持跨语言的交互式数据科学和科学计算”：</p>
+<blockquote>
+<p>support interactive data science and scientific computing across all programming languages.</p>
+</blockquote>
+<p>我一直还是把Jupyter当做一个好用的Markdown编辑器以及其他编程语言的虚拟运行环境来用，并没有关注过项目具体的发展。前段时间<a href="http://blog.jupyter.org/2015/05/07/rendering-notebooks-on-github/">Github支持渲染<code>.ipynb</code>文件</a>（测试：<a href="https://github.com/rainyear/lolita/blob/master/playground/test_jupyter.ipynb">test_jupyter.ipynb</a>），以及后来Google开源的<a href="https://github.com/google/deepdream">Deepdream</a>项目，通过IPython Notebook可视化图片分类的深度学习过程中相邻神经网络层次之间的信息传递（我怀疑是不是这个大新闻促使了Jupyter向数据科学方向的转变？），可以看到Jupyter挑了一个热门或者正确的方向去发展。我这次打算用它来做<a href="http://www.lua.org/">Lua</a>和<a href="http://torch.ch/">Torch7</a>的学习笔记与交互展示，再去看官方文档，甚至已经开始脱离<a href="https://blog.jupyter.org/2015/04/15/the-big-split/">IPython</a>走向独立。</p>
+<h3>Lua &amp; Torch &amp; iTorch</h3>
+<p>提到Lua很多人第一反应就是“写游戏的”（我最初接触它也是因为<a href="http://jupyter-notebook.readthedocs.org/en/latest/public_server.html#notebook-public-server">Cocos2d-Lua</a>），Cocos2d-x中的Lua只是C/C++的binding，Lua的定位本身就是跨平台嵌入式脚本语言。Lua可能并不像其它语言那么热门，我看到有人认为“说Python是Toy Language是因为你没用过Lua”<code>:P</code>。国内社区似乎不怎么活跃，在用的人仍然在用，不用的人也有大把大把新的语言和框架涌现出来可供选择。在国内提到Lua不得不提的<a href="http://jupyter-notebook.readthedocs.org/en/latest/public_server.html#notebook-public-server">云风</a>和他的<a href="https://github.com/cloudwu/skynet">天网-skynet</a>；最近锤子赞助了<a href="https://openresty.org/">OpenResty</a>也就是<code>Nginx_lua</code>；之前上过<a href="http://www.nytimes.com/2014/11/18/science/researchers-announce-breakthrough-in-content-recognition-software.html">纽约时报</a>的<a href="https://github.com/karpathy/neuraltalk">neuraltalk</a>（自动生成场景图片的文字描述）从Python+numpy转到Torch（<a href="https://github.com/karpathy/neuraltalk2">neuraltalk2</a>）。这些是进入我视线范围内的Lua的进展，也就是集中于后端服务程序和机器学习（数据科学）。</p>
+<p>Torch之于Lua（LuaJIT）就像Numpy之于Python，不仅如此，Torch还提供了神经网络模型和GPU的支持。为了更方便调试和展示运算过程，Facebook开源了<a href="https://github.com/facebook/iTorch">iTorch</a> - IPython(Jupyter) Kernel for Torch，其中可视化展现的部分由<a href="http://bokeh.pydata.org/en/latest/docs/gallery.html">Bokeh.js</a>提供，效果如下：</p>
+<p><img alt="iTorch ScreenShoot" src="http://7xiijd.com1.z0.glb.clouddn.com/itorch-ss.png"></p>
+<h3>安装步骤</h3>
+<blockquote>
+<p>System: Ubuntu 14.04.3 LTS (GNU/Linux 3.13.0-67-generic x86_64)</p>
+</blockquote>
+<p><strong>1. install torch</strong></p>
+<p>基本上按照<a href="http://torch.ch/docs/getting-started.html">官网</a>的步骤就可以了，时间会比较长，尤其是在网速比较慢的时候：</p>
+<div class="highlight"><pre><span class="c1"># in a terminal, run the commands</span>
+curl -s https://raw.githubusercontent.com/torch/ezinstall/master/install-deps <span class="p">|</span> bash
+git clone https://github.com/torch/distro.git ~/torch --recursive
+<span class="nb">cd</span> ~/torch<span class="p">;</span> ./install.sh
+</pre></div>
+
+
+<p>上面的步骤会先安装LuaJIT和Lua的包管理工具<a href="https://luarocks.org/">Luarocks</a>。</p>
+<p><strong>2. install Jupyter</strong></p>
+<p>按照<a href="https://jupyter.readthedocs.org/en/latest/install.html">Jupyter文档</a>，如果没装<code>pip3</code>先装起来：</p>
+<div class="highlight"><pre>sudo apt-get install build-essential python3-dev
+<span class="c1"># 还有下面这一步</span>
+sudo apt-get install python3-pip
+</pre></div>
+
+
+<p>然后安装Jupiter（国内网络记得换国内pip镜像）：</p>
+<div class="highlight"><pre>pip3 install jupyter -i http://pypi.douban.com/simple
+</pre></div>
+
+
+<p><strong>3. install iTorch</strong></p>
+<p>首先安装<a href="http://zeromq.org/">ZeroMQ</a>依赖：</p>
+<div class="highlight"><pre>sudo apt-get install libzmq3-dev
+</pre></div>
+
+
+<p>然后下载安装iTorch：</p>
+<div class="highlight"><pre>git clone https://github.com/facebook/iTorch.git
+<span class="nb">cd</span> iTorch
+luarocks make
+</pre></div>
+
+
+<p><strong>4. <a href="http://jupyter-notebook.readthedocs.org/en/latest/public_server.html">Running a notebook server</a></strong></p>
+<p>首先查看是否存在Jupyter配置文件，若没有则新建一份：</p>
+<div class="highlight"><pre>ls ~/.jupyter
+<span class="c1"># 如果没有 jupyter_notebook_config.py 则执行</span>
+jupyter notebook --generate-config
+</pre></div>
+
+
+<p>准备Hased Password：</p>
+<div class="highlight"><pre><span class="c1"># IPython</span>
+<span class="kn">from</span> <span class="nn">notebook.auth</span> <span class="kn">import</span> <span class="n">passwd</span>
+<span class="n">passwd</span><span class="p">(</span><span class="s1">&#39;mypassword&#39;</span><span class="p">)</span>
+<span class="c1"># Output =&gt; &#39;sha1:67c9e60bb8b6:9ffede0825894254b2e042ea597d771089e11aed&#39;</span>
+</pre></div>
+
+
+<p>更改 <code>~/.jupyter/jupyter_notebook_config.py</code>：</p>
+<div class="highlight"><pre><span class="c1"># 去掉 c.NotebookApp.password 注释</span>
+<span class="n">c</span><span class="o">.</span><span class="n">NotebookApp</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="s1">u&#39;sha1:67c9e60bb8b6:9ffede0825894254b2e042ea597d771089e11aed&#39;</span>
+<span class="n">c</span><span class="o">.</span><span class="n">NotebookApp</span><span class="o">.</span><span class="n">ip</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span>
+<span class="n">c</span><span class="o">.</span><span class="n">NotebookApp</span><span class="o">.</span><span class="n">open_browser</span> <span class="o">=</span> <span class="bp">False</span>
+</pre></div>
+
+
+<p><strong>5. Run itorch &amp; Hello iTorch</strong></p>
+<p>一切准备就绪，运行<code>itorch notebook</code>！</p>
+<p>感兴趣的可以尝试一下：<a href="http://jupyter.rainy.im:8888/notebooks/hello-iTorch.ipynb">Hello iTorch</a>，合理使用，切勿乱搞~<code>Password('rainy.im')</code>。</p>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=Jupyter上的Lua与torch7&amp;url=http://blog.rainy.im/2016/01/02/lua-and-torch7-on-jupyter/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2016/01/02/lua-and-torch7-on-jupyter/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2016/01/02/lua-and-torch7-on-jupyter/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/python.html">Python</a><a href="http://blog.rainy.im/tag/lua.html">Lua</a><a href="http://blog.rainy.im/tag/torch.html">torch</a><a href="http://blog.rainy.im/tag/ml.html">ML</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

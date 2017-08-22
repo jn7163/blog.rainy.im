@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>Python 爱好者专用技术头条</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/none.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2016/05/06/hacker-news-for-pythoners/" rel="canonical" />
+
+        <meta name="description" content="在写公众号自动回复的时候就有想法进一步扩展这一平台的应用，中间断断续续写了几个爬虫，这两天把流程整理了一下，做了一个纯 Python 版本的 Hacker News 🐍🐍🎉🎉，所谓纯 Python 是指只收集、分享与 Python 有关的链接！">
+
+        <meta name="author" content="Yusheng">
+
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="Python 爱好者专用技术头条"/>
+<meta property="og:description" content="在写公众号自动回复的时候就有想法进一步扩展这一平台的应用，中间断断续续写了几个爬虫，这两天把流程整理了一下，做了一个纯 Python 版本的 Hacker News 🐍🐍🎉🎉，所谓纯 Python 是指只收集、分享与 Python 有关的链接！"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2016/05/06/hacker-news-for-pythoners/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-05-06 14:23:59+08:00"/>
+<meta property="article:modified_time" content="2016-05-06 14:23:59+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="None"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "Python 爱好者专用技术头条",
+  "headline": "Python 爱好者专用技术头条",
+  "datePublished": "2016-05-06 14:23:59+08:00",
+  "dateModified": "2016-05-06 14:23:59+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2016/05/06/hacker-news-for-pythoners/",
+  "description": "在写公众号自动回复的时候就有想法进一步扩展这一平台的应用，中间断断续续写了几个爬虫，这两天把流程整理了一下，做了一个纯 Python 版本的 Hacker News 🐍🐍🎉🎉，所谓纯 Python 是指只收集、分享与 Python 有关的链接！"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Python 爱好者专用技术头条</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Fri 06 May 2016">Fri 06 May 2016</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Fri 06 May 2016</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <h3>又做了新玩具！</h3>
+<p>在写公众号自动回复的时候就有想法进一步扩展这一平台的应用，中间断断续续写了几个爬虫，这两天把流程整理了一下，做了一个纯 Python 版本的 Hacker News 🐍🐍🎉🎉，所谓纯 Python 是指只收集、分享与 Python 有关的链接！</p>
+<p><img alt="" src="http://qncdn.rainy.im/pyhubcc-screenshot.png"></p>
+<p>技术分享的网站有很多，每天涌入的信息也越来越多，我希望可以把筛选信息的工作交给程序。考虑到版权等问题，网站只保留了链接信息，不抓取全文；用户登录只对接了 GitHub 登入，域名没有备案，所以国内服务大部分不可用。</p>
+<p>目前只完成了首页和收藏等基本操作，但是我对是否有人真的会去读收藏过的文章保留怀疑态度，相比于 Read-It-Later 我更愿意相信 Read-It-Now-Or-Never 😀，当然还是会继续完善网页，包括加入更多数据来源。</p>
+<p>除了爬虫之外暂时开放了一个简单的分享入口，就是在公众号中回复 <code>2+链接</code>：</p>
+<p><img alt="" src="http://qncdn.rainy.im/share-with-pyhub.png"></p>
+<p>（说明：由于个人公众号无法获取用户数据，因此无法署名）</p>
+<h3>技术栈</h3>
+<p>网站到现在可能连半成品都算不上，但蚂蚁虽小五脏俱全，基本功能是完善的，数据信息来源也是可靠的（但不保证正式完成前不会清空数据库😜），欢迎使用、测试甚至捣乱。这篇文章的主要目的是简单介绍一下生产过程和技术栈的简单笔记，除了爬虫和一些敏感信息以外，网站全部代码开源。</p>
+<p>服务端依然是基于 Tornado + Motor + MongoDB 的标配。</p>
+<p>爬虫本来想用 Scrapy，后来觉得没有必要，但是其架构还是值得借鉴的：将不同来源的爬虫划分为不同模块，公用模块处理请求和入库等操作；还是习惯用正则匹配，更精准方便；最爱前后端分离的网站，用正确的姿势打开后，json.loads() 就搞定了（好像我写的网站也是这样，不过爬人者必被爬，这也算一种荣幸吧🙃）。</p>
+<p>前端真是让人又爱又恨，显然我不想再在一个小项目上一个人吭哧吭哧啃 React 了，国产的 Vue 似乎是个不错的选择，但我最终选择了更短小精悍的 Riot！</p>
+<p><img alt="" src="http://riotjs.com/img/logo/riot960x.png"></p>
+<p>大家最初排斥 React 将 HTML 和 JavaScript 混在一起的做法，认为这是一种倒退，但是 Riot 不但继承了这一反骨，甚至将其发挥到极致。不再需要额外的工具，无需容忍编译，不再忍受啰嗦到像 Android 一样的语法，Riot 做到了像 Python 一样简练的语法同时兼容了 React 的思想，简直功德无量！事实上如果你有过 React 的经验只要看一下 Riot 版本的 TODO App 就知道该怎么做了，简直是小项目的不二之选。</p>
+<p>感谢 Material Design Lite，感谢 Material Icons，感谢 Devicons，感谢 BootCDN，让我尽可能避免跟 CSS 打交道。</p>
+<p>哦对了，地址是：<a href="https://pyhub.cc">https://pyhub.cc</a> 或 原文链接。</p>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=Python 爱好者专用技术头条&amp;url=http://blog.rainy.im/2016/05/06/hacker-news-for-pythoners/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2016/05/06/hacker-news-for-pythoners/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2016/05/06/hacker-news-for-pythoners/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>Python函数式编程：从入门到走火入魔</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/python.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2016/12/04/fp-with-py/" rel="canonical" />
+
+        <meta name="description" content="很多人都在谈论函数式编程（Functional Programming），只是很多人站在不同的角度看到的是完全不一样的风景。">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Python">
+        <meta name="tags" content="总结">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="Python函数式编程：从入门到走火入魔"/>
+<meta property="og:description" content="很多人都在谈论函数式编程（Functional Programming），只是很多人站在不同的角度看到的是完全不一样的风景。"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2016/12/04/fp-with-py/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-12-04 08:40:09+08:00"/>
+<meta property="article:modified_time" content="2016-12-04 08:40:09+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Python"/>
+<meta property="article:tag" content="Python"/>
+<meta property="article:tag" content="总结"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "Python函数式编程：从入门到走火入魔",
+  "headline": "Python函数式编程：从入门到走火入魔",
+  "datePublished": "2016-12-04 08:40:09+08:00",
+  "dateModified": "2016-12-04 08:40:09+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2016/12/04/fp-with-py/",
+  "description": "很多人都在谈论函数式编程（Functional Programming），只是很多人站在不同的角度看到的是完全不一样的风景。"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Python函数式编程：从入门到走火入魔</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Sun 04 December 2016">Sun 04 December 2016</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Sun 04 December 2016</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>函数式编程源自于数学理论，它似乎也更适用于数学计算相关的场景，因此本文以一个简单的数据处理问题为例，逐步介绍 Python 函数式编程从入门到走火入魔的过程。</p>
+<p>很多人都在谈论函数式编程（Functional Programming），只是很多人站在不同的角度看到的是完全不一样的风景。坚持实用主义的 Python 老司机们对待 FP 的态度应该更加包容，虽然他们不相信银弹，但冥冥中似乎能感觉到 FP 暗合了 Python 教义（The Zen of Python）的某些思想，而且既然 Python 是一门多范式编程语言，并在很大程度上支持函数式编程，那就更没有理由拒绝它。</p>
+<p>函数式编程源自于数学理论，它似乎也更适用于数学计算相关的场景，因此本文以一个简单的数据处理问题为例，逐步介绍 Python 函数式编程从入门到走火入魔的过程。</p>
+<blockquote>
+<p><strong>问题</strong>：计算 N 位同学在某份试卷的 M 道选择题上的得分（每道题目的分值不同）。</p>
+</blockquote>
+<p>首先来生成一组用于计算的伪造数据：</p>
+<div class="highlight"><pre><span class="c1"># @file: data.py</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+
+<span class="n">Student</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Student&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;ans&#39;</span><span class="p">])</span>
+
+<span class="n">N_Questions</span> <span class="o">=</span> <span class="mi">25</span>
+<span class="n">N_Students</span> <span class="o">=</span> <span class="mi">20</span>
+
+<span class="k">def</span> <span class="nf">gen_random_list</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+
+<span class="c1"># 问题答案 &#39;ABCD&#39; 随机</span>
+<span class="n">ANS</span>   <span class="o">=</span> <span class="n">gen_random_list</span><span class="p">(</span><span class="s1">&#39;ABCD&#39;</span><span class="p">,</span> <span class="n">N_Questions</span><span class="p">)</span>
+<span class="c1"># 题目分值 1~5 分</span>
+<span class="n">SCORE</span> <span class="o">=</span> <span class="n">gen_random_list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span> <span class="n">N_Questions</span><span class="p">)</span>
+
+<span class="n">QUIZE</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ANS</span><span class="p">,</span> <span class="n">SCORE</span><span class="p">)</span>
+<span class="n">students</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># 学生答案为 &#39;ABCD*&#39; 随机，&#39;*&#39; 代表未作答</span>
+    <span class="n">Student</span><span class="p">(</span><span class="n">_id</span><span class="p">,</span> <span class="n">gen_random_list</span><span class="p">(</span><span class="s1">&#39;ABCD*&#39;</span><span class="p">,</span> <span class="n">N_Questions</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N_Students</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">QUIZE</span><span class="p">)</span>
+<span class="c1"># [(&#39;A&#39;, 3), (&#39;B&#39;, 1), (&#39;D&#39;, 1), ...</span>
+<span class="k">print</span><span class="p">(</span><span class="n">students</span><span class="p">)</span>
+<span class="c1"># [Student(id=1, ans=[&#39;C&#39;, &#39;B&#39;, &#39;A&#39;, ...</span>
+</pre></div>
+
+
+<h3>入门</h3>
+<p>首先来看常规的面向过程编程风格，我们需要遍历每个学生，然后遍历每个学生对每道题目的答案并与真实答案进行比较，然后将正确答案的分数累计：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">data</span>
+<span class="k">def</span> <span class="nf">normal</span><span class="p">(</span><span class="n">students</span><span class="p">,</span> <span class="n">quize</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">student</span> <span class="ow">in</span> <span class="n">students</span><span class="p">:</span>
+        <span class="n">sid</span> <span class="o">=</span> <span class="n">student</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">quize</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">quize</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">student</span><span class="o">.</span><span class="n">ans</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">score</span> <span class="o">+=</span> <span class="n">quize</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;ID</span><span class="se">\t</span><span class="s1">Score</span><span class="se">\n</span><span class="s1">==================&#39;</span><span class="p">)</span>
+<span class="n">normal</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">students</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">quize</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">ID  Score</span>
+<span class="sd">==================</span>
+<span class="sd">1    5</span>
+<span class="sd">2    12</span>
+<span class="sd">...</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+
+<p>如果你觉得上面的代码非常直观且合乎逻辑，那说明你已经习惯按照计算机的思维模式进行思考了。通过创建嵌套两个 <code>for</code> 循环来<strong>遍历</strong>所有题目答案的判断和评分，这完全是为计算机服务的思路，虽然说 Python 中的 <code>for</code> 循环已经比 <code>C</code> 语言更进了一步，通常不需要额外的状态变量来记录当前循环的次数，但有时候也不得不使用状态变量，如上例中第二个循环中比较两个列表的元素。函数式编程的一大特点就是尽量抛弃这种明显<strong>循环遍历</strong>的做法，而是把注意集中在解决问题本身，一如在现实中我们批改试卷时，只需要将两组答案<strong>并列</strong>进行比较即可：</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">data</span> <span class="kn">import</span> <span class="n">students</span><span class="p">,</span> <span class="n">QUIZE</span>
+
+<span class="n">student</span> <span class="o">=</span> <span class="n">students</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># 将学生答案与正确答案合并到一起</span>
+<span class="c1"># 然后过滤出答案一致的题目</span>
+<span class="n">filtered</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nb">zip</span><span class="p">(</span><span class="n">student</span><span class="o">.</span><span class="n">ans</span><span class="p">,</span> <span class="n">QUIZE</span><span class="p">))</span>
+
+<span class="k">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">filtered</span><span class="p">))</span>
+<span class="c1"># [(&#39;A&#39;, (&#39;A&#39;, 3)), (&#39;D&#39;, (&#39;D&#39;, 1)), ...]</span>
+</pre></div>
+
+
+<p>然后再将所有正确题目的分数累加起来，即可：</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="nb">reduce</span>
+
+<span class="n">reduced</span> <span class="o">=</span> <span class="nb">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">filtered</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">reduced</span><span class="p">)</span>
+</pre></div>
+
+
+<p>以上是对一位学生的结果处理，接下来只需要对所有学生进行同样的处理即可：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">cal</span><span class="p">(</span><span class="n">student</span><span class="p">):</span>
+    <span class="n">filtered</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nb">zip</span><span class="p">(</span><span class="n">student</span><span class="o">.</span><span class="n">ans</span><span class="p">,</span> <span class="n">QUIZE</span><span class="p">))</span>
+    <span class="n">reduced</span> <span class="o">=</span> <span class="nb">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">filtered</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">student</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">reduced</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;ID</span><span class="se">\t</span><span class="s1">Score</span><span class="se">\n</span><span class="s1">==================&#39;</span><span class="p">)</span>
+<span class="c1"># 由于 Python 3 中 map 方法只是组合而不直接执行</span>
+<span class="c1"># 需要转换成 list 才能将 cal 方法的的结果打印出来</span>
+<span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">cal</span><span class="p">,</span> <span class="n">students</span><span class="p">))</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">ID  Score</span>
+<span class="sd">==================</span>
+<span class="sd">1    5</span>
+<span class="sd">2    12</span>
+<span class="sd">...</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+
+<p>上面的示例通过 <code>zip/filter/reduce/map</code> 等函数将数据处理的方法<strong>打包</strong>应用到数据上，实现了基本的函数式编程操作。但是如果你对函数式有更深入的了解，你就会发现上面的 <code>cal</code> 方法中使用了全局变量 <code>QUIZE</code>，这会导致在相同输入的条件下，函数可能产生不同的输出，这是 FP 的大忌，因此需要进行整改：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">cal</span><span class="p">(</span><span class="n">quize</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="n">student</span><span class="p">):</span>
+        <span class="n">filtered</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nb">zip</span><span class="p">(</span><span class="n">student</span><span class="o">.</span><span class="n">ans</span><span class="p">,</span> <span class="n">quize</span><span class="p">))</span>
+        <span class="n">reduced</span> <span class="o">=</span> <span class="nb">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">filtered</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">student</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">reduced</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">inner</span>
+<span class="nb">map</span><span class="p">(</span><span class="n">cal</span><span class="p">(</span><span class="n">QUIZE</span><span class="p">),</span> <span class="n">students</span><span class="p">)</span>
+</pre></div>
+
+
+<p>如此借助闭包（Closure）的方法，就可以维持纯净的 FP 模式啦！</p>
+<h3>走火（fn.py)</h3>
+<p>也许看了上面的 FP 写法，你还是觉得挺啰嗦的，并没有达到你想象中的结果，这时候就需要呈上一款语法糖利器：<a href="https://github.com/kachayev/fn.py">fn.py</a>！<code>fn.py</code> 封装了一些常用的 FP 函数及语法糖，可以大大简化你的代码！</p>
+<div class="highlight"><pre>pip install fn
+</pre></div>
+
+
+<p>首先从刚刚的闭包开始，我们可以用更加 FP 的方法来解决这一问题，称为<a href="https://en.wikipedia.org/wiki/Currying">柯里化</a>，简单来说就是<strong>允许接受多个参数的函数可以分次执行，每次只接受一个参数</strong>：</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">fn.func</span> <span class="kn">import</span> <span class="n">curried</span>
+<span class="nd">@curried</span>
+<span class="k">def</span> <span class="nf">sum5</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span> <span class="o">+</span> <span class="n">d</span> <span class="o">+</span> <span class="n">e</span>
+
+<span class="n">sum3</span> <span class="o">=</span> <span class="n">sum5</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">sum4</span> <span class="o">=</span> <span class="n">sum3</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">sum4</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="c1"># 15</span>
+</pre></div>
+
+
+<p>应用到上面的 <code>cal</code> 方法中：</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">fn.func</span> <span class="kn">import</span> <span class="n">curried</span>
+
+<span class="nd">@curried</span>
+<span class="k">def</span> <span class="nf">cal</span><span class="p">(</span><span class="n">quize</span><span class="p">,</span> <span class="n">student</span><span class="p">):</span>
+    <span class="n">filtered</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nb">zip</span><span class="p">(</span><span class="n">student</span><span class="o">.</span><span class="n">ans</span><span class="p">,</span> <span class="n">quize</span><span class="p">))</span>
+    <span class="n">reduced</span> <span class="o">=</span> <span class="nb">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">filtered</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">student</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">reduced</span><span class="p">)</span>
+
+<span class="nb">map</span><span class="p">(</span><span class="n">cal</span><span class="p">(</span><span class="n">QUIZE</span><span class="p">),</span> <span class="n">students</span><span class="p">)</span>
+</pre></div>
+
+
+<p>在 FP 中数据通常被看作是一段数据流在一串函数的管道中传递，因此上面的<code>reduce</code>和<code>filter</code>其实可以合并：</p>
+<div class="highlight"><pre><span class="nb">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nb">zip</span><span class="p">(</span><span class="n">student</span><span class="o">.</span><span class="n">ans</span><span class="p">,</span> <span class="n">quize</span><span class="p">)),</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+
+<p>虽然更简略了，但是这样会大大降低代码的可读性（这也是 FP 容易遭受批评的一点），为此 <code>fn</code> 提供了更高级的函数操作工具：</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">fn</span> <span class="kn">import</span> <span class="n">F</span>
+
+<span class="n">cal</span> <span class="o">=</span> <span class="n">F</span><span class="p">()</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="nb">reduce</span><span class="p">(</span><span class="n">_</span><span class="o">+</span><span class="n">_</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">r</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="c1"># 计算一名学生的成绩</span>
+<span class="k">print</span><span class="p">(</span><span class="n">cal</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">student</span><span class="o">.</span><span class="n">ans</span><span class="p">,</span> <span class="n">QUIZE</span><span class="p">)))</span>
+
+<span class="c1"># 然后组合一下</span>
+<span class="nd">@curried</span>
+<span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="n">quize</span><span class="p">,</span> <span class="n">student</span><span class="p">):</span>
+    <span class="n">cal</span> <span class="o">=</span> <span class="n">F</span><span class="p">()</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="nb">reduce</span><span class="p">(</span><span class="n">_</span><span class="o">+</span><span class="n">_</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">r</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">student</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">cal</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">student</span><span class="o">.</span><span class="n">ans</span><span class="p">,</span> <span class="n">quize</span><span class="p">)))</span>
+<span class="nb">map</span><span class="p">(</span><span class="n">output</span><span class="p">(</span><span class="n">QUIZE</span><span class="p">),</span> <span class="n">students</span><span class="p">)</span>
+</pre></div>
+
+
+<h3>入魔（Hy）</h3>
+<p>如果你觉得上面的代码已经足够魔性到看起来不像是 Python 语言了，然而一旦接受了这样的语法设定感觉也还挺不错的。如果你兴冲冲地拿去给 Lisp 或 Haskell 程序员看，则一定会被无情地鄙视😂，于是你痛定思痛下定决心继续挖掘 Python 函数式编程的奥妙，那么恭喜你，组织欢迎你的加入：<code>Hail Hydra</code>！</p>
+<p><img alt="" src="http://qncdn.rainy.im/blog/hydra.jpeg"></p>
+<p>哦不对，说漏了，是<code>Hi Hy</code>！</p>
+<p><img alt="" src="http://qncdn.rainy.im/blog/hy-logo.jpg"></p>
+<p><a href="https://github.com/hylang/hy">Hy</a> 是基于 Python 的 Lisp 方言，可以与 Python 代码进行完美互嵌（如果你更偏好 PyPy，同样也有类似的<a href="https://github.com/pixie-lang/pixie">Pixie</a>），除此之外你也可以把它当做一门独立的语言来看待，它有自己的解释器，可以当做独立的脚本语言来使用：</p>
+<div class="highlight"><pre>pip install git+https://github.com/hylang/hy.git
+</pre></div>
+
+
+<p>首先来看一下它的基本用法，和 Python 一样，安装完之后可以通过 <code>hy</code> 命令进入 REPL 环境：</p>
+<div class="highlight"><pre><span class="nv">=&gt;</span> <span class="p">(</span><span class="nb">print</span> <span class="s">&quot;Hy!&quot;</span><span class="p">)</span>
+<span class="nv">Hy!</span>
+<span class="nv">=&gt;</span> <span class="p">(</span><span class="nv">defn</span> <span class="nv">salutationsnm</span> <span class="nv">[name]</span> <span class="p">(</span><span class="nb">print</span> <span class="p">(</span><span class="nb">+</span> <span class="s">&quot;Hy &quot;</span> <span class="nv">name</span> <span class="s">&quot;!&quot;</span><span class="p">)))</span>
+<span class="nv">=&gt;</span> <span class="p">(</span><span class="nv">salutationsnm</span> <span class="s">&quot;YourName&quot;</span><span class="p">)</span>
+<span class="nv">Hy</span> <span class="nv">YourName!</span>
+</pre></div>
+
+
+<p>或者当做命令行脚本运行：</p>
+<div class="highlight"><pre><span class="err">#</span><span class="nv">!</span> <span class="nv">/usr/bin/env</span> <span class="nv">hy</span>
+<span class="p">(</span><span class="nb">print</span> <span class="s">&quot;I was going to code in Python syntax, but then I got Hy.&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>保存为 <code>awesome.hy</code>：</p>
+<div class="highlight"><pre>chmod +x awesome.hy
+./awesome.hy
+</pre></div>
+
+
+<p>接下来继续以上面的问题为例，首先可以直接从 Python 代码中导入：</p>
+<div class="highlight"><pre><span class="p">(</span><span class="nb">import</span> <span class="nv">data</span><span class="p">)</span>
+
+<span class="c1">;; 用于 Debug 的自定义宏</span>
+<span class="c1">;; 将可迭代对象转化成列表后打印</span>
+<span class="p">(</span><span class="nb">defmacro</span> <span class="nv">printlst</span> <span class="nv">[it]</span>
+    <span class="o">`</span><span class="p">(</span><span class="nb">print</span> <span class="p">(</span><span class="nb">list</span> <span class="nv">~it</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nv">setv</span> <span class="nv">students</span> <span class="nv">data.students</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">setv</span> <span class="nv">quize</span> <span class="nv">data.QUIZE</span><span class="p">)</span>
+
+<span class="p">(</span><span class="nv">defn</span> <span class="nv">cal</span> <span class="nv">[quize]</span>
+  <span class="p">(</span><span class="nv">fn</span> <span class="nv">[student]</span>
+    <span class="p">(</span><span class="nb">print</span> <span class="nv">student.id</span>
+      <span class="p">(</span><span class="nb">reduce</span>
+        <span class="p">(</span><span class="nv">fn</span> <span class="nv">[x</span> <span class="nv">y]</span> <span class="p">(</span><span class="nb">+</span> <span class="nv">x</span> <span class="p">(</span><span class="nb">last</span> <span class="p">(</span><span class="nb">last</span> <span class="nv">y</span><span class="p">))))</span>
+        <span class="p">(</span><span class="nv">filter</span>
+          <span class="p">(</span><span class="nv">fn</span> <span class="nv">[x]</span> <span class="p">(</span><span class="nb">=</span> <span class="p">(</span><span class="nb">first</span> <span class="nv">x</span><span class="p">)</span> <span class="p">(</span><span class="nb">first</span> <span class="p">(</span><span class="nb">last</span> <span class="nv">x</span><span class="p">))))</span>
+          <span class="p">(</span><span class="nv">zip</span> <span class="nv">student.ans</span> <span class="nv">quize</span><span class="p">))</span>
+        <span class="mi">0</span>
+      <span class="p">)</span>
+    <span class="p">)</span>
+  <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="p">(</span><span class="nv">printl</span> <span class="p">(</span><span class="nb">map</span> <span class="p">(</span><span class="nv">cal</span> <span class="nv">quize</span><span class="p">)</span> <span class="nv">students</span><span class="p">))</span>
+</pre></div>
+
+
+<p>如果觉得不放心，还可以直接调用最开始定义的方法将结果进行比较：</p>
+<div class="highlight"><pre><span class="c1">;; 假设最上面的 normal 方法保存在 fun.py 文件中</span>
+<span class="p">(</span><span class="nb">import</span> <span class="nv">fun</span><span class="p">)</span>
+<span class="p">(</span><span class="o">.</span><span class="nv">normal</span> <span class="nv">fun</span> <span class="nv">students</span> <span class="nv">quize</span><span class="p">)</span>
+</pre></div>
+
+
+<h3>总结</h3>
+<p>以一个简单的数据处理问题为例，我们经历了 Python 函数式编程从开始尝试到“走火入魔”的整个过程。也许你还是觉得不够过瘾，想要尝试更<strong>纯粹</strong>的 FP 体验，那么 Haskell 将是你最好的选择。FP 将数据看做数据流在不同函数间传递，省去不必要的中间变量，保证函数的纯粹性…等等这些思想在数据处理过程中还是非常有帮助的（Python 在这一领域的竞争对手 R 语言本身在语法设计上就更多地受到 Lisp 语言的影响，虽然看起来语法也比较奇怪，但这也是它比较适合用于数据处理及统计分析的原因之一）。</p>
+<h3>参考</h3>
+<ol>
+<li><a href="http://tips.pyhub.cc/zh/latest/2016-03-08-Functional-Programming-in-Python/">Tips » 0x02-函数式编程</a></li>
+<li><a href="https://docs.python.org/3/howto/functional.html">Python HOWTOs » Functional Programming HOWTO</a></li>
+<li><a href="http://docs.hylang.org/en/latest/index.html">Hy's Doc</a></li>
+<li><a href="https://github.com/kachayev/fn.py">fn.py</a></li>
+</ol>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=Python函数式编程：从入门到走火入魔&amp;url=http://blog.rainy.im/2016/12/04/fp-with-py/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2016/12/04/fp-with-py/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2016/12/04/fp-with-py/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/python.html">Python</a><a href="http://blog.rainy.im/tag/zong-jie.html">总结</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

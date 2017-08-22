@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Yu's Tech Lab - None</title><link href="http://blog.rainy.im/" rel="alternate"></link><link href="http://blog.rainy.im/feeds/none.atom.xml" rel="self"></link><id>http://blog.rainy.im/</id><updated>2016-11-11T15:48:47+08:00</updated><entry><title>About Me</title><link href="http://blog.rainy.im/2016/11/11/about/" rel="alternate"></link><published>2016-11-11T15:48:47+08:00</published><updated>2016-11-11T15:48:47+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2016-11-11:/2016/11/11/about/</id><summary type="html">&lt;p&gt;None&lt;/p&gt;</summary><content type="html">&lt;blockquote&gt;
+&lt;p&gt;技术，编程，随意做点试验&lt;/p&gt;
+&lt;p&gt;电影，读书，胡乱搞点设计&lt;/p&gt;
+&lt;p&gt;的&lt;/p&gt;
+&lt;p&gt;心理学，博士。&lt;/p&gt;
+&lt;/blockquote&gt;</content></entry><entry><title>Python 爱好者专用技术头条</title><link href="http://blog.rainy.im/2016/05/06/hacker-news-for-pythoners/" rel="alternate"></link><published>2016-05-06T14:23:59+08:00</published><updated>2016-05-06T14:23:59+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2016-05-06:/2016/05/06/hacker-news-for-pythoners/</id><summary type="html">&lt;p&gt;在写公众号自动回复的时候就有想法进一步扩展这一平台的应用，中间断断续续写了几个爬虫，这两天把流程整理了一下，做了一个纯 Python 版本的 Hacker News 🐍🐍🎉🎉，所谓纯 Python 是指只收集、分享与 Python 有关的链接！&lt;/p&gt;</summary><content type="html">&lt;h3&gt;又做了新玩具！&lt;/h3&gt;
+&lt;p&gt;在写公众号自动回复的时候就有想法进一步扩展这一平台的应用，中间断断续续写了几个爬虫，这两天把流程整理了一下，做了一个纯 Python 版本的 Hacker News 🐍🐍🎉🎉，所谓纯 Python 是指只收集、分享与 Python 有关的链接！&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="http://qncdn.rainy.im/pyhubcc-screenshot.png"&gt;&lt;/p&gt;
+&lt;p&gt;技术分享的网站有很多，每天涌入的信息也越来越多，我希望可以把筛选信息的工作交给程序。考虑到版权等问题，网站只保留了链接信息，不抓取全文；用户登录只对接了 GitHub 登入，域名没有备案，所以国内服务大部分不可用。&lt;/p&gt;
+&lt;p&gt;目前只完成了首页和收藏等基本操作，但是我对是否有人真的会去读收藏过的文章保留怀疑态度，相比于 Read-It-Later 我更愿意相信 Read-It-Now-Or-Never 😀，当然还是会继续完善网页，包括加入更多数据来源。&lt;/p&gt;
+&lt;p&gt;除了爬虫之外暂时开放了一个简单的分享入口，就是在公众号中回复 &lt;code&gt;2+链接&lt;/code&gt;：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="http://qncdn.rainy.im/share-with-pyhub.png"&gt;&lt;/p&gt;
+&lt;p&gt;（说明：由于个人公众号无法获取用户数据，因此无法署名）&lt;/p&gt;
+&lt;h3&gt;技术栈&lt;/h3&gt;
+&lt;p&gt;网站到现在可能连半成品都算不上，但蚂蚁虽小五脏俱全，基本功能是完善的，数据信息来源也是可靠的（但不保证正式完成前不会清空数据库😜），欢迎使用、测试甚至捣乱。这篇文章的主要目的是简单介绍一下生产过程和技术栈的简单笔记，除了爬虫和一些敏感信息以外，网站全部代码开源。&lt;/p&gt;
+&lt;p&gt;服务端依然是基于 Tornado + Motor + MongoDB 的标配。&lt;/p&gt;
+&lt;p&gt;爬虫本来想用 Scrapy，后来觉得没有必要，但是其架构还是值得借鉴的：将不同来源的爬虫划分为不同模块，公用模块处理请求和入库等操作；还是习惯用正则匹配，更精准方便；最爱前后端分离的网站，用正确的姿势打开后，json.loads() 就搞定了（好像我写的网站也是这样，不过爬人者必被爬，这也算一种荣幸吧🙃）。&lt;/p&gt;
+&lt;p&gt;前端真是让人又爱又恨，显然我不想再在一个小项目上一个人吭哧吭哧啃 React 了，国产的 Vue 似乎是个不错的选择，但我最终选择了更短小精悍的 Riot！&lt;/p&gt;
+&lt;p&gt;&lt;img alt="" src="http://riotjs.com/img/logo/riot960x.png"&gt;&lt;/p&gt;
+&lt;p&gt;大家最初排斥 React 将 HTML 和 JavaScript 混在一起的做法，认为这是一种倒退，但是 Riot 不但继承了这一反骨，甚至将其发挥到极致。不再需要额外的工具，无需容忍编译，不再忍受啰嗦到像 Android 一样的语法，Riot 做到了像 Python 一样简练的语法同时兼容了 React 的思想，简直功德无量！事实上如果你有过 React 的经验只要看一下 Riot 版本的 TODO App 就知道该怎么做了，简直是小项目的不二之选。&lt;/p&gt;
+&lt;p&gt;感谢 Material Design Lite，感谢 Material Icons，感谢 Devicons，感谢 BootCDN，让我尽可能避免跟 CSS 打交道。&lt;/p&gt;
+&lt;p&gt;哦对了，地址是：&lt;a href="https://pyhub.cc"&gt;https://pyhub.cc&lt;/a&gt; 或 原文链接。&lt;/p&gt;</content></entry></feed>

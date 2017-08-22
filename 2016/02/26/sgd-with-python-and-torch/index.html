@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>神经网络模型随机梯度下降法—简单实现与Torch应用</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/python.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2016/02/26/sgd-with-python-and-torch/" rel="canonical" />
+
+        <meta name="description" content="本文主要关于神经网络模型中的随机梯度下降法，介绍其原理及推导过程，并比较 Python 简单实现和 Torch 的应用。">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Python">
+        <meta name="tags" content="torch">
+        <meta name="tags" content="ML">
+        <meta name="tags" content="Note">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="神经网络模型随机梯度下降法—简单实现与Torch应用"/>
+<meta property="og:description" content="本文主要关于神经网络模型中的随机梯度下降法，介绍其原理及推导过程，并比较 Python 简单实现和 Torch 的应用。"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2016/02/26/sgd-with-python-and-torch/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-02-26 09:04:54+08:00"/>
+<meta property="article:modified_time" content="2016-02-26 09:04:54+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Python"/>
+<meta property="article:tag" content="Python"/>
+<meta property="article:tag" content="torch"/>
+<meta property="article:tag" content="ML"/>
+<meta property="article:tag" content="Note"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "神经网络模型随机梯度下降法—简单实现与Torch应用",
+  "headline": "神经网络模型随机梯度下降法—简单实现与Torch应用",
+  "datePublished": "2016-02-26 09:04:54+08:00",
+  "dateModified": "2016-02-26 09:04:54+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2016/02/26/sgd-with-python-and-torch/",
+  "description": "本文主要关于神经网络模型中的随机梯度下降法，介绍其原理及推导过程，并比较 Python 简单实现和 Torch 的应用。"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">神经网络模型随机梯度下降法—简单实现与Torch应用</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Fri 26 February 2016">Fri 26 February 2016</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Fri 26 February 2016</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <h3>About</h3>
+<p>本文以及后续关于 Torch 应用及机器学习相关的笔记文章，均基于<a href="https://github.com/rainyear/Oxford-Machine-Learning-Course-2015">牛津大学2015机器学习课程</a>，课件和视频可从<a href="https://www.cs.ox.ac.uk/people/nando.defreitas/machinelearning/">官网</a>下载。本文主要关于神经网络模型中的随机梯度下降法，介绍其原理及推导过程，并比较 Python 简单实现和 Torch 的应用。对应课件为<a href="https://github.com/rainyear/Oxford-Machine-Learning-Course-2015/blob/master/L2-Linear-prediction.ipynb">L2-Linear-prediction.ipynb</a>。</p>
+<h3>梯度下降法（gradient descent）</h3>
+<p>为了确定神经网络模型中参数（权值）的好坏，需要先指定一个衡量标准（训练误差，损失函数，目标函数），例如以均方差（Mean Square Error, MSE）公式作为损失函数：</p>
+<p>$$J(\mathbf{\theta}) = MSE = \frac{1}{n} \sum_{i = 1}^n(\widehat{\mathbf{Y_i}} - \mathbf{Y_i})^2$$</p>
+<p>其中，$\widehat{y_i} = \sum_{j = 1}^d x_{ij}\theta_j$，矩阵表示法为$\widehat{\mathbf{Y}} = \mathbf{X}\theta$，为线性模型（神经网络）拟合结果。</p>
+<p>模型最优化实际上是最小化损失函数的过程，梯度下降法的原理是：</p>
+<blockquote>
+<p>若函数 $F(x)$ 在点 $a$ 可微且有定义，则 $F(x)$ 在 $a$ 点沿着梯度相反方向 $-\nabla F(a)$ 下降最快。<a href="https://zh.wikipedia.org/wiki/梯度下降法">梯度下降法 - 维基百科</a></p>
+</blockquote>
+<p>损失函数 $J$ 对于权重向量 $\mathbf{\theta}$ 的梯度（gradient）：</p>
+<p>$$\nabla J(\mathbf{\theta}) = [\frac{\partial J}{\partial \theta_0}, \frac{\partial J}{\partial \theta_1}, ..., \frac{\partial J}{\partial \theta_n}]$$</p>
+<p>则根据梯度下降法则，参数的变化应根据：</p>
+<p>$$\Delta \theta_i = -\alpha\frac{\partial J}{\partial \theta_i}$$</p>
+<p>其中 $\alpha$ 为学习速率（Learning Rate）。由此可得梯度下降算法如下：</p>
+<ul>
+<li>GD(training_examples, alpha)</li>
+<li>training_examples 是训练集合，$\lt \vec{inputs}, output \gt$</li>
+<li>初始化每个权值 $\theta_i$ 为随机值<ul>
+<li>终止条件前，迭代：</li>
+<li>初始化权值的变化梯度 $\Delta\theta_i = 0$ </li>
+<li>对每条训练数据：<ul>
+<li>根据 $\vec{input}$ 计算模型输出为 o</li>
+<li>对每个权值梯度 $\Delta \theta_i$：<ul>
+<li>$\Delta \theta_i = \Delta \theta_i + \alpha (output - o) * x_i$  ~&gt;(A</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>对每个权值 $\theta_i$：<ul>
+<li>$\theta_i = \theta_i + \Delta \theta_i$ ~&gt;(B</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>根据算法描述可以简单实现（<a href="https://github.com/rainyear/Oxford-Machine-Learning-Course-2015/blob/master/%E9%9A%8F%E6%9C%BA%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95%E5%AE%9E%E7%8E%B0.ipynb">完整代码</a>）：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">GD</span><span class="p">(</span><span class="n">training_examples</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+    <span class="c1"># init thetas</span>
+    <span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">NPAMATERS</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">LOOPS</span><span class="p">):</span>
+        <span class="n">deltas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">NPAMATERS</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">training_examples</span><span class="p">:</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">o</span> <span class="o">=</span> <span class="n">NN</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">thetas</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NPAMATERS</span><span class="p">):</span>
+                <span class="c1"># -- Step (A</span>
+                <span class="n">deltas</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">deltas</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="n">output</span> <span class="o">-</span> <span class="n">o</span><span class="p">)</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NPAMATERS</span><span class="p">):</span>
+            <span class="c1"># -- Step (B</span>
+            <span class="n">thetas</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">thetas</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">deltas</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">thetas</span>
+<span class="n">thetas</span> <span class="o">=</span> <span class="n">GD</span><span class="p">(</span><span class="n">training_examples</span><span class="p">,</span> <span class="mf">0.00001</span><span class="p">)</span>
+<span class="n">test</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="n">training_examples</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">#No Target  Prediction</span>
+<span class="sd">0   40  20.55</span>
+<span class="sd">1   44  37.96</span>
+<span class="sd">2   46  44.42</span>
+<span class="sd">3   48  48.66</span>
+<span class="sd">4   52  52.89</span>
+<span class="sd">5   58  54.89</span>
+<span class="sd">6   60  67.83</span>
+<span class="sd">7   68  63.13</span>
+<span class="sd">8   74  69.59</span>
+<span class="sd">9   80  89.00</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+
+<p>梯度下降法中计算 $\Delta \theta_i$ 时汇总了所有训练样本数据的误差，在实践过程中可能出现以下问题：</p>
+<ol>
+<li>收敛过慢</li>
+<li>可能停留在局部最小值</li>
+</ol>
+<p>需要注意的是，学习速率的选择很重要，$\alpha$ 越小相当于沿梯度下降的步子越小。很显然，步子越小，到达最低点所需要迭代的次数就越多，或者说收敛越慢；但步子太大，又容易错过最低点，走向发散的高地。在我写的这一个简单实现的测试中，取 $\alpha = 1e-3$ 时导致无法收敛，而取 $\alpha = 1e-5$ 时可收敛，但下降速度肯定更慢。</p>
+<p>常见的改进方案是随机梯度下降法（stochatic gradient descent procedure, SGD）,SGD 的原理是根据每个单独的训练样本的误差对权值进行更新，针对上面的算法描述，删除 $(B$，将$(A$ 更新为：</p>
+<p>$$\theta_i = \theta_i + \alpha (output - o) * x_i$$</p>
+<p>代码如下：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">SGD</span><span class="p">(</span><span class="n">training_examples</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+    <span class="c1"># init thetas</span>
+    <span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">NPAMATERS</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">LOOPS</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">training_examples</span><span class="p">:</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">o</span> <span class="o">=</span> <span class="n">NN</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">thetas</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NPAMATERS</span><span class="p">):</span>
+                <span class="n">thetas</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">thetas</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="n">output</span> <span class="o">-</span> <span class="n">o</span><span class="p">)</span> <span class="o">*</span> <span class="n">inputs</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">thetas</span>
+<span class="n">thetas</span> <span class="o">=</span> <span class="n">SGD</span><span class="p">(</span><span class="n">training_examples</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">)</span>
+<span class="n">test</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="n">training_examples</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">#No Target  Prediction</span>
+<span class="sd">0   40  41.45</span>
+<span class="sd">1   44  42.71</span>
+<span class="sd">2   46  44.82</span>
+<span class="sd">3   48  48.42</span>
+<span class="sd">4   52  52.02</span>
+<span class="sd">5   58  57.11</span>
+<span class="sd">6   60  61.34</span>
+<span class="sd">7   68  70.88</span>
+<span class="sd">8   74  72.99</span>
+<span class="sd">9   80  79.33</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+
+<p>可以看出，SGD 可以用较大的 $\alpha$ 获得较好的优化结果。</p>
+<h3>Torch的应用</h3>
+<p>清楚了 SGD 的原理后，再来应用 Torch 框架完成上上述过程，其中神经网络模型的框架由<a href="https://github.com/torch/nn">torch/nn</a>提供。</p>
+<div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;</span><span class="s">torch&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;</span><span class="s">optim&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;</span><span class="s">nn&#39;</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Sequential</span><span class="p">()</span>                 <span class="c1">-- 定义容器</span>
+<span class="n">ninputs</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">noutputs</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">model</span><span class="p">:</span><span class="n">add</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">ninputs</span><span class="p">,</span> <span class="n">noutputs</span><span class="p">))</span> <span class="c1">-- 向容器中添加一个组块（层），本例中只有一个组块。</span>
+
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">MSECriterion</span><span class="p">()</span>
+
+<span class="c1">-- 获取初始化参数</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">dl_dx</span> <span class="o">=</span> <span class="n">model</span><span class="p">:</span><span class="n">getParameters</span><span class="p">()</span>
+<span class="c1">-- print(help(model.getParameters))</span>
+<span class="cm">--[[</span>
+<span class="cm">[flatParameters, flatGradParameters] getParameters()</span>
+<span class="cm">  返回两组参数，flatParameters 学习参数（flattened learnable</span>
+<span class="cm">parameters）；flatGradParameters 梯度参数（gradients of the energy</span>
+<span class="cm">wrt）</span>
+<span class="cm">]]</span><span class="c1">--</span>
+
+<span class="n">feval</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="n">x_new</span><span class="p">)</span>
+  <span class="c1">-- 用于SGD求值函数</span>
+  <span class="c1">-- 输入：设定权值</span>
+  <span class="c1">-- 输出：损失函数在该训练样本点上的损失 loss_x，</span>
+  <span class="c1">--       损失函数在该训练样本点上的梯度值 dl_dx</span>
+  <span class="k">if</span> <span class="n">x</span> <span class="o">~=</span> <span class="n">x_new</span> <span class="k">then</span>
+    <span class="n">x</span><span class="p">:</span><span class="n">copy</span><span class="p">(</span><span class="n">x_new</span><span class="p">)</span>
+  <span class="k">end</span>
+  <span class="c1">-- 每次调用 feval 都选择新的训练样本</span>
+  <span class="n">_nidx_</span> <span class="o">=</span> <span class="p">(</span><span class="n">_nidx_</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+  <span class="k">if</span> <span class="n">_nidx_</span> <span class="o">&gt;</span> <span class="p">(</span><span class="o">#</span><span class="n">data</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">then</span> <span class="n">_nidx_</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">end</span>
+
+  <span class="kd">local</span> <span class="n">sample</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">_nidx_</span><span class="p">]</span>
+  <span class="kd">local</span> <span class="n">target</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[{</span> <span class="p">{</span><span class="mi">1</span><span class="p">}</span> <span class="p">}]</span>
+  <span class="kd">local</span> <span class="n">inputs</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[{</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span> <span class="p">}]</span>
+  <span class="n">dl_dx</span><span class="p">:</span><span class="n">zero</span><span class="p">()</span> <span class="c1">-- 每次训练新样本时都重置dl_dx为0</span>
+
+  <span class="kd">local</span> <span class="n">loss_x</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">:</span><span class="n">forward</span><span class="p">(</span><span class="n">model</span><span class="p">:</span><span class="n">forward</span><span class="p">(</span><span class="n">inputs</span><span class="p">),</span> <span class="n">target</span><span class="p">))</span>
+  <span class="c1">-- print(help(model.forward))</span>
+  <span class="cm">--[[</span>
+<span class="cm">  [output] forward(input)</span>
+<span class="cm">    接收 input 作为参数，返回经该模型计算得到的 output，调用 forward() 方法后，模型的 output 状态更新。</span>
+<span class="cm">  ]]</span><span class="c1">--</span>
+  <span class="c1">-- print(help(criterion.forward))</span>
+  <span class="cm">--[[</span>
+<span class="cm">  [output] forward(input, target)</span>
+<span class="cm">    给定 input 和（要拟合的）目标 target，根据损失函数公式求出损失值。</span>
+<span class="cm">    状态变量 self.output 会更新。</span>
+<span class="cm">  --]]</span>
+  <span class="n">model</span><span class="p">:</span><span class="n">backward</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">criterion</span><span class="p">:</span><span class="n">backward</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">))</span>
+  <span class="c1">-- print(help(criterion.backward))</span>
+  <span class="cm">--[[</span>
+<span class="cm">  [gradInput] backward(input, target)</span>
+<span class="cm">    给定 input 和（要拟合的）目标 target，根据损失函数公式求出梯度值。</span>
+<span class="cm">    状态变量 self.gradInput 会更新。</span>
+<span class="cm">  --]]</span>
+  <span class="c1">-- @ https://github.com/torch/nn/blob/948ac6a26cc6c2812e04718911bca9a4b641020e/doc/module.md#nn.Module.backward</span>
+  <span class="cm">--[[</span>
+<span class="cm">  [gradInput] backward(input, gradOutput)</span>
+<span class="cm">    调用下面两个函数：</span>
+<span class="cm">      1. updateGradInput(input, gradOutput)</span>
+<span class="cm">      2. accGradParameters(input, gradOutput, scale)</span>
+<span class="cm">  --]]</span>
+  <span class="k">return</span> <span class="n">loss_x</span><span class="p">,</span> <span class="n">dl_dx</span>
+<span class="k">end</span>
+<span class="c1">-- 设置 SGD 算法所需参数</span>
+<span class="n">sgd_params</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="n">learningRate</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+  <span class="n">learningRateDecay</span> <span class="o">=</span> <span class="mf">1e-4</span><span class="p">,</span>
+  <span class="n">weightDecay</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="n">momentum</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="p">}</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1e4</span> <span class="k">do</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="o">#</span><span class="n">data</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">do</span>
+    <span class="c1">-- optim.sgd@https://github.com/torch/optim/blob/master/sgd.lua</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">optim</span><span class="p">.</span><span class="n">sgd</span><span class="p">(</span><span class="n">feval</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">sgd_params</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1">-- Test</span>
+<span class="n">test</span> <span class="o">=</span> <span class="p">{</span><span class="mf">40.32</span><span class="p">,</span> <span class="mf">42.92</span><span class="p">,</span> <span class="mf">45.33</span><span class="p">,</span> <span class="mf">48.85</span><span class="p">,</span> <span class="mf">52.37</span><span class="p">,</span> <span class="mi">57</span><span class="p">,</span> <span class="mf">61.82</span><span class="p">,</span> <span class="mf">69.78</span><span class="p">,</span> <span class="mf">72.19</span><span class="p">,</span> <span class="mf">79.42</span><span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="s">id</span><span class="se">\t</span><span class="s">approx</span><span class="se">\t</span><span class="s">text&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="o">#</span><span class="n">data</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">do</span>
+    <span class="kd">local</span> <span class="n">myPrediction</span> <span class="o">=</span> <span class="n">model</span><span class="p">:</span><span class="n">forward</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">][{{</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">}}])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">string.format</span><span class="p">(</span><span class="s2">&quot;</span><span class="s">%2d</span><span class="se">\t</span><span class="s">%.2f</span><span class="se">\t</span><span class="s">%.2f&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">myPrediction</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">test</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+<span class="k">end</span>
+<span class="cm">--[[</span>
+<span class="cm">id  approx  text    </span>
+<span class="cm"> 1  40.10   40.32   </span>
+<span class="cm"> 2  42.77   42.92   </span>
+<span class="cm"> 3  45.22   45.33   </span>
+<span class="cm"> 4  48.78   48.85   </span>
+<span class="cm"> 5  52.34   52.37   </span>
+<span class="cm"> 6  57.02   57.00   </span>
+<span class="cm"> 7  61.92   61.82   </span>
+<span class="cm"> 8  69.95   69.78   </span>
+<span class="cm"> 9  72.40   72.19   </span>
+<span class="cm">10  79.74   79.42   </span>
+<span class="cm">--]]</span>
+</pre></div>
+
+
+<h3>Torch 的 Neural Network Package</h3>
+<p>关于 Torch 的 Neural Network Package 在 GitHub 上有更详细的<a href="https://github.com/torch/nn/blob/948ac6a26cc6c2812e04718911bca9a4b641020e/doc%2Findex.md">文档介绍</a>，这里暂时不作深入学习，根据后续课程进度再做补充。</p>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=神经网络模型随机梯度下降法—简单实现与Torch应用&amp;url=http://blog.rainy.im/2016/02/26/sgd-with-python-and-torch/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2016/02/26/sgd-with-python-and-torch/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2016/02/26/sgd-with-python-and-torch/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/python.html">Python</a><a href="http://blog.rainy.im/tag/torch.html">torch</a><a href="http://blog.rainy.im/tag/ml.html">ML</a><a href="http://blog.rainy.im/tag/note.html">Note</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

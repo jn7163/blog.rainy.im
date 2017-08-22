@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Yu's Tech Lab - Enjoy</title><link href="http://blog.rainy.im/" rel="alternate"></link><link href="http://blog.rainy.im/feeds/enjoy.atom.xml" rel="self"></link><id>http://blog.rainy.im/</id><updated>2016-12-23T06:47:42+08:00</updated><entry><title>Filco Minila Air + Mac</title><link href="http://blog.rainy.im/2016/12/23/filco-minila-air-with-mac/" rel="alternate"></link><published>2016-12-23T06:47:42+08:00</published><updated>2016-12-23T06:47:42+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2016-12-23:/2016/12/23/filco-minila-air-with-mac/</id><summary type="html">&lt;p&gt;总体来说这块黑轴的60%蓝牙键盘还算令人满意，只是以后在选择键盘的时候（尤其是60%尺寸），键位布局是否合理（是否真正完美适配特定的操作系统）也需要着重考虑一下。至于这块键盘是否能够对得起两倍于 Poker 的价格，为了避免认知失调，既剁之，则安之（默默期待下一代 Poker iv 有蓝牙版…&lt;/p&gt;</summary><content type="html">&lt;p&gt;终于在 &lt;a href="http://blog.rainy.im/2015/05/03/poker-ii-with-mac/"&gt;Poker ii&lt;/a&gt; 服役一年半之后，剁手了黑轴 Filco Minila Air：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="minila air open.jpeg" src="http://qcdn.rainy.im/DE8FA3570EB152045EA29665591356FA.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="filco vs poker.jpeg" src="http://qcdn.rainy.im/D66F2D62F66DC68223B2D2286B37AA64.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;当然我应该永远不会选择大而无当的全键盘，而60%的蓝牙键盘其实也没有太多选择（不要提 HHKB :)）。单从外观上看，其实我还是更喜欢 Poker ii 的简洁大方，Minila Air 除了多出来一块必要的蓝牙发射及指示灯区域，键盘本身的面积应该与 Poker 差不多，但很明显在近似大小的面积里塞进了更多按键（在实际使用过程中才体会到这绝对是一个大坑）。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="keys.jpeg" src="http://qcdn.rainy.im/50B721BF7C996B2245F4C62E9BE5919A.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;虽然我们知道右边的指示灯只有在电池电量不足的时候才会闪烁，但是这个电量标志真的让人很纠结…有心拿到自己刮掉又舍不得……&lt;/p&gt;
+&lt;p&gt;黑轴最大的特点就是不再有啪啪啪得快感了，直来直去地按键，阻力或者说弹性更大，虽说需要稍微费力一些但手指不会被震疼了。与用力平整声音清脆的茶轴相比，就像从 A 到 D，不好说孰优孰劣，只能说是完全不同的体验。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="keyboard connecting.png" src="http://qcdn.rainy.im/CAC8C1D146499131A7D24A2BF55F6E2B.png"&gt;&lt;/p&gt;
+&lt;p&gt;至于说蓝牙的延迟、唤醒等问题则完全不需要担心，至少在使用了大概一周的时间里，没有发现任何延迟现象，而唤醒功能只有在电脑本身没接电源进入休眠状态时有可能需要重连（也是很快可以自动完成的），正常情况下的唤醒功能也是非常灵敏的。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="MINILAUSBUSDIP.png" src="http://qcdn.rainy.im/530CBC02020396892D6E6F3DFF16A6C4.png"&gt;&lt;/p&gt;
+&lt;p&gt;Minila Air 背面提供了6个功能键开关，仔细看一下会发现，在 Mac 中使用只有4号键位可以开启，可以让看起来短小精悍的空格键多一个小帮手，而左侧的 Fn 键需要用来和 SDFE 键组合成为方向键，这样就可以在无需移动手掌位置的前提下直接按下方向键，这比 Poker 转换后的 CapsLock + ASDW 要更方便一些。&lt;/p&gt;
+&lt;p&gt;Mac 系统只能通过修改键位映射将 Win(Command) 与 Alt(Option) 互换，此外也强烈建议将没有指示灯的 CapsLock 键禁用：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Screen Shot 2016-12-28 at 1.21.18 PM.png" src="http://qcdn.rainy.im/85A5072154F4126C72855274A5207414.png"&gt;&lt;/p&gt;
+&lt;p&gt;优点列举得差不多了，下面开始吐槽！&lt;/p&gt;
+&lt;p&gt;与 Poker 相近的键盘面积里，整整多塞进去6个键，主要集中在右下角：四个方向键，一个 Delete 键。即便方向键是出于善意，但是右 Shift 被挤压到如此小的空间里，在盲打情况下想要用右手小指一次准确按到几乎是不可能的（至少我从来没有成功过，后来干脆放弃了，只用左 Shift）。&lt;/p&gt;
+&lt;p&gt;App 键在 Mac 系统下等于死键。App 旁边的 Alt 无法转换为 Command 键，导致使用率几乎为零。如此宝贵的空间里塞进这么多死键，简直可惜。&lt;/p&gt;
+&lt;p&gt;与右 Shift 形成反面对比的是左下角的 Ctrl，可能是为了照顾 Windows 系统下对 Ctrl 键的高度依赖，它几乎占据了两个键位的面积，进一步挤压了最后一排的空间！不能说 Minila 与 Mac 不适配，只能说它更适合 Windows 系统。&lt;/p&gt;
+&lt;p&gt;据说大 F 的键帽都是经过特殊加工的 ABS 材质，虽然触感更圆润但不像一般的 ABS 那么容易打油。不过 Poker ii 的 PBT 键帽可是持续用了一年半都没出现一点打油的现象，不期望更好只要能持平就行（当然用键盘前要洗手也是很重要滴！）。&lt;/p&gt;
+&lt;p&gt;最后，总体来说这块黑轴的60%蓝牙键盘还算令人满意，只是以后在选择键盘的时候（尤其是60%尺寸），键位布局是否合理（是否真正完美适配特定的操作系统）也需要着重考虑一下。至于这块键盘是否能够对得起两倍于 Poker 的价格，为了避免认知失调，既剁之，则安之（默默期待下一代 Poker iv 有蓝牙版…&lt;/p&gt;</content><category term="Enjoy"></category><category term="Keyboard"></category></entry><entry><title>Poker ii + Mac</title><link href="http://blog.rainy.im/2015/05/02/poker-ii-with-mac/" rel="alternate"></link><published>2015-05-02T16:02:48+08:00</published><updated>2015-05-02T16:02:48+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2015-05-02:/2015/05/02/poker-ii-with-mac/</id><summary type="html">&lt;p&gt;第一块机械键盘献给了白色 Poker 2茶轴，尺寸是常规键盘的60%，也就是省去了功能区的F1-F12那一排、方向键和小键盘区。对于一般用户或者是台式机作为主要外接键盘，可能多少有些不方便，但是对于笔记本或VIM用户来说，小巧的尺寸反而更加简洁方便。&lt;/p&gt;</summary><content type="html">&lt;p&gt;第一块机械键盘献给了白色 Poker 2茶轴，尺寸是常规键盘的60%，也就是省去了功能区的F1-F12那一排、方向键和小键盘区。对于一般用户或者是台式机作为主要外接键盘，可能多少有些不方便，但是对于笔记本或VIM用户来说，小巧的尺寸反而更加简洁方便。&lt;/p&gt;
+&lt;p&gt;首先看一下实际尺寸跟外观：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Poker vs Mbp15" src="http://7xiijd.com1.z0.glb.clouddn.com/poker2-3.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;长度跟Mbp键盘区接近，宽度由于少了一排F区显得更加苗条。茶轴的声音还是比较明显的，尤其是敲击速度加快，声音会更加明显一些，啪啪啪的快感十足~&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Poker white" src="http://7xiijd.com1.z0.glb.clouddn.com/poker2-2.jpg"&gt;&lt;/p&gt;
+&lt;p&gt;Poker 接到 Mac 上，根据日常习惯，需要做一些简单的调整跟映射：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Keymap" src="http://7xiijd.com1.z0.glb.clouddn.com/poker-mac-keymap.png"&gt;&lt;/p&gt;
+&lt;p&gt;键盘上空格键左一（蓝色Alt）映射到 Command 键，左二（Windows键）对应 Alt/Option 键。&lt;/p&gt;
+&lt;p&gt;在大部分VIM环境（VIM、各种IDE以及Chrome中）不需要考虑方向键，但是实际使用中总还是会用到方向键，Poker默认的解决方案是右下角的FN键+ASWD，这是游戏中食指中指无名指的经典布局，但对于正常食指放在F键的情况下，ASWD用起来就非常别扭了。另外省略F区导致原本键盘中数字 1 左侧的&amp;lt;`/~&amp;gt;键集成到 Esc 上，经常需要输入&amp;lt;`&amp;gt;或&amp;lt;~&amp;gt;，也非常不方便。好在 Poker 提供简单的编程功能，可以在硬件层面重新映射某些功能键，但必须要组合 FN 旁边的 PN 键，虽然仍旧不是很方便，但除此之外只能重新刷固件解决了。映射方案如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;PN+E &lt;span class="o"&gt;=&lt;/span&gt; UP
+PN+F &lt;span class="o"&gt;=&lt;/span&gt; LEFT
+PN+D &lt;span class="o"&gt;=&lt;/span&gt; DOWN
+PN+S &lt;span class="o"&gt;=&lt;/span&gt; RIGHT
+&lt;span class="c1"&gt;# PN+(Right Ctrl) = `&lt;/span&gt;
+&lt;span class="c1"&gt;# PN+(Right Shift)+(Right Ctrl) = ~&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;UPDATE&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;开启 Switch 2 开关，可以将 Right ctrl 转换成&amp;lt;`/~&amp;gt;，无需编程也就不再需要 PN 键了。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;UPDARE 2&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;开启 Switch 3 开关，将 CAPSLOCK 转换成 PN 键，就可以通过 CAPSLOCK + &lt;code&gt;WASD&lt;/code&gt; 切换方向键，单手操作顺手得多，只是损失了大写锁定键，但实际上并不常用。&lt;/p&gt;
+&lt;p&gt;留一下&lt;a href="https://adprice.fedorapeople.org/poker2_manual.pdf"&gt;说明书地址&lt;/a&gt;。&lt;/p&gt;</content><category term="Enjoy"></category><category term="Keyboard"></category></entry></feed>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Yu's Tech Lab - ML</title><link href="http://blog.rainy.im/" rel="alternate"></link><link href="http://blog.rainy.im/feeds/ml.atom.xml" rel="self"></link><id>http://blog.rainy.im/</id><updated>2016-03-04T17:42:30+08:00</updated><entry><title>Hadoop 入门实践</title><link href="http://blog.rainy.im/2016/03/04/hadoop-101/" rel="alternate"></link><published>2016-03-04T17:42:30+08:00</published><updated>2016-03-04T17:42:30+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2016-03-04:/2016/03/04/hadoop-101/</id><summary type="html">&lt;p&gt;Hadoop 单机节点下的伪分布式模式的启动。&lt;/p&gt;</summary><content type="html">&lt;h3&gt;Hadoop 2.0 架构&lt;/h3&gt;
+&lt;p&gt;Hadoop 包括如下几个模块：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Hadoop Common：公共基础组件；&lt;/li&gt;
+&lt;li&gt;Hadoop Distributed File System（HDFS）：分布式文件系统；&lt;/li&gt;
+&lt;li&gt;Hadoop YARN：任务和资源管理框架；&lt;/li&gt;
+&lt;li&gt;Hadoop MapReduce：基于YARN的并行数据处理系统；&lt;/li&gt;
+&lt;li&gt;其它基于Hadoop的项目（包括Pig，Hive，Spark等）。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img alt="Hadoop-2.0" src="http://7xiijd.com1.z0.glb.clouddn.com/hadoop-2.0.png"&gt;
+&lt;em&gt;图片来源：&lt;a href="http://www.slideshare.net/hortonworks/icons-for-hadoop"&gt;Icons and Stencils for Hadoop&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;了解基本架构之后先在本地安装一下最新版本的 Hadoop，我安装在阿里云服务器：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Ubuntu 14.04.3 LTS&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3&gt;Hadoop 单节点安装&lt;/h3&gt;
+&lt;h4&gt;依赖&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;Java 1.5.X&lt;/li&gt;
+&lt;li&gt;ssh&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;wget http://javadl.oracle.com/webapps/download/AutoDL?BundleId&lt;span class="o"&gt;=&lt;/span&gt;116021
+mv AutoDL&lt;span class="se"&gt;\?&lt;/span&gt;&lt;span class="nv"&gt;BundleId&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;116021&lt;/span&gt; jre-7u7-linux-x64.tar.gz
+tar zxvf jre-7u7-linux-x64.tar.gz
+
+sudo mkdir -p /usr/java
+sudo cp -r jre1.8.0_73/* /usr/java/
+
+&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;JAVA_PATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/usr/java
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4&gt;下载 Hadoop&lt;/h4&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;wget http://mirror.bit.edu.cn/apache/hadoop/common/hadoop-2.6.4/hadoop-2.6.4.tar.gz
+tar zxvf hadoop-2.6.4.tar.gz
+&lt;span class="nb"&gt;cd&lt;/span&gt; hadoop-2.6.4
+
+&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;HADOOP_INSTALL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/path/to/hadoop-2.6.4
+&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;PATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;$PATH:$HADOOP_INSTALL/bin:$HADOOP_INSTALL/sbin
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4&gt;三种集群模式&lt;/h4&gt;
+&lt;p&gt;Hadoop 共有三种模式，运行前需要先了解它们的差别：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;单机（本地）模式&lt;/li&gt;
+&lt;li&gt;伪分布式模式&lt;/li&gt;
+&lt;li&gt;完全分布式模式&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;单机模式只是运行一次 MapReduce 程序，不生成 daemon，适合调试程序；伪分布式模式 daemon 运行在本地，只是模拟集群；完全分布式的 daemon 运行在多个机器上。&lt;/p&gt;
+&lt;p&gt;文章开始介绍的 Hadoop 架构中提到两个主要模块：HDFS 和 YAEN，运行 Hadoop 前需要分别对其进行配置，在配置之前需要先了解一下它们分别是什么。&lt;/p&gt;
+&lt;h3&gt;HDFS &amp;amp; YARN 配置&lt;/h3&gt;
+&lt;h4&gt;HDFS&lt;/h4&gt;
+&lt;p&gt;HDFS 是基于 &lt;a href="http://research.google.com/archive/gfs.html"&gt;Google File System（GFS）&lt;/a&gt;的一种实现，由 Java 实现的一种分布式、可扩展、可移植的文件系统。HDFS 由两部分组成：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;NameNode：主机（master machine），用于管理所有集群数据的元数据；&lt;/li&gt;
+&lt;li&gt;DataNode：HDFS 中真正用于保存数据的部分，通常包含多个DN；&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;除此之外，在多节点集群模式下，还配备一个 Secondary NameNode，用于生成主机数据操作的缓存镜像，结构如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="HDFS" src="http://7xiijd.com1.z0.glb.clouddn.com/hdfs.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;图片来源：见参考1&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;选择伪分布式模式，我们先配置启动 HDFS。由于需要用到&lt;code&gt;ssh&lt;/code&gt;，先对本机设置&lt;code&gt;ssh&lt;/code&gt;无密码登录模式：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;cat ~/.ssh/id_rsa.pub &amp;gt;&amp;gt; ~/.ssh/authorized_keys
+ssh localhost
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;创建新的配置目录：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;mkdir init_config
+cp $HADOOP_INSTALL/etc/hadoop/*.xml init_config/
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;编辑 &lt;code&gt;init_config/core-site.xml&lt;/code&gt; 和 &lt;code&gt;init_config/hdfs-site.xml&lt;/code&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;&amp;lt;!-- core-site.xml --&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;configuration&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;property&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;name&amp;gt;&lt;/span&gt;fs.default.name&lt;span class="nt"&gt;&amp;lt;/name&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;value&amp;gt;&lt;/span&gt;hdfs://localhost:9000&lt;span class="nt"&gt;&amp;lt;/value&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;/property&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;/configuration&amp;gt;&lt;/span&gt;
+&lt;span class="c"&gt;&amp;lt;!-- hdfs-site.xml --&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;configuration&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;property&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;name&amp;gt;&lt;/span&gt;dfs.replication&lt;span class="nt"&gt;&amp;lt;/name&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;value&amp;gt;&lt;/span&gt;1&lt;span class="nt"&gt;&amp;lt;/value&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;/property&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;/configuration&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;格式化HDFS，然后运行启动脚本：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;hadoop namenode -format
+start-dfs.sh --config /absolute/path/to/init_config
+
+&lt;span class="c1"&gt;# 遇到错误&lt;/span&gt;
+&lt;span class="c1"&gt;# localhost: Error: JAVA_HOME is not set and could not be found.&lt;/span&gt;
+&lt;span class="c1"&gt;# 可能与我用 zsh 有关，JAVA_HOME 已设置在 ~/.zshrc&lt;/span&gt;
+&lt;span class="c1"&gt;# 解决方案&lt;/span&gt;
+cp $HADOOP_INSTALL/etc/hadoop/hadoop-env.sh init_config/
+&lt;span class="c1"&gt;# 编辑 init_config/hadoop-env.sh&lt;/span&gt;
+&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;JAVA_HOME&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/usr/java
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;启动之后，可以从通过浏览器访问&lt;a href="http://localhost:50070"&gt;&lt;code&gt;http://localhost:50070&lt;/code&gt;&lt;/a&gt;：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="hdfs-web-interface" src="http://7xiijd.com1.z0.glb.clouddn.com/hdfs-web-interface.png"&gt;&lt;/p&gt;
+&lt;h4&gt;YARN&lt;/h4&gt;
+&lt;p&gt;YARN 还是基于 &lt;a href="http://research.google.com/archive/mapreduce.html"&gt;Google MapReduce&lt;/a&gt; 的实现，具体 MapReduce 的原理有时间可以研究一下这篇论文。 MapReduce 的基本过程如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;(&lt;/span&gt;input&lt;span class="o"&gt;)&lt;/span&gt; &amp;lt;k1, v1&amp;gt;-&amp;gt;map-&amp;gt;&amp;lt;k2, v2&amp;gt;-&amp;gt;combine-&amp;gt;&amp;lt;k2, v2&amp;gt;-&amp;gt;reduce-&amp;gt;&amp;lt;k3, v3&amp;gt; &lt;span class="o"&gt;(&lt;/span&gt;output&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;map/reduce&lt;/code&gt; 的过程对数据进行分块并行处理，而 Hadoop 提供的 YARN 框架由&lt;code&gt;JobTracker&lt;/code&gt;和&lt;code&gt;TaskTracker&lt;/code&gt;两部分组成，输入和输出都是来自/存入 HDFS，YARN 只是负责调度和监控，其架构如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="YARN" src="http://7xiijd.com1.z0.glb.clouddn.com/yarn.jpg"&gt;
+&lt;em&gt;图片来源：见参考1&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;要启动 YARN 同样需要配置 &lt;code&gt;init_config/yarn-site.xml&lt;/code&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;&amp;lt;!-- yarn-site.xml --&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;configuration&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;property&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;name&amp;gt;&lt;/span&gt;yarn.resourcemanager.address&lt;span class="nt"&gt;&amp;lt;/name&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;value&amp;gt;&lt;/span&gt;localhost:8032&lt;span class="nt"&gt;&amp;lt;/value&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;/property&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;property&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;name&amp;gt;&lt;/span&gt;yarn.nodemanager.aux-services&lt;span class="nt"&gt;&amp;lt;/name&amp;gt;&lt;/span&gt;
+    &lt;span class="nt"&gt;&amp;lt;value&amp;gt;&lt;/span&gt;mapreduce.shuffle&lt;span class="nt"&gt;&amp;lt;/value&amp;gt;&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;lt;/property&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;/configuration&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;之后运行：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;start-yarn.sh --config /absolute/path/to/init_config
+
+&lt;span class="c1"&gt;# 若出现 cat: /path/to/init_config/slaves: No such file or directory&lt;/span&gt;
+&lt;span class="c1"&gt;# 则需要从 $HADOOP_INSTALL/etc/hadoop/ 中 copy 过来。&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;启动成功之后同样可以通过 &lt;code&gt;http://localhost:8088&lt;/code&gt; 访问 Web 管理界面：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Yarn-web-interface" src="http://7xiijd.com1.z0.glb.clouddn.com/yarn-web-interface.png"&gt;&lt;/p&gt;
+&lt;h3&gt;总结&lt;/h3&gt;
+&lt;p&gt;到此为止已经完成了 Hadoop 单机节点下的伪分布式模式的启动，接下来需要分别学习：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;HDFS 的一些指令操作以及 Web 管理界面&lt;/li&gt;
+&lt;li&gt;MapReduce 原理&lt;/li&gt;
+&lt;li&gt;基于 Python 的 MapReduce 数据操作以及 YARN 的 Web 管理界面&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Hadoop 负责数据的存储于基本处理，HDFS 与 MapReduce 分别实现&lt;strong&gt;数据存储&lt;/strong&gt;于&lt;strong&gt;处理过程&lt;/strong&gt;的分布式并行加工。有了数据基础之后，才可以进一步应用到机器学习模型中，或者是实现更加高效的查询或计算，这就需要后续更多基于 Hadoop 之上的应用，例如 Pig/Hive/Spark。&lt;/p&gt;
+&lt;h3&gt;参考&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="http://blog.matthewrathbone.com/2013/04/17/what-is-hadoop.html"&gt;A Beginners Guide to Hadoop&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://hadoopbook.com/"&gt;Book《Hadoop: The Definitive Guide》&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Apache_Hadoop"&gt;Wikipedia: Apache Hadoop&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.ibm.com/developerworks/cn/opensource/os-cn-hadoop-yarn/"&gt;Hadoop 新 MapReduce 框架 Yarn 详解&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</content><category term="ML"></category><category term="Hadoop"></category><category term="Data"></category></entry></feed>

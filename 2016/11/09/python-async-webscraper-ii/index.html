@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>Python 异步网络爬虫 II</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/python.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2016/11/09/python-async-webscraper-ii/" rel="canonical" />
+
+        <meta name="description" content="上一部分（[Python 异步网络爬虫 I]）整理了如何利用 aiohttp 和 asyncio 执行异步网络请求，接下来我们将在此基础上实现一个简洁、普适的爬虫框架。">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Python">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="Python 异步网络爬虫 II"/>
+<meta property="og:description" content="上一部分（[Python 异步网络爬虫 I]）整理了如何利用 aiohttp 和 asyncio 执行异步网络请求，接下来我们将在此基础上实现一个简洁、普适的爬虫框架。"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2016/11/09/python-async-webscraper-ii/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-11-09 06:51:18+08:00"/>
+<meta property="article:modified_time" content="2016-11-09 06:51:18+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Python"/>
+<meta property="article:tag" content="Python"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "Python 异步网络爬虫 II",
+  "headline": "Python 异步网络爬虫 II",
+  "datePublished": "2016-11-09 06:51:18+08:00",
+  "dateModified": "2016-11-09 06:51:18+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2016/11/09/python-async-webscraper-ii/",
+  "description": "上一部分（[Python 异步网络爬虫 I]）整理了如何利用 aiohttp 和 asyncio 执行异步网络请求，接下来我们将在此基础上实现一个简洁、普适的爬虫框架。"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Python 异步网络爬虫 II</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Wed 09 November 2016">Wed 09 November 2016</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Wed 09 November 2016</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>上一部分（<a href="http://blog.rainy.im/2016/10/30/python-async-webscraper-i/">Python 异步网络爬虫 I</a>）整理了如何利用 <code>aiohttp</code> 和 <code>asyncio</code> 执行异步网络请求，接下来我们将在此基础上实现一个简洁、普适的爬虫框架。</p>
+<p>一般网站抓取的流程是这样的：</p>
+<p><img alt="avgot_spider_flow.jpg" src="http://qncdn.rainy.im/blog/avgot_spider_flow.jpg-wm"></p>
+<p>从入口页面开始提取一组下一级页面的链接，然后递归地执行下去，直到最后一层页面为止。唯一不同的是对每一级页面所要抓取的信息，也就是需要的正则表达式不同，除此之外，请求页面、分析内容、正则匹配的步骤是重复的，因此可以将上面的过程简化为：</p>
+<p><img alt="avgot.jpg" src="http://qncdn.rainy.im/blog/avgot.jpg-wm"></p>
+<p>其中虚线框中的步骤可以抽象出来，即模拟浏览器行为的 <code>Client</code>，<code>Cleaning</code> 方法用于对正则匹配的结果进行清理，并将下一级所需的入口地址返回给 <code>Client</code>，在这一过程中也可能涉及到数据输出到数据库的过程。</p>
+<p>这里我参考了 <code>Flask</code>（或 <code>Sanic</code>）框架的设计，即利用 Python 装饰器的语法特性，将不同页面的 <code>Cleaning</code> 方法注册到 <code>Client</code> 中：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">aiohttp</span>
+<span class="kn">import</span> <span class="nn">async_timeout</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="k">class</span> <span class="nc">AvGot</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">loop</span> <span class="o">=</span> <span class="n">loop</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1)&quot;</span>
+      <span class="s2">&quot; AppleWebKit/537.36 (KHTML, like Gecko)&quot;</span>
+      <span class="s2">&quot; Chrome/54.0.2840.87 Safari/537.36&quot;</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">TCPConnector</span><span class="p">(</span><span class="n">verify_ssl</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">(</span><span class="n">loop</span><span class="o">=</span><span class="n">loop</span><span class="p">,</span>
+                    <span class="n">connector</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">,</span>
+                    <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">pipe</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="n">async</span> <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">async_timeout</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+      <span class="n">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">as</span> <span class="n">resp</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">await</span> <span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+  <span class="n">async</span> <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">regexp</span><span class="o">=</span><span class="s1">r&#39;&#39;</span><span class="p">):</span>
+    <span class="n">html</span> <span class="o">=</span> <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">regexp</span><span class="p">,</span> <span class="n">html</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">matches</span>
+
+  <span class="k">def</span> <span class="nf">entry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">regexp</span><span class="o">=</span><span class="s1">r&#39;&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">callback</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">pipe</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+  <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+  <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+<span class="n">av</span> <span class="o">=</span> <span class="n">AvGot</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span>
+
+<span class="n">reTag</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;&lt;a href=&quot;(\/tag\/.*?)&quot;&gt;(.*?)&lt;\/a&gt;&#39;</span><span class="p">))</span>
+<span class="n">ROOT</span>  <span class="o">=</span> <span class="s2">&quot;https://movie.douban.com/tag/&quot;</span>
+
+<span class="nd">@av.entry</span><span class="p">(</span><span class="n">ROOT</span><span class="p">,</span> <span class="n">reTag</span><span class="p">)</span>
+<span class="n">async</span> <span class="k">def</span> <span class="nf">entry_callback</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+  <span class="c1"># await db.save(result) 保存到数据库</span>
+  <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;https://movie.douban.com{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+  <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">clean</span><span class="p">,</span> <span class="n">result</span><span class="p">))[:</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="n">av</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">av</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+
+<p>这时我们遇到一个比较棘手的问题：由于从当前页面提取数据（<code>extract()</code>）的过程是异步的， 而在上一个页面执行完成之前是无法进入下一个页面的，也就是说<strong>同一级页面之间是异步的，不同层级页面之间是同步的</strong>，那么如何在 <code>asyncio</code> 中安排这种任务？</p>
+<p>这其实是一个带有递归属性的生产者/消费者模型，上级页面作为生产者只有在经过网络请求之后才能生产出下级所有入口链接，而下一级的消费者将成为下下一级的生产者……我们可以将事件循环看作是一个“传送带”，一些可能造成阻塞的任务（如<code>extract()</code>）会被挂起，等阻塞任务完成后重新进入队列等待被执行：</p>
+<p><img alt="event_loop.jpg" src="http://qncdn.rainy.im/blog/event_loop.jpg-wm"></p>
+<p>在上面的问题中，不同层级页面的提取过程可以被封装成 <code>Task</code> 并丢进任务队列，只是不同任务携带不同的页面地址、正则表达式、<code>Cleaning</code> 回调函数等属性，至于这些任务在具体执行时如何调度，就丢给事件循环去操心好了（这也是使用 <code>asyncio</code> 的一条基本原则）：</p>
+<div class="highlight"><pre><span class="c1"># 下面只列举更改后的代码</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+
+<span class="c1"># Task 所需要携带的属性</span>
+<span class="n">Node</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Node&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;re&quot;</span><span class="p">,</span> <span class="s2">&quot;callback&quot;</span><span class="p">])</span>
+
+<span class="k">class</span> <span class="nc">AvGot</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="n">_ENTRY</span> <span class="o">=</span> <span class="s2">&quot;ENTRY_NODE&quot;</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_prev_node</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pipe</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># 异步任务队列</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+  <span class="k">def</span> <span class="nf">entry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">regexp</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">callback</span><span class="p">):</span>
+      <span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">regexp</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ENTRY</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipe</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_ENTRY</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># 以 Cleaning 函数而不是 node 作为 Key</span>
+        <span class="c1"># 因为任务队列中需要构造新的 node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipe</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">prev_node</span><span class="o">.</span><span class="n">callback</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_prev_node</span> <span class="o">=</span> <span class="n">node</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+  <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regexp</span><span class="o">=</span><span class="s1">r&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">     除入口页面</span>
+<span class="sd">     其他页面地址 url 依赖上级页面提取结果</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">entry</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">regexp</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># 将入口页面放入队列</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put_nowait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ENTRY</span><span class="p">))</span>
+
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">_runner</span><span class="p">():</span>
+      <span class="n">producer</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">ensure_future</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_worker</span><span class="p">())</span>
+      <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+      <span class="n">producer</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">_runner</span><span class="p">())</span>
+
+
+  <span class="n">async</span> <span class="k">def</span> <span class="nf">_worker</span><span class="p">():</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+      <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+      <span class="c1"># Cleaning 函数在这里回调，并产生下一级页面入口</span>
+      <span class="n">results</span> <span class="o">=</span> <span class="n">await</span> <span class="n">node</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">re</span><span class="p">))</span>
+
+      <span class="k">if</span> <span class="n">results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+          <span class="c1"># 从 pipe 链表中取出下一级的 node</span>
+          <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipe</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">callback</span><span class="p">)</span>
+          <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c1"># 根据结果中的 url 构造新的任务并放回到队列里</span>
+            <span class="n">next_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">page</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="o">.</span><span class="n">re</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">callback</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put_nowait</span><span class="p">(</span><span class="n">next_node</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">task_done</span><span class="p">()</span>
+</pre></div>
+
+
+<p>以上就是异步爬虫的基本结构，有一点需要约定好的是所有的 <code>Cleaning</code> 方法必须以列表形式返回清洗之后的结果，且下一级页面入口必须在第一位（最后一页除外）。接下来做一个简单的测试，以豆瓣电影分类页面为入口，进入该类别列表，最后进入电影详情页面，并提取电影时长和评分：</p>
+<div class="highlight"><pre><span class="n">ROOT</span> <span class="o">=</span> <span class="s2">&quot;https://movie.douban.com/tag/&quot;</span>
+
+<span class="c1"># 正则：类别地址与类别名称</span>
+<span class="n">reTag</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;&lt;a href=&quot;(\/tag\/.*?)&quot;&gt;(.*?)&lt;\/a&gt;&#39;</span><span class="p">)</span>
+<span class="c1"># 正则：详情页面链接及电影标题</span>
+<span class="n">reLinkTitle</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;&lt;a href=&quot;(https:\/\/movie\.douban\.com\/subject\/\d+/)&quot;.*?&gt;([\s\S]*?)&lt;\/a&gt;&#39;</span><span class="p">)</span>
+<span class="c1"># 正则：电影时长及评分</span>
+<span class="n">reRuntimeRate</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;&lt;span property=&quot;v:runtime&quot; content=&quot;(\d+)&quot;&gt;[\s\S]*?&lt;strong class=&quot;ll rating_num&quot; property=&quot;v:average&quot;&gt;(.*?)&lt;\/strong&gt;&#39;</span><span class="p">)</span>
+
+<span class="nd">@av.entry</span><span class="p">(</span><span class="n">ROOT</span><span class="p">,</span> <span class="n">reTag</span><span class="p">)</span>
+<span class="n">async</span> <span class="k">def</span> <span class="nf">entry_callback</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+  <span class="c1"># 构造列表页地址</span>
+  <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;https://movie.douban.com{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">result</span><span class="p">))</span>
+<span class="nd">@av.register</span><span class="p">(</span><span class="n">reLinkTitle</span><span class="p">)</span>
+<span class="n">async</span> <span class="k">def</span> <span class="nf">list_page</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+  <span class="c1"># 显示未清理前结果</span>
+  <span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">r&#39;&lt;.*?&gt;|\s&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+  <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">clean</span><span class="p">,</span> <span class="n">result</span><span class="p">))</span>
+
+<span class="nd">@av.register</span><span class="p">(</span><span class="n">reRuntimeRate</span><span class="p">)</span>
+<span class="n">async</span> <span class="k">def</span> <span class="nf">detail_page</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+  <span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+<span class="n">av</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">av</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="avgot_result.jpg" src="http://qncdn.rainy.im/blog/avgot_result.jpg-wm"></p>
+<p>从上面的执行的结果可以看出，正则表达式有时候不能（或不便）直接精确过滤我们所需内容，因此可以在 <code>Cleaning</code> 函数中进行清理（如去掉多余 Tag 或空位符等），另外：</p>
+<ul>
+<li>不像 <code>Flask</code>，这里通过 <code>register</code> 注册方法的<strong>顺序必须与页面处理顺序保持一致</strong>；</li>
+<li>与 <code>Sanic</code> 一样，注册方法必须也是 Coroutine （<code>async def</code>），同时可以在其中异步执行数据库存储操作；</li>
+<li>上级页面信息实际上可以通过扩展 <code>Node</code> 直接传递给下级页面，这在某些相关页面中甚至是必须的；</li>
+</ul>
+<h3>总结</h3>
+<p>抽象这一框架的目的主要有以下几点：</p>
+<ol>
+<li>学习使用 <code>asyncio</code> 库及基于协程的异步；</li>
+<li>将网络爬虫的编写过程聚焦到<strong>页面关系分析</strong>、<strong>精确正则表达式</strong>及<strong>少量数据清理</strong>上；</li>
+<li>简化使用，降低学习成本。</li>
+</ol>
+<p>仍有以下内容需要完成：</p>
+<ol>
+<li>错误捕捉与 logging，让调试过程更简单；</li>
+<li>寻找不适应该框架的情况，进行 upgrade；</li>
+<li>性能测试；</li>
+<li>完善浏览器模拟：Headers、proxy、Referer等……</li>
+</ol>
+<p>未完待续。</p>
+<h3>参考</h3>
+<ol>
+<li><a href="https://github.com/channelcat/sanic">Sanic</a></li>
+<li><a href="http://asyncio.readthedocs.io/en/latest/producer_consumer.html">Asyncio Doc::Producer/consumer</a></li>
+</ol>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=Python 异步网络爬虫 II&amp;url=http://blog.rainy.im/2016/11/09/python-async-webscraper-ii/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2016/11/09/python-async-webscraper-ii/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2016/11/09/python-async-webscraper-ii/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/python.html">Python</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>机器学习笔记-模型评估与模型选择</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/python.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2016/03/27/ml-model-selection/" rel="canonical" />
+
+        <meta name="description" content="评价一个机器学习模型的好坏需要特定的评估方法，并据此对模型进行选择，从而得到一个更好的模型。本文主要是关于模型评估与模型选择的笔记，以及利用 scikit-learn 对 Logistic 回归进行的结果进行交叉检验。">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Python">
+        <meta name="tags" content="ML">
+        <meta name="tags" content="sklearn">
+        <meta name="tags" content="pandas">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="机器学习笔记-模型评估与模型选择"/>
+<meta property="og:description" content="评价一个机器学习模型的好坏需要特定的评估方法，并据此对模型进行选择，从而得到一个更好的模型。本文主要是关于模型评估与模型选择的笔记，以及利用 scikit-learn 对 Logistic 回归进行的结果进行交叉检验。"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2016/03/27/ml-model-selection/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-03-27 16:17:32+08:00"/>
+<meta property="article:modified_time" content="2016-03-27 16:17:32+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Python"/>
+<meta property="article:tag" content="Python"/>
+<meta property="article:tag" content="ML"/>
+<meta property="article:tag" content="sklearn"/>
+<meta property="article:tag" content="pandas"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "机器学习笔记-模型评估与模型选择",
+  "headline": "机器学习笔记-模型评估与模型选择",
+  "datePublished": "2016-03-27 16:17:32+08:00",
+  "dateModified": "2016-03-27 16:17:32+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2016/03/27/ml-model-selection/",
+  "description": "评价一个机器学习模型的好坏需要特定的评估方法，并据此对模型进行选择，从而得到一个更好的模型。本文主要是关于模型评估与模型选择的笔记，以及利用 scikit-learn 对 Logistic 回归进行的结果进行交叉检验。"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">机器学习笔记-模型评估与模型选择</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Sun 27 March 2016">Sun 27 March 2016</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Sun 27 March 2016</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>评价一个机器学习模型的好坏需要特定的评估方法，并据此对模型进行选择，从而得到一个更好的模型。本文主要是关于模型评估与模型选择的笔记，以及利用 <code>scikit-learn</code> 对 Logistic 回归进行的结果进行交叉检验。</p>
+<h3>1. 训练误差，测试误差与泛化误差</h3>
+<p>学习器（模型）在训练集上表现出来的误差称为<strong>训练误差（training error）</strong>或<strong>经验误差（empirical error）</strong>，这种误差可以通过损失函数进行描述：</p>
+<p>$$E_{training}(f) = \frac{1}{N}\sum_{i=1}^NL(y_i, f(x_i)$$</p>
+<p>其中 $L(\cdot)$ 为损失函数，$f$ 为模型，$N$ 为训练样本容量。很多机器学习算法的训练过程就是试图最小化这一训练误差。但是最小化训练误差并不一定就是一个好的模型，它有可能只是将训练样本中所有的特征都非常好地挖掘出来进行学习，但这些训练样本的某些特征有可能是具有特异性的，并不能推广到所有样本中，这就会导致模型的<strong>过拟合（overfitting）</strong>。模型在新数据集合上表现出来的误差，称为<strong>泛化误差（generalization error）</strong>。通常会通过实验测试来对模型的泛化误差进行评估，这时需要引入一些新的测试数据对模型进行检验，在测试数据上表现出来的误差称为<strong>测试误差（testing error）</strong>。测试误差为：</p>
+<p>$$e_{test} = \frac{1}{N'}\sum_{i=1}^N' I(y_i \neq f(x_i))$$</p>
+<p>其中 $I(\cdot)$ 为指标函数（indicator function），当$\cdot$为真是返回$1$ ，否则返回 $0$；$N'$ 为测试样本容量，测试准确率（或称为精度（accuracy））：</p>
+<p>$$acc_{test} = 1 - e_{test}$$</p>
+<h3>2. 过拟合与欠拟合</h3>
+<p>训练误差很小而泛化误差很大时称为过拟合，与之相对的是<strong>欠拟合（underfitting）</strong>。例如多项式拟合：</p>
+<p>$$f_M(x, \omega) = \omega_0 + \omega_1x + \omega_2x^2+\dots+\omega_Mx^M = \sum_{j=0}^M\omega_jx^j$$</p>
+<p>当选取 $M$ 个参数进行训练时，可能出现下列情况：</p>
+<p><img alt="fitting" src="http://qncdn.rainy.im/fitting.png"></p>
+<p>当 $M = 0$ 和 $M = 1$ 时，模型为直线，拟合效果很差，即欠拟合；当 $M = 9$ 时，模型曲线经过了每一个训练数据点，训练误差为 0，但是无法预测新的数据，因此泛化误差很大，即过拟合。</p>
+<h3>3. 测试误差的评估方法</h3>
+<ol>
+<li>留出法（hold-out）</li>
+<li>交叉验证法（cross validation）</li>
+<li>自助法（bootstrapping）</li>
+<li>调参（parameter tuning）</li>
+</ol>
+<h4>3.1 留出法</h4>
+<p>将数据集 $D$ 划分为 $S, T$：</p>
+<p>$$D = S \cap T, S \cup T = \emptyset$$</p>
+<p>并采用<strong>分层采样（stratified sampling）</strong>，通常选用 $2/3 - 4/5$ 用于训练。</p>
+<h4>3.2 交叉验证法</h4>
+<p>将 $D$ 划分为 $k$ 个大小相似的互斥子集：</p>
+<p>$$D = D_1 \cup D_2 \cup \dots \cup D_k, D_i \cap D_j = \emptyset (i \neq j)$$</p>
+<p>每次用 $k-1$ 个子集作为训练集，剩下一个作为测试集，称为<strong>k折交叉验证（k-fold cross validation）</strong>。$k$ 通常取 10，并随机使用不同划分重复 $p$ 次，最终取 $p$ 次结果均值，例如“10次10折交叉验证”。</p>
+<p>假设数据集 $D$ 容量为 $m$，若 $k = m$，则称为<strong>留一法（Leave-One-Out, LOO）</strong>。留一法苹果结果比较准确，但计算开销也相应较大。</p>
+<h4>3.3 自助法</h4>
+<p>以<strong>自助采样法（bootstrap sampling）</strong>为基础，从 $D$ 中有放回地随机抽取 $m$ 次，得到同样包含 $m$ 个样本的 $D'$，$D$ 中有一部分样本会在 $D'$ 中出现多次，而另一部分则未出现，$m$ 次重采样始终未被采到的概率是：</p>
+<p>$$\lim_{m\rightarrow\infty}(1-\frac{1}{m})^m \rightarrow \frac{1}{e} \approx 0.368$$</p>
+<p>即 $36.8\%$ 的样本未出现在 $D'$。以 $D'$ 作为训练集，$D - D'$ 作为测试集。自助法在数据集较小、难以划分训练/测试集时很有用。</p>
+<h3>4. 性能度量</h3>
+<p>除了精度（$acc_{test}$）和错误率（$e_{test}$），还需要反映任务需求的性能度量指标。</p>
+<ol>
+<li>查准率、查全率与 $F_1$</li>
+<li>ROC &amp; AUC</li>
+<li>代价矩阵</li>
+</ol>
+<h4>4.1 查准率、查全率与 $F_1$</h4>
+<p><img alt="confusion matrix" src="http://qncdn.rainy.im/performance.jpg"></p>
+<p>$$ TP + FP + TN + FN = m^++m^- = m$$</p>
+<p>查准率（准确率，precision）：
+$$P = \frac{TP}{TP + FP}$$</p>
+<p>查全率（召回率，recall）：
+$$R = \frac{TP}{TP + FN}$$</p>
+<p>希望查全率高，意味着更看重决策的准确性，例如在商品推荐系统，尽量减少错误推荐；希望查全率高，意味着“宁可错杀一千”，例如在罪犯检测过程中。</p>
+<p>$$F_1 = \frac{2PR}{P+R}$$
+$$F_\beta = \frac{(1+\beta^2)PR}{(\beta^2+P)+R}$$</p>
+<p>当 $\beta = 1$ 时，$F_\beta = F_1$；$\beta \gt 1$ 时，查全率影响更大；$\beta \lt 1$ 时，查准率影响更大。</p>
+<h4>4.2 信号检测论</h4>
+<p>$$TPR = \frac{TP}{TP + FN}$$
+$$FPR = \frac{FP}{FP + TN}$$</p>
+<p>在实验心理学信号检测论中，TPR 是<strong>击中（Hit）</strong>的概率，FPR 是 <strong>虚惊（False alarm）</strong>的概率。ROC（Receiver Operating Characteristic Curve）称为接受者操作特性曲线（又称感受性曲线）。曲线上各点反应相同的感受性，只是在不同的判定标准下所得的结果。以虚惊概率（FPR）为横轴，击中概率（TPR）为纵轴组成的坐标图和被试（学习模型）在相同刺激条件下采用不同判断标准得出不同结果画出的曲线。</p>
+<p>曲线下区域的面积（Area Under ROC Curve, AUC）代表不同被试（模型）对刺激的辨别能力，AUC 越大，意味着辨别能力越强。</p>
+<p>$$AUC = \frac{1}{2}\sum_{i=1}^{m-1}(x_{i+1}-x_i)(y_i+y_{i+1})$$</p>
+<h4>4.3 代价矩阵</h4>
+<p>暂略。</p>
+<h3>5. 统计检验</h3>
+<p>暂略。</p>
+<h3>6. 练习</h3>
+<p>《机器学习·周志华》习题 3.4：</p>
+<blockquote>
+<p>选择两个 UCI 数据集，比较 10折交叉验证法和留一法所估计出的对数回归错误率。</p>
+</blockquote>
+<p>选择：<a href="http://archive.ics.uci.edu/ml/datasets/Adult">Adult Data Set</a></p>
+<p>根据人口统计数据预测年收入是否超过 $50K（共14个属性，有不完整数据，暂时将不完整数据清除）。</p>
+<div class="highlight"><pre>head -n <span class="m">5</span> adult.data
+
+<span class="c1"># 39, State-gov, 77516, Bachelors, 13, Never-married, Adm-clerical, Not-in-family, White, Male, 2174, 0, 40, United-States, &lt;=50K</span>
+<span class="c1"># 50, Self-emp-not-inc, 83311, Bachelors, 13, Married-civ-spouse, Exec-managerial, Husband, White, Male, 0, 0, 13, United-States, &lt;=50K</span>
+<span class="c1"># 38, Private, 215646, HS-grad, 9, Divorced, Handlers-cleaners, Not-in-family, White, Male, 0, 0, 40, United-States, &lt;=50K</span>
+<span class="c1"># 53, Private, 234721, 11th, 7, Married-civ-spouse, Handlers-cleaners, Husband, Black, Male, 0, 0, 40, United-States, &lt;=50K</span>
+<span class="c1"># 28, Private, 338409, Bachelors, 13, Married-civ-spouse, Prof-specialty, Wife, Black, Female, 0, 0, 40, Cuba, &lt;=50K</span>
+</pre></div>
+
+
+<h4>6.1 步骤</h4>
+<ol>
+<li>利用 <code>pandas</code> 读取数据，将遗失数据（数据中以 <code>?</code> 占位）剔除；</li>
+<li>将标字符串格式的标签转化为数字格式的类别（category）；</li>
+<li>分别用 <code>KFold</code> 和 <code>LOO</code> 的方法对对数回归模型进行验证。</li>
+<li>完整代码及计算过程见：<a href="http://nbviewer.jupyter.org/github/rainyear/Data-Structures-and-Algorithms-in-Interview/blob/master/ML/Exe3.4.ipynb">Exe3.4</a></li>
+</ol>
+<div class="highlight"><pre><span class="c1"># 处理数据元信息</span>
+<span class="n">meta</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">age: continuous. </span>
+<span class="s2">workclass: Private, Self-emp-not-inc, Self-emp-inc, Federal-gov, Local-gov, State-gov, Without-pay, Never-worked. </span>
+<span class="s2">fnlwgt: continuous. </span>
+<span class="s2">education: Bachelors, Some-college, 11th, HS-grad, Prof-school, Assoc-acdm, Assoc-voc, 9th, 7th-8th, 12th, Masters, 1st-4th, 10th, Doctorate, 5th-6th, Preschool. </span>
+<span class="s2">education-num: continuous. </span>
+<span class="s2">marital-status: Married-civ-spouse, Divorced, Never-married, Separated, Widowed, Married-spouse-absent, Married-AF-spouse. </span>
+<span class="s2">occupation: Tech-support, Craft-repair, Other-service, Sales, Exec-managerial, Prof-specialty, Handlers-cleaners, Machine-op-inspct, Adm-clerical, Farming-fishing, Transport-moving, Priv-house-serv, Protective-serv, Armed-Forces. </span>
+<span class="s2">relationship: Wife, Own-child, Husband, Not-in-family, Other-relative, Unmarried. </span>
+<span class="s2">race: White, Asian-Pac-Islander, Amer-Indian-Eskimo, Other, Black. </span>
+<span class="s2">sex: Female, Male. </span>
+<span class="s2">capital-gain: continuous. </span>
+<span class="s2">capital-loss: continuous. </span>
+<span class="s2">hours-per-week: continuous. </span>
+<span class="s2">native-country: United-States, Cambodia, England, Puerto-Rico, Canada, Germany, Outlying-US(Guam-USVI-etc), India, Japan, Greece, South, China, Cuba, Iran, Honduras, Philippines, Italy, Poland, Jamaica, Vietnam, Mexico, Portugal, Ireland, France, Dominican-Republic, Laos, Ecuador, Taiwan, Haiti, Columbia, Hungary, Guatemala, Nicaragua, Scotland, Thailand, Yugoslavia, El-Salvador, Trinadad&amp;Tobago, Peru, Hong, Holand-Netherlands.</span>
+<span class="s2">salary: &lt;=50K, &gt;50K</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="c1">#?? 有没有更标准的方法可以把标签数据转化为数字？</span>
+<span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">catMap</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">meta</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">continue</span>
+    <span class="n">name</span><span class="p">,</span> <span class="n">cate</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">))</span>
+    <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;continuous&#39;</span> <span class="ow">in</span> <span class="n">cate</span><span class="p">:</span> <span class="c1"># 数字类型的跳过</span>
+        <span class="k">continue</span>
+    <span class="n">catMap</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cate</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))}</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+
+<span class="c1"># pandas 读取 csv 格式到 DataFrame</span>
+<span class="n">datas</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;adult.data&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">datas</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>    <span class="c1"># (32561, 15)</span>
+
+<span class="c1"># 遗漏数据在文件中是 ?，替换成 NaN</span>
+<span class="n">datas</span> <span class="o">=</span> <span class="n">datas</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">r&#39;\?&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="c1"># 剔除任何含有 NaN 的数据</span>
+<span class="n">datas</span> <span class="o">=</span> <span class="n">datas</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;any&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">datas</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>    <span class="c1"># (30162, 15)</span>
+
+<span class="c1"># 将 Object 类型转化成 category 并赋予整数值</span>
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">datas</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">datas</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;object&#39;</span><span class="p">:</span>
+        <span class="n">datas</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">datas</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">catMap</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()])</span>
+<span class="n">datas</span> <span class="o">=</span> <span class="n">datas</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s2">&quot;any&quot;</span><span class="p">)</span>
+
+<span class="c1"># 分别将前 14 个属性和目标属性 salary 读入</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">datas</span><span class="p">[</span><span class="n">datas</span><span class="o">.</span><span class="n">columns</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">datas</span><span class="o">.</span><span class="n">salary</span>
+<span class="n">X_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">y_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># 10折交叉检验</span>
+<span class="kn">from</span> <span class="nn">sklearn.cross_validation</span> <span class="kn">import</span> <span class="n">KFold</span>
+<span class="n">kf</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">datas</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n_folds</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">train_index</span><span class="p">,</span> <span class="n">test_index</span> <span class="ow">in</span> <span class="n">kf</span><span class="p">:</span>
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">X_arr</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">X_arr</span><span class="p">[</span><span class="n">test_index</span><span class="p">]</span>
+    <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">y_arr</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">y_arr</span><span class="p">[</span><span class="n">test_index</span><span class="p">]</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;---- Shapes: &quot;</span><span class="p">,</span> <span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">X_test</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="c1"># ---- Shapes:  (27146, 14) (3016, 14)  X 10次</span>
+
+<span class="c1"># 先取最后一折的数据进行测试：</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+
+<span class="n">lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;l1&#39;</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">lr</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>    <span class="c1"># 0.83</span>
+
+<span class="c1"># 或者直接用 cross_val_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.cross_validation</span> <span class="kn">import</span> <span class="n">cross_val_score</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">lr</span><span class="p">,</span> <span class="n">X_arr</span><span class="p">,</span> <span class="n">y_arr</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Mean: &quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span> <span class="c1"># 0.81</span>
+
+<span class="c1"># 留一法</span>
+<span class="kn">from</span> <span class="nn">sklearn.cross_validation</span> <span class="kn">import</span> <span class="n">LeaveOneOut</span>
+<span class="c1">## LOO 实际上等于 KFold(n, n_folds=n)</span>
+<span class="c1"># scores = cross_val_score(lr, X_arr, y_arr, cv=X_arr.shape[0])</span>
+<span class="c1"># -- 执行时间非常之长，在 Jupyter 里面运行应该已经超时了，最后没有返回结果</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">lr</span><span class="p">,</span> <span class="n">X_arr</span><span class="p">,</span> <span class="n">y_arr</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span> <span class="c1"># 意思一下…</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Mean: &quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span>  <span class="c1"># 0.82</span>
+</pre></div>
+
+
+<h3>参考</h3>
+<ol>
+<li>周志华，《机器学习》</li>
+<li>李航，《统计学习方法》</li>
+<li>杨治良，《实验心理学》</li>
+</ol>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=机器学习笔记-模型评估与模型选择&amp;url=http://blog.rainy.im/2016/03/27/ml-model-selection/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2016/03/27/ml-model-selection/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2016/03/27/ml-model-selection/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/python.html">Python</a><a href="http://blog.rainy.im/tag/ml.html">ML</a><a href="http://blog.rainy.im/tag/sklearn.html">sklearn</a><a href="http://blog.rainy.im/tag/pandas.html">pandas</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

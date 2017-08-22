@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>R 语言 package 基本操作</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/r.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2015/05/12/r-packages-guides/" rel="canonical" />
+
+        <meta name="description" content="小星星同学借口说在学习《Learning statistics with R》的时候被安装 package 卡住了，导致后面的学习存在很多障碍，由于我也很长时间没有接触 R，有些生疏了，所以没办法马上解决，但是我觉得几个 package ...">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="R">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="R 语言 package 基本操作"/>
+<meta property="og:description" content="小星星同学借口说在学习《Learning statistics with R》的时候被安装 package 卡住了，导致后面的学习存在很多障碍，由于我也很长时间没有接触 R，有些生疏了，所以没办法马上解决，但是我觉得几个 package ..."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2015/05/12/r-packages-guides/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2015-05-12 14:38:45+08:00"/>
+<meta property="article:modified_time" content="2015-05-12 14:38:45+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="R"/>
+<meta property="article:tag" content="R"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "R 语言 package 基本操作",
+  "headline": "R 语言 package 基本操作",
+  "datePublished": "2015-05-12 14:38:45+08:00",
+  "dateModified": "2015-05-12 14:38:45+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2015/05/12/r-packages-guides/",
+  "description": "小星星同学借口说在学习《Learning statistics with R》的时候被安装 package 卡住了，导致后面的学习存在很多障碍，由于我也很长时间没有接触 R，有些生疏了，所以没办法马上解决，但是我觉得几个 package ..."
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">R 语言 package 基本操作</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Tue 12 May 2015">Tue 12 May 2015</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Tue 12 May 2015</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>小星星同学借口说在学习《Learning statistics with R》的时候被安装 package 卡住了，导致后面的学习存在很多障碍，由于我也很长时间没有接触 R，有些生疏了，所以没办法马上解决，但是我觉得几个 package 不应该太大，安装出问题一定是打开的姿势不对。</p>
+<p>首先来说，package 或者是 library 之类的“包”，是所有语言或者 projects 中非常重要的一部分核心内容，它们是所有先辈们智慧的结晶，这些 package 往往封装了许多底层或者通用的功能，让我们不必重造太多轮子。然而在复杂的项目中 package 的安装或者载入可能会伴随很多依赖性、兼容性等问题，优秀的项目往往提供相应的包管理工具来解决这些问题，同时也可以简化用户的操作。R 语言中 package 的下载、安装同样有两种方式，用<code>install.package()</code>命令自动下载安装或者手动下载压缩包并手动载入，两者各有利弊，自动载入方便快捷，不需要对逐一安装层层依赖，但是容易对新手（如小星星同学）产生不可知的后果，一旦出错就不知道究竟发生了什么，该怎么办，最后只好卡在这里一动不动 <code>-,-</code></p>
+<p>晚上我自己试了一下，安装了所需要的 <code>lsr, psych, car</code> 三个 package，耗时大概十分钟不到...，下面是总结的一些基本操作：</p>
+<h3>1. 查看当前电脑已经安装过的 package:</h3>
+<div class="highlight"><pre><span class="m">.</span>packages<span class="p">(</span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="o">//</span> 返回结果大致如下：
+<span class="o">//</span> <span class="p">[</span><span class="m">1</span><span class="p">]</span> <span class="s">&quot;alr4&quot;</span>        <span class="s">&quot;base&quot;</span>        <span class="s">&quot;bitops&quot;</span>      <span class="s">&quot;boot&quot;</span> <span class="kc">...</span>
+<span class="o">//</span> <span class="kc">...</span>
+<span class="o">//</span> 刚开始大概有 <span class="m">30</span><span class="o">+</span>
+
+<span class="kn">library</span><span class="p">()</span>
+<span class="o">//</span> 会返回每个 package 更为详细的解释
+</pre></div>
+
+
+<h3>2. 查看已经加载的 package:</h3>
+<div class="highlight"><pre><span class="o">//</span> 已经安装过的 package 并不代表会加载到 R 语言的运行环境中，可以通过如下命令<span class="p">(</span>函数<span class="p">)</span>查看
+<span class="kp">search</span><span class="p">()</span>
+<span class="o">//</span> 返回结果大致如下：
+<span class="o">//</span> <span class="p">[</span><span class="m">1</span><span class="p">]</span> <span class="s">&quot;.GlobalEnv&quot;</span>        <span class="s">&quot;package:stats&quot;</span>     <span class="s">&quot;tools:RGUI&quot;</span>  <span class="kc">...</span>
+<span class="o">//</span> <span class="kc">...</span>
+<span class="o">//</span> search 返回 R 运行环境的搜索路径，因此不仅包括 package ，也包括一些会用到的工具，如 GUI 图形界面等
+</pre></div>
+
+
+<h3>3. 载入需要的 package:</h3>
+<div class="highlight"><pre><span class="o">//</span> 现在需要载入电脑中已安装但是未被加载近来的 package
+<span class="kn">library</span><span class="p">(</span>package <span class="o">=</span> <span class="s">&quot;survival&quot;</span><span class="p">)</span>
+<span class="o">//</span> 或简写为
+<span class="kn">library</span><span class="p">(</span>survival<span class="p">)</span>
+<span class="o">--</span> 载入需要的程辑包：splines <span class="o">--</span>
+<span class="o">//</span> 同时也会载入其依赖的 package
+</pre></div>
+
+
+<h3>4. (从运行环境中)移除不需要的 package:</h3>
+<div class="highlight"><pre><span class="o">//</span> 当不再需要某些包可以从运行环境中移除<span class="o">:</span>
+<span class="kn">detach</span><span class="p">(</span> name <span class="o">=</span> <span class="s">&quot;package:survival&quot;</span> <span class="p">)</span>
+<span class="o">//</span> 或简写为<span class="o">:</span>
+<span class="kn">detach</span><span class="p">(</span><span class="s">&quot;package:splines&quot;</span><span class="p">)</span>
+<span class="o">//</span> 如果安装了 lsr 这个包，可以更方便地移除<span class="o">:</span>
+unlibrary<span class="p">(</span> survival <span class="p">)</span>
+</pre></div>
+
+
+<h3>5. 下载并安装新的 packages:</h3>
+<p>以天朝尤其是校园网的网速，如果选用默认的镜像下载，很有可能遇到意想不到惊喜，所以最好还是指定镜像来安装，<code>install.package()</code> 方法提供了一些参数，其中 <code>repos = ""</code> 指定镜像的 URL，<a href="http://cran.r-project.org/mirrors.html">官网</a>提供了很多可选镜像，就近选择<a href="http://mirror.bjtu.edu.cn/cran/">http://mirror.bjtu.edu.cn/cran/</a>：</p>
+<div class="highlight"><pre>install.packages<span class="p">(</span> pkgs <span class="o">=</span> <span class="s">&quot;car&quot;</span><span class="p">,</span> repos <span class="o">=</span> <span class="s">&quot;http://mirror.bjtu.edu.cn/cran/&quot;</span><span class="p">,</span> dependencies <span class="o">=</span> <span class="kc">TRUE</span> <span class="p">)</span>
+<span class="o">//</span> dependencies <span class="o">=</span> <span class="kc">TRUE</span> 指定自动下载相关依赖，所以可能需要一定时间
+</pre></div>
+
+
+<hr>
+<p><strong>UPDATE@2015年05月12日</strong></p>
+<h3>6. 图形界面 RStudio 中的操作</h3>
+<p>开源项目 <a href="http://www.rstudio.com/">RStudio</a> 为 R 提供图形界面的支持，使 R 看起来用起来都更像 Matlab 了。RStudio 中 package 的操作可以在 Packages 窗口中通过点选的方式进行载入、移除、安装、更新等操作：</p>
+<p><img alt="rstudio packages window" src="http://7xiijd.com1.z0.glb.clouddn.com/rstudio-packages-window.png"></p>
+<p>也可以通过 <code>RStudio-&gt;Preferences...-&gt;Packages</code>选择对应的镜像：</p>
+<p><img alt="rstudio preferences" src="http://7xiijd.com1.z0.glb.clouddn.com/rstudio-preferences.png"></p>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=R 语言 package 基本操作&amp;url=http://blog.rainy.im/2015/05/12/r-packages-guides/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2015/05/12/r-packages-guides/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2015/05/12/r-packages-guides/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/r.html">R</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

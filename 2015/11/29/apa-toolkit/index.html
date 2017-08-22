@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>APA格式化工具</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/psychology.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2015/11/29/apa-toolkit/" rel="canonical" />
+
+        <meta name="description" content="这个工具的作用就是输入所有参考文献，生成正文中引用文献和直接引用两种格式。">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Psychology">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="APA格式化工具"/>
+<meta property="og:description" content="这个工具的作用就是输入所有参考文献，生成正文中引用文献和直接引用两种格式。"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2015/11/29/apa-toolkit/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2015-11-29 13:41:47+08:00"/>
+<meta property="article:modified_time" content="2015-11-29 13:41:47+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Psychology"/>
+<meta property="article:tag" content="Psychology"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "APA格式化工具",
+  "headline": "APA格式化工具",
+  "datePublished": "2015-11-29 13:41:47+08:00",
+  "dateModified": "2015-11-29 13:41:47+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2015/11/29/apa-toolkit/",
+  "description": "这个工具的作用就是输入所有参考文献，生成正文中引用文献和直接引用两种格式。"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">APA格式化工具</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Sun 29 November 2015">Sun 29 November 2015</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Sun 29 November 2015</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>APA格式是心理学文献中常用的引用格式，包括文章最后参考文献列表的格式和文中引用文献标注的格式，在写论文的时候要整理这些格式也是一件非常痛苦的事情，不过好在有很多文献管理工具可以自动生成引用格式，但我已经不用乱七八糟的工具很久了。忘了什么时候我曾经写过一个解析<a href="http://rainy.im/apa/">APA格式的工具</a>，因为Google Scholar可以自动生成文献的APA引用格式，只是在文中引用时还需要自己手动去写，这个工具的作用就是输入所有参考文献，生成正文中引用文献和直接引用两种格式，如：</p>
+<p><img alt="apa-example" src="http://7xiijd.com1.z0.glb.clouddn.com/apa-example.png"></p>
+<h3>包括如下功能：</h3>
+<ol>
+<li>自动检测（批量）输入的APA格式是否正确，尤其是有些自动生产的引用缺少页码，需要去原杂志找；</li>
+<li>按作者姓氏自动排序；</li>
+<li>引用文献：文中括号里引用的格式，包括多人文献在文中第二次以上出现时的格式；</li>
+<li>直接引用：引用文献原文的格式，也包括文中第二次以上出现时的格式。</li>
+</ol>
+<h3>具体步骤：</h3>
+<h4>1. 先去Google Scholar（好吧，百度学术做得也不错啦，毕竟速度快，给跪还不行么）搜到文献，Copy出APA格式；</h4>
+<p><img alt="xueshu" src="http://7xiijd.com1.z0.glb.clouddn.com/xueshu.png"></p>
+<h4>2. 全部参考文献添加完之后，一起Copy到输入框，<a href="http://rainy.im/apa/">开始</a>！</h4>
+<p><img alt="input" src="http://7xiijd.com1.z0.glb.clouddn.com/input.png"></p>
+<h4>3. Copy Copy Copy！</h4>
+<p><img alt="output" src="http://7xiijd.com1.z0.glb.clouddn.com/output.png"></p>
+<p><strong>看起来很智能化诶！但是并不能保证100%没有错误，欢迎提交BUG，但并不保证会改<code>:D</code></strong></p>
+<p>源码地址：<a href="https://github.com/ZJU-Psy/APA6.js">APA6.js</a></p>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=APA格式化工具&amp;url=http://blog.rainy.im/2015/11/29/apa-toolkit/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2015/11/29/apa-toolkit/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2015/11/29/apa-toolkit/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/psychology.html">Psychology</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

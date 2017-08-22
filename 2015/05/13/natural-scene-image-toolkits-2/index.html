@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>自然场景实验材料处理工具（2）</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/psychology.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2015/05/13/natural-scene-image-toolkits-2/" rel="canonical" />
+
+        <meta name="description" content="事实再一次证明，要用正确的工具做正确的事情。编程语言并没有好坏之分（至少在大部分应用情景下），我在[自然场景实验材料处理工具（1）]中用 Go ...">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Psychology">
+        <meta name="tags" content="Python">
+        <meta name="tags" content="OpenCV">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="自然场景实验材料处理工具（2）"/>
+<meta property="og:description" content="事实再一次证明，要用正确的工具做正确的事情。编程语言并没有好坏之分（至少在大部分应用情景下），我在[自然场景实验材料处理工具（1）]中用 Go ..."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2015/05/13/natural-scene-image-toolkits-2/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2015-05-13 05:49:08+08:00"/>
+<meta property="article:modified_time" content="2015-05-13 05:49:08+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Psychology"/>
+<meta property="article:tag" content="Psychology"/>
+<meta property="article:tag" content="Python"/>
+<meta property="article:tag" content="OpenCV"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "自然场景实验材料处理工具（2）",
+  "headline": "自然场景实验材料处理工具（2）",
+  "datePublished": "2015-05-13 05:49:08+08:00",
+  "dateModified": "2015-05-13 05:49:08+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2015/05/13/natural-scene-image-toolkits-2/",
+  "description": "事实再一次证明，要用正确的工具做正确的事情。编程语言并没有好坏之分（至少在大部分应用情景下），我在[自然场景实验材料处理工具（1）]中用 Go ..."
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">自然场景实验材料处理工具（2）</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Wed 13 May 2015">Wed 13 May 2015</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Wed 13 May 2015</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>事实再一次证明，要用正确的工具做正确的事情。编程语言并没有好坏之分（至少在大部分应用情景下），我在<a href="/2015/04/23/natural-scene-image-toolkits/">自然场景实验材料处理工具（1）</a>中用 Go 做了一些简单的图片尺寸过滤、裁减、缩放等处理，虽然也可以很好完成任务，但第二个实验中的实验材料稍有不同，处理方式也稍有不同，重新修改调试的时间成本可能要比 Python + OpenCV 重做还要高。总之，理性对待工具，<code>Don't get too attached to things -,-</code>。</p>
+<p>主要用 Python + OpenCV 几何处理的方法：</p>
+<h3>1. 过滤尺寸</h3>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">cv2</span>
+
+<span class="k">def</span> <span class="nf">validSize</span><span class="p">(</span><span class="n">imgin</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+  <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">imgin</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span>
+  <span class="k">if</span> <span class="n">h</span> <span class="o">&lt;</span> <span class="n">s</span> <span class="ow">or</span> <span class="n">w</span> <span class="o">&lt;</span> <span class="n">s</span><span class="p">:</span>
+    <span class="k">return</span>  <span class="bp">False</span>
+  <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+
+
+<h3>2. 裁减周围 N pix</h3>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">cv2</span>
+
+<span class="k">def</span> <span class="nf">crop</span><span class="p">(</span><span class="n">imgin</span><span class="p">,</span> <span class="n">imgout</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+  <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">imgin</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span>
+  <span class="k">if</span> <span class="n">h</span> <span class="o">&lt;=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">N</span> <span class="ow">or</span> <span class="n">w</span> <span class="o">&lt;=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">N</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s2">&quot;To smale to crop </span><span class="si">%s</span><span class="s2">!&quot;</span> <span class="o">%</span> <span class="n">imgin</span>
+    <span class="k">return</span>
+  <span class="n">cropped</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="n">N</span><span class="p">:</span><span class="n">h</span><span class="o">-</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span><span class="n">w</span><span class="o">-</span><span class="n">N</span><span class="p">,</span> <span class="p">:]</span>
+
+  <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">imgout</span><span class="p">,</span> <span class="n">cropped</span><span class="p">)</span>
+</pre></div>
+
+
+<h3>3. 裁剪至比例后缩放</h3>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">cv2</span>
+
+<span class="k">def</span> <span class="nf">scaleTo</span><span class="p">(</span><span class="n">imgin</span><span class="p">,</span> <span class="n">imgout</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">H</span><span class="p">):</span>
+  <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">imgin</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span>
+
+  <span class="k">if</span> <span class="n">h</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">w</span> <span class="o">&lt;=</span> <span class="n">H</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">W</span><span class="p">:</span>
+    <span class="n">w2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">W</span> <span class="o">/</span> <span class="n">H</span><span class="p">)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="p">[:,</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">-</span> <span class="n">w2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">):</span><span class="nb">int</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">-</span> <span class="n">w2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="n">w2</span><span class="p">,</span> <span class="p">:]</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">H</span> <span class="o">*</span> <span class="n">w</span> <span class="o">/</span> <span class="n">W</span><span class="p">)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">h</span> <span class="o">-</span> <span class="n">h2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">):</span><span class="nb">int</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">h</span> <span class="o">-</span> <span class="n">h2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="n">h2</span><span class="p">,:,:]</span>
+
+  <span class="n">dest</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">H</span><span class="p">),</span> <span class="n">interpolation</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">INTER_CUBIC</span><span class="p">)</span>
+  <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">imgout</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
+</pre></div>
+
+
+<p>参考：</p>
+<ol>
+<li><a href="http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_imgproc/py_geometric_transformations/py_geometric_transformations.html#geometric-transformations">Geometric Transformations of Images</a></li>
+</ol>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=自然场景实验材料处理工具（2）&amp;url=http://blog.rainy.im/2015/05/13/natural-scene-image-toolkits-2/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2015/05/13/natural-scene-image-toolkits-2/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2015/05/13/natural-scene-image-toolkits-2/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/psychology.html">Psychology</a><a href="http://blog.rainy.im/tag/python.html">Python</a><a href="http://blog.rainy.im/tag/opencv.html">OpenCV</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

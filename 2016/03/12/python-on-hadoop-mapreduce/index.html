@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>MapReduce 原理与 Python 实践</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/python.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2016/03/12/python-on-hadoop-mapreduce/" rel="canonical" />
+
+        <meta name="description" content="MapReduce 的原理与实践操作。">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Python">
+        <meta name="tags" content="Hadoop">
+        <meta name="tags" content="Data">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="MapReduce 原理与 Python 实践"/>
+<meta property="og:description" content="MapReduce 的原理与实践操作。"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2016/03/12/python-on-hadoop-mapreduce/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-03-12 18:44:14+08:00"/>
+<meta property="article:modified_time" content="2016-03-12 18:44:14+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Python"/>
+<meta property="article:tag" content="Python"/>
+<meta property="article:tag" content="Hadoop"/>
+<meta property="article:tag" content="Data"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "MapReduce 原理与 Python 实践",
+  "headline": "MapReduce 原理与 Python 实践",
+  "datePublished": "2016-03-12 18:44:14+08:00",
+  "dateModified": "2016-03-12 18:44:14+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2016/03/12/python-on-hadoop-mapreduce/",
+  "description": "MapReduce 的原理与实践操作。"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">MapReduce 原理与 Python 实践</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Sat 12 March 2016">Sat 12 March 2016</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Sat 12 March 2016</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>继上一篇<a href="http://blog.rainy.im/2016/03/05/hadoop-101/">Hadoop 入门实践</a>之后，接下来应该是 <a href="https://en.wikipedia.org/wiki/MapReduce">MapReduce</a> 的原理与实践操作。</p>
+<h3>MapReduce 原理</h3>
+<p>Hadoop 的 MapReduce 是基于 <a href="http://research.google.com/archive/mapreduce.html">Google - MapReduce: Simplified Data Processing on Large Clusters</a> 的一种实现。对 MapReduce 的基本介绍如下：</p>
+<blockquote>
+<p>MapReduce is a programming model and an associated implementation for processing and generating large data sets. Users specify a map function that processes a key/value pair to generate a set of intermediate key/value pairs, and a reduce function that merges all intermediate values associated with the same intermediate key.</p>
+</blockquote>
+<p>MapReduce 是一种编程模型，用于处理大规模的数据。用户主要通过指定一个 <code>map</code> 函数和一个 <code>reduce</code> 函数来完成数据的处理。看到 <code>map</code>/<code>reduce</code> 很容易就联想到函数式编程，而实际上论文中也提到确实受到 Lisp 和其它函数式编程语言的启发。以 Python 为例，<code>map</code>/<code>reduce</code> 的用法如下：</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="nb">reduce</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">add</span>
+<span class="n">ls</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="s2">&quot;ana&quot;</span><span class="p">,</span> <span class="s2">&quot;bob&quot;</span><span class="p">,</span> <span class="s2">&quot;catty&quot;</span><span class="p">,</span> <span class="s2">&quot;dogge&quot;</span><span class="p">])</span>
+<span class="c1"># print(list(ls))</span>
+<span class="c1"># =&gt; [3, 3, 5, 5]</span>
+<span class="nb">reduce</span><span class="p">(</span><span class="n">add</span><span class="p">,</span> <span class="n">ls</span><span class="p">)</span>
+<span class="c1"># =&gt; 16</span>
+</pre></div>
+
+
+<p>MapReduce 的优势在于对大规模数据进行切分（split），并在分布式集群上分别运行 <code>map</code>/<code>reduce</code> 并行加工，而用户只需要针对数据处理逻辑编写简单的 <code>map</code>/<code>reduce</code> 函数，MapReduce 则负责保证分布式运行和容错机制。Hadoop 的 MapReduce 虽然由 Java 实现，但同时提供 Streaming API 可以通过标准化输入/输出允许我们使用任何编程语言来实现 <code>map</code>/<code>reduce</code>。</p>
+<p>MapReduce 在处理数据时，首先生成一个 <code>job</code> 将输入文件切分成独立的块（chunk），切块的大小是根据配置设定的。然后每个独立的文件块交给 <code>map task</code> 并行加工，得到一组 <code>&lt;k1, v1&gt;</code> 列表，MapReduce 再将 <code>map</code> 输出的结果按 <code>k1</code> 进行重新组合，再将结果传递给 <code>reduce task</code>，最后 <code>reduce</code> 计算得出结果。</p>
+<p>以官方提供的 WordCount 为例，输入为两个文件：</p>
+<div class="highlight"><pre>hadoop fs -cat file0
+<span class="c1"># Hello World Bye World</span>
+
+hadoop fs -cat file1
+<span class="c1"># Hello Hadoop Goodbye Hadoop</span>
+</pre></div>
+
+
+<p>利用 MapReduce 来计算所有文件中单词出现数量的统计。MapReduce 的运行过程如下图所示：</p>
+<p><img alt="MapReduce" src="http://7xiijd.com1.z0.glb.clouddn.com/MapReduce.png"></p>
+<h3>Python <code>map</code>/<code>reduce</code></h3>
+<p>Hadoop 的 Streaming API 通过 <code>STDIN</code>/<code>STDOUT</code> 传递数据，因此 Python 版本的 <code>map</code> 可以写作：</p>
+<div class="highlight"><pre><span class="ch">#!/usr/bin/env python3</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="k">def</span> <span class="nf">read_inputs</span><span class="p">(</span><span class="nb">file</span><span class="p">):</span>
+  <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">file</span><span class="p">:</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">yield</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+  <span class="nb">file</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span>
+  <span class="n">lines</span> <span class="o">=</span> <span class="n">read_inputs</span><span class="p">(</span><span class="nb">file</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">words</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+      <span class="k">print</span><span class="p">(</span><span class="s2">&quot;{}</span><span class="se">\t</span><span class="s2">{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">word</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+  <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+
+<p>运行一下：</p>
+<div class="highlight"><pre>chmod +x map.py
+<span class="nb">echo</span> <span class="s2">&quot;Hello World Bye World&quot;</span> <span class="p">|</span> ./map.py
+
+<span class="c1"># Hello   1</span>
+<span class="c1"># World   1</span>
+<span class="c1"># Bye     1</span>
+<span class="c1"># World   1</span>
+</pre></div>
+
+
+<p><code>reduce</code> 函数以此读取经过排序之后的 <code>map</code> 函数的输出，并统计单词的次数：</p>
+<div class="highlight"><pre><span class="ch">#!/usr/bin/env python3</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="k">def</span> <span class="nf">read_map_outputs</span><span class="p">(</span><span class="nb">file</span><span class="p">):</span>
+  <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">file</span><span class="p">:</span>
+    <span class="k">yield</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+  <span class="n">current_word</span> <span class="o">=</span> <span class="bp">None</span>
+  <span class="n">word_count</span>   <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">lines</span> <span class="o">=</span> <span class="n">read_map_outputs</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+      <span class="k">continue</span>
+    <span class="k">if</span> <span class="n">current_word</span> <span class="o">==</span> <span class="n">word</span><span class="p">:</span>
+      <span class="n">word_count</span> <span class="o">+=</span> <span class="n">count</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">current_word</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;{}</span><span class="se">\t</span><span class="s2">{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">current_word</span><span class="p">,</span> <span class="n">word_count</span><span class="p">))</span>
+      <span class="n">current_word</span> <span class="o">=</span> <span class="n">word</span>
+      <span class="n">word_count</span> <span class="o">=</span> <span class="n">count</span>
+  <span class="k">if</span> <span class="n">current_word</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;{}</span><span class="se">\t</span><span class="s2">{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">current_word</span><span class="p">,</span> <span class="n">word_count</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+  <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+
+<p><code>reduce</code> 的输入是排序后的 <code>map</code> 输出：</p>
+<div class="highlight"><pre>chmod +x reduce.py
+<span class="nb">echo</span> <span class="s2">&quot;Hello World Bye World&quot;</span> <span class="p">|</span> ./map.py <span class="p">|</span> sort <span class="p">|</span> ./reduce.py
+
+<span class="c1"># Bye     1</span>
+<span class="c1"># Hello   1</span>
+<span class="c1"># World   2</span>
+</pre></div>
+
+
+<p>这其实与 MapReduce 的执行流程是一致的，下面我们通过 MapReduce 来执行（已启动 Hadoop），需要用到 <code>hadoop-streaming-2.6.4.jar</code>，不同的 Hadoop 版本位置可能不同：</p>
+<div class="highlight"><pre><span class="nb">cd</span> $HADOOP_INSTALL <span class="o">&amp;&amp;</span> find ./ -name <span class="s2">&quot;hadoop-streaming*.jar&quot;</span>
+<span class="c1"># ./share/hadoop/tools/lib/hadoop-streaming-2.6.4.jar</span>
+
+mkdir wordcount -p wordcount/input
+<span class="nb">cd</span> wordcount
+<span class="nb">echo</span> <span class="s2">&quot;Hello World Bye World&quot;</span> &gt;&gt; input/file0
+<span class="nb">echo</span> <span class="s2">&quot;Hello Hadoop Goodbye Hadoop&quot;</span> &gt;&gt; input/file1
+
+hadoop jar $HADOOP_INSTALL/share/hadoop/tools/lib/hadoop-streaming-2.6.4.jar <span class="se">\</span>
+-input <span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/input <span class="se">\</span>
+-output output <span class="se">\</span>
+-mapper <span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/map.py <span class="se">\</span>
+-reducer <span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/reduce.py
+</pre></div>
+
+
+<p>执行完成之后会在 <code>output</code> 目录产生结果：</p>
+<div class="highlight"><pre>hadoop fs -ls output
+<span class="c1"># Found 2 items</span>
+<span class="c1"># -rw-r--r--   1 rainy rainy          0 2016-03-13 02:15 output/_SUCCESS</span>
+<span class="c1"># -rw-r--r--   1 rainy rainy         41 2016-03-13 02:15 output/part-00000</span>
+hadoop fs -cat output/part-00000
+<span class="c1"># Bye     1</span>
+<span class="c1"># Goodbye 1</span>
+<span class="c1"># Hadoop  2</span>
+<span class="c1"># Hello   2</span>
+<span class="c1"># World   2</span>
+</pre></div>
+
+
+<h3>总结</h3>
+<p>Hadoop 的架构让 MapReduce 的实际执行过程简化了许多，但这里省略了很多细节的内容，尤其是针对完全分布式模式，并且要在输入文件足够大的情况下才能体现出优势。这里处理纯文本文档作为示例，但我想要做的是通过连接 MongoDB 直接读取数据到 <code>HDFS</code> 然后进行 MapReduce 处理，但考虑到数据量仍然不是很大（700,000条记录）的情况，不知道是否会比直接 Python + MongoDB 更快。</p>
+<p>下一步目标：</p>
+<ol>
+<li><a href="https://www.mongodb.com/hadoop-and-mongodb?jmp=docs">MongoDB and Hadoop</a>。</li>
+</ol>
+<h3>参考</h3>
+<ol>
+<li><a href="https://en.wikipedia.org/wiki/MapReduce">MapReduce</a></li>
+<li><a href="http://hadoop.apache.org/docs/current/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html">MapReduce Tutorial</a></li>
+<li><a href="http://www.michael-noll.com/tutorials/writing-an-hadoop-mapreduce-program-in-python/">Writing an Hadoop MapReduce Program in Python</a></li>
+</ol>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=MapReduce 原理与 Python 实践&amp;url=http://blog.rainy.im/2016/03/12/python-on-hadoop-mapreduce/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2016/03/12/python-on-hadoop-mapreduce/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2016/03/12/python-on-hadoop-mapreduce/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/python.html">Python</a><a href="http://blog.rainy.im/tag/hadoop.html">Hadoop</a><a href="http://blog.rainy.im/tag/data.html">Data</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

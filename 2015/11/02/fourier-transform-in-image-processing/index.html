@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>图像的傅里叶变换</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/python.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2015/11/02/fourier-transform-in-image-processing/" rel="canonical" />
+
+        <meta name="description" content="傅里叶变换（Fourier Transform）是非常重要的数学分析工具，同时也是一种非常重要的信号处理方法。最近实验中需要对图像进行滤波处理，文献中提到的方法通常是经过傅里叶变换之后对频域进行过滤，将图像中的低频信息与高频信息区分开来。">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Python">
+        <meta name="tags" content="OpenCV">
+        <meta name="tags" content="傅里叶">
+        <meta name="tags" content="BlowYourMind3000">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="图像的傅里叶变换"/>
+<meta property="og:description" content="傅里叶变换（Fourier Transform）是非常重要的数学分析工具，同时也是一种非常重要的信号处理方法。最近实验中需要对图像进行滤波处理，文献中提到的方法通常是经过傅里叶变换之后对频域进行过滤，将图像中的低频信息与高频信息区分开来。"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2015/11/02/fourier-transform-in-image-processing/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2015-11-02 18:31:56+08:00"/>
+<meta property="article:modified_time" content="2015-11-02 18:31:56+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Python"/>
+<meta property="article:tag" content="Python"/>
+<meta property="article:tag" content="OpenCV"/>
+<meta property="article:tag" content="傅里叶"/>
+<meta property="article:tag" content="BlowYourMind3000"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "图像的傅里叶变换",
+  "headline": "图像的傅里叶变换",
+  "datePublished": "2015-11-02 18:31:56+08:00",
+  "dateModified": "2015-11-02 18:31:56+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2015/11/02/fourier-transform-in-image-processing/",
+  "description": "傅里叶变换（Fourier Transform）是非常重要的数学分析工具，同时也是一种非常重要的信号处理方法。最近实验中需要对图像进行滤波处理，文献中提到的方法通常是经过傅里叶变换之后对频域进行过滤，将图像中的低频信息与高频信息区分开来。"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">图像的傅里叶变换</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Mon 02 November 2015">Mon 02 November 2015</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Mon 02 November 2015</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p><img alt="Fourier" src="http://7xiijd.com1.z0.glb.clouddn.com/Joseph_Fourier_250.jpg"></p>
+<p>傅里叶变换（Fourier Transform）是非常重要的数学分析工具，同时也是一种非常重要的信号处理方法。我记得本科课程电路原理中有提到过，但由于计算过于复杂，好像是超出考试范围了，所以并没有深入学习。最近实验中需要对图像进行滤波处理，文献中提到的方法通常是经过傅里叶变换之后对频域进行过滤，将图像中的低频信息与高频信息区分开来。</p>
+<p>理解傅里叶变换对非数学专业的人来说比较难以理解的原因主要有两方面。首先，由于涉及到比较复杂繁琐的数学操作，看到下面的这两个公式，一般人可能当时就蒙了：</p>
+<p>$$
+\widehat{f}(t) =  \int_{-\infty}^{\infty} f(x) e^{-2\pi ixt}dx;
+$$</p>
+<p>$$
+f(x) = \int_{-\infty}^{\infty}\widehat f (t) e^{2\pi itx}dt;
+$$</p>
+<p>另一方面的原因则是由于变换过程比较抽象，很难从直觉上去把握在傅里叶变换过程中到底发生了什么。关于傅里叶变换的科普文章，有一篇是知乎上传阅较广的《<a href="http://zhuanlan.zhihu.com/wille/19763358">傅里叶分析之掐死教程</a>》，作者用了尽可能少的数学公式和图形分解来解决这两方面的问题。在此之前，国外有个专门科普数学概念的网站（<a href="http://betterexplained.com/">Better Explained</a>）也写了一篇类似的科普文章，但更彻底的是，全文都不涉及到任何数学公式和推断，完全用英语来向读者解释傅里叶变换过程。第一篇文章以音乐和乐谱为例，第二篇作者用“奶昔”作为例子，我想了半天终于找到一个更通俗的例子：</p>
+<p><img alt="方便面" src="http://7xiijd.com1.z0.glb.clouddn.com/fbm.png"></p>
+<p>我们来想象一下，假设这块面饼的厚度是$N$层面条，每一层都是由一根弯曲成正弦曲线形状的面条排列而成，有些面条波浪较大，也就是排列较为稀疏，而密有些排列较密集。我们把这$N$层面条挤压到一起，就得到上图这一块杂乱无序、世间独一无二的面饼。傅里叶变换所做的事就是把上面的过程反过来，我们可以从一块完整的面饼得到最初的$N$层面条。如果有些人的口味比较特殊，喜欢波浪大又稀疏的面，于是我们就将排列太紧凑（高频面）剔除之后再重新压制成一块新的面饼，这就是我们最终想要的滤波（Filter）的过程。</p>
+<p>带着对面饼的想象，我们来看一种更为抽象、优雅的描述（<a href="https://zh.wikipedia.org/wiki/%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2">from Wikipedia</a>）：</p>
+<p><img alt="Fourier series and transfrom" src="http://7xiijd.com1.z0.glb.clouddn.com/Fourier_series_and_transform.gif"></p>
+<p>一般的波形或者说信号（Signal）都是基于时间尺度上的采样结果，因此也称为时域（Time Domain），而上面泡面的例子和我们将要处理的图像信号则是基于空间尺度上的采样，但好像并没有“空域（Space Domain）”这一说，毕竟我们对空间的感知仍然依赖于时间。不过在空间尺度上我们可以更直观地认为信号是静止，例如下面这张图像（灰度图），其实是由250x250个像素点组成，每个像素点的灰度值（$[0, 255]$）就是基于像素坐标的空间采样的结果：</p>
+<p><img alt="Fourier_signal" src="http://7xiijd.com1.z0.glb.clouddn.com/image_to_signal.png"></p>
+<p>右边的3D Fourier就是一块长相奇怪的面饼。</p>
+<h3>实践</h3>
+<p>对傅里叶变换有了大概的了解之后可以先动手尝试一下，来更加直观地感受一下（实际上完全可以在不理解的情况下，直接上手）。这里用到的是OpenCV + Numpy，实际上OpenCV和Numpy都提供了快速傅里叶变换（FFT）算法：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">cv2</span> <span class="kn">as</span> <span class="nn">cv</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;Joseph_Fourier_250.jpg&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft2</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="c1"># 快速傅里叶变换算法得到频率分布</span>
+<span class="n">fshift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="c1"># 默认结果中心点位置是在左上角，转移到中间位置</span>
+
+<span class="n">fimg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">fshift</span><span class="p">))</span> <span class="c1"># fft 结果是复数，求绝对值结果才是振幅</span>
+
+<span class="c1"># 展示结果</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">),</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="s1">&#39;gray&#39;</span><span class="p">),</span> <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Original Fourier&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">),</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">fimg</span><span class="p">,</span> <span class="s1">&#39;gray&#39;</span><span class="p">),</span> <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Fourier Fourier&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="fourier fourier" src="http://7xiijd.com1.z0.glb.clouddn.com/fourier_fourier.png"></p>
+<p>右边图就是频率分布图谱，其中越靠近中心的位置频率越低，越亮（灰度值越高）的位置代表该频率的信号振幅越大。<code>fft</code>的结果是复数形式，保留了图像的全部信息，但去绝对值得到的频谱图只表现了振幅而没有体现相位。</p>
+<p>回想一下高中时候学过的三角函数：</p>
+<p>$$
+f(x) = A sin(\omega x+\varphi) = A sin(2\pi fx + \varphi)
+$$</p>
+<p>一个正弦波是由下面三个参数决定的：</p>
+<ul>
+<li>角速度（频率）$\omega = 2\pi f$ ；</li>
+<li>振幅$A$；</li>
+<li>相位$\varphi$。</li>
+</ul>
+<p>除了上面这个公式之外，还可以用另外一种形式来（唯一地）表示一个正弦波（<a href="http://betterexplained.com/articles/intuitive-understanding-of-eulers-formula/">from BetterExplained</a>）：</p>
+<p><img alt="better_explained" src="http://betterexplained.com/wp-content/uploads/euler/circle_traverse.png"></p>
+<p>即：</p>
+<p>$$
+cos(x) + i sin(x) \Leftrightarrow a + i b
+$$</p>
+<p>所以说，<code>fft</code>的复数结果保留了正弦波成分的所有信息，但频谱图只展现了频率和振幅的分布。因此可以根据<code>fft</code>的结果还原原始图像，但是我们做傅里叶变换的目的并不是为了观察图像的频率分布（至少不是最终目的），更多情况下是为了对频率进行过滤。过滤的方法一般有三种：低通（Low-pass）、高通（High-pass）、带通（Band-pass）。所谓低通就是保留图像中的低频成分，过滤高频成分，可以把过滤器想象成一张渔网，根据上文对频谱图的解读，想要低通过滤器，就是将高频区域的信号全部拉黑，而低频区域全部保留：</p>
+<div class="highlight"><pre><span class="n">img</span> <span class="o">=</span> <span class="n">cv</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;Joseph_Fourier_250.jpg&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft2</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="c1"># 快速傅里叶变换算法得到频率分布</span>
+<span class="n">fshift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="c1"># 默认结果中心点位置是在左上角，转移到中间位置</span>
+
+<span class="n">lpButterMask</span> <span class="o">=</span> <span class="n">butterWorthLPF</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">hpButterMask</span> <span class="o">=</span> <span class="n">butterWorthHPF</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="n">lpFshift</span> <span class="o">=</span> <span class="n">fshift</span> <span class="o">*</span> <span class="n">lpButterMask</span>
+<span class="n">maskedInvf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifft2</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifftshift</span><span class="p">(</span><span class="n">lpFshift</span><span class="p">))</span>
+<span class="n">lpfImg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">maskedInvf</span><span class="p">)</span>
+
+<span class="n">hpFshift</span> <span class="o">=</span> <span class="n">fshift</span> <span class="o">*</span> <span class="n">hpButterMask</span>
+<span class="n">maskedInvf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifft2</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifftshift</span><span class="p">(</span><span class="n">hpFshift</span><span class="p">))</span>
+<span class="n">hpfImg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">maskedInvf</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">221</span><span class="p">),</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">lpButterMask</span><span class="p">,</span> <span class="s1">&#39;gray&#39;</span><span class="p">),</span> <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Butterworth LPF&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">222</span><span class="p">),</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">lpfImg</span><span class="p">,</span> <span class="s1">&#39;gray&#39;</span><span class="p">),</span> <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;LPF Image&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">223</span><span class="p">),</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">hpButterMask</span><span class="p">,</span> <span class="s1">&#39;gray&#39;</span><span class="p">),</span> <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;HPF Spectrum&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">224</span><span class="p">),</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">hpfImg</span><span class="p">,</span> <span class="s1">&#39;gray&#39;</span><span class="p">),</span> <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;HPF Image&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="filters" src="http://7xiijd.com1.z0.glb.clouddn.com/filters.png"></p>
+<p>很显然，滤波器的选择也是很重要的，这里用到的是 Butterworth 滤波器，有兴趣的可以自己实现一下<code>:P</code></p>
+<h3>总结</h3>
+<p>傅里叶变换真是又伟大、又深奥、又方便！至少对于一个微积分已经忘记差不多、三角函数公式都要搜索半天才能回忆起来的“文科生”来说，从头学习一遍简直是又有虐脑又有惊喜！这篇文章可能更加偏重于记录我自己的消化过程，如果想要更加细致、深入深刻以及深入浅出地介绍，请参考下方参考链接。</p>
+<p>这两天被虐脑的感觉真是酸爽，打算接续这一篇下去写一个专题，就叫<a href="http://blog.rainy.im/tag/blowyourmind3000/">#BlowYourMind3000#</a>，哈哈哈，下篇预告《贝叶斯》。</p>
+<h4>参考</h4>
+<ol>
+<li>
+<p><a href="http://betterexplained.com/articles/an-interactive-guide-to-the-fourier-transform/">An Interactive Guide To The Fourier Transform</a></p>
+</li>
+<li>
+<p><a href="http://zhuanlan.zhihu.com/wille/19763358">傅里叶分析之掐死教程</a></p>
+</li>
+<li>
+<p><a href="http://homepages.inf.ed.ac.uk/rbf/HIPR2/fourier.htm">Fourier Transform</a></p>
+</li>
+<li>
+<p><a href="http://blog.csdn.net/abcjennifer/article/details/7622228">图像傅里叶变换</a></p>
+</li>
+<li>
+<p><a href="http://cns-alumni.bu.edu/~slehar/fourier/fourier.html">An Intuitive Explanation of Fourier Theory</a></p>
+</li>
+<li>
+<p><a href="http://paulbourke.net/miscellaneous/imagefilter/">Image Filtering in the Frequency Domain</a></p>
+</li>
+<li>
+<p><a href="http://www.cad.zju.edu.cn/home/gfzhang/course/computational-photography/lab2-filtering/filtering.html">Lab 2 - 图像滤波和傅里叶变换</a></p>
+</li>
+<li>
+<p><a href="http://blog.csdn.net/on2way/article/details/46981825">Python下opencv使用笔记（十）（图像频域滤波与傅里叶变换）</a></p>
+</li>
+<li>
+<p>Schyns, P. G., &amp; Oliva, A. (1994). From blobs to boundary edges: evidence for time- and spatial-scale-dpendent scene recognition.<em>Psychological Science</em><em>,</em> <em>5</em>(5), 195-200.</p>
+</li>
+</ol>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=图像的傅里叶变换&amp;url=http://blog.rainy.im/2015/11/02/fourier-transform-in-image-processing/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2015/11/02/fourier-transform-in-image-processing/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2015/11/02/fourier-transform-in-image-processing/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/python.html">Python</a><a href="http://blog.rainy.im/tag/opencv.html">OpenCV</a><a href="http://blog.rainy.im/tag/fu-li-xie.html">傅里叶</a><a href="http://blog.rainy.im/tag/blowyourmind3000.html">BlowYourMind3000</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

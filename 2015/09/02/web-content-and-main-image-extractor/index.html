@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>网页正文及内容图片提取算法</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/python.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2015/09/02/web-content-and-main-image-extractor/" rel="canonical" />
+
+        <meta name="description" content="提取任意（尤其是新闻、资讯类）网页的正文内容，提取与文章内容相关的图片。">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Python">
+        <meta name="tags" content="算法">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="网页正文及内容图片提取算法"/>
+<meta property="og:description" content="提取任意（尤其是新闻、资讯类）网页的正文内容，提取与文章内容相关的图片。"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2015/09/02/web-content-and-main-image-extractor/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2015-09-02 15:50:38+08:00"/>
+<meta property="article:modified_time" content="2015-09-02 15:50:38+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Python"/>
+<meta property="article:tag" content="Python"/>
+<meta property="article:tag" content="算法"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "网页正文及内容图片提取算法",
+  "headline": "网页正文及内容图片提取算法",
+  "datePublished": "2015-09-02 15:50:38+08:00",
+  "dateModified": "2015-09-02 15:50:38+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2015/09/02/web-content-and-main-image-extractor/",
+  "description": "提取任意（尤其是新闻、资讯类）网页的正文内容，提取与文章内容相关的图片。"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">网页正文及内容图片提取算法</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Wed 02 September 2015">Wed 02 September 2015</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Wed 02 September 2015</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p><strong>问题：</strong>如何提取任意（尤其是新闻、资讯类）网页的正文内容，提取与文章内容相关的图片，源码可见：<a href="https://github.com/rainyear/cix-extractor-py/blob/master/extractor.py">extractor.py</a>。</p>
+<p>抓取单个网站网页内容时通常采用正则匹配的方式，但不同网站之间结构千奇百怪，很难用统一的正则表达式进行匹配。<a href="http://cx-extractor.googlecode.com/files/%E5%9F%BA%E4%BA%8E%E8%A1%8C%E5%9D%97%E5%88%86%E5%B8%83%E5%87%BD%E6%95%B0%E7%9A%84%E9%80%9A%E7%94%A8%E7%BD%91%E9%A1%B5%E6%AD%A3%E6%96%87%E6%8A%BD%E5%8F%96%E7%AE%97%E6%B3%95.pdf">《基于行块分布函数的通用网页正文抽取算法》</a>的作者总结了一般从网页中提取文章正文的方法，提出基于行块分布的正文抽取算法，并给出了 PHP 、Java 等实现。这一算法的主要原理基于两点：</p>
+<ol>
+<li>正文区密度：在去除HTML中所有tag之后，正文区字符密度更高，较少出现多行空白；</li>
+<li>行块长度：非正文区域的内容一般单独标签（行块）中较短。</li>
+</ol>
+<p>算法步骤如下：</p>
+<ul>
+<li>去除所有tag，包括样式、Js脚本内容等，但保留原有的换行符<code>\n</code>：</li>
+</ul>
+<div class="highlight"><pre><span class="n">reCOMM</span> <span class="o">=</span> <span class="s1">r&#39;&lt;!--.*?--&gt;&#39;</span>
+<span class="n">reTRIM</span> <span class="o">=</span> <span class="s1">r&#39;&lt;{0}.*?&gt;([\s\S]*?)&lt;\/{0}&gt;&#39;</span>
+<span class="n">reTAG</span>  <span class="o">=</span> <span class="s1">r&#39;&lt;[\s\S]*?&gt;|[ \t\r\f\v]&#39;</span>
+
+<span class="k">def</span> <span class="nf">processTags</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+  <span class="n">body</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">reCOMM</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+  <span class="n">body</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">reTRIM</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;script&quot;</span><span class="p">),</span> <span class="s2">&quot;&quot;</span> <span class="p">,</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">reTRIM</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;style&quot;</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">body</span><span class="p">))</span>
+  <span class="n">body</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">reTAG</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">body</span>
+</pre></div>
+
+
+<ul>
+<li>将网页内容按行分割，定义行块 $block_i$ 为第 $[i, i + blockSize]$ 行文本之和并给出行块长度基于行号的分布函数：</li>
+</ul>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">processBlocks</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+  <span class="n">ctexts</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+  <span class="n">textLens</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">ctexts</span><span class="p">]</span>
+  <span class="n">cblocks</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ctexts</span><span class="p">)</span> <span class="o">-</span> <span class="n">blockSize</span><span class="p">)</span>
+
+  <span class="n">lines</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ctexts</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">blockSize</span><span class="p">):</span>
+    <span class="n">cblocks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">,</span> <span class="n">textLens</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">lines</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">blockSize</span><span class="o">+</span><span class="n">i</span><span class="p">],</span> <span class="n">cblocks</span><span class="p">))</span>
+  <span class="k">return</span> <span class="n">cblocks</span>
+</pre></div>
+
+
+<ul>
+<li>正文出现在最长的行块，截取两边至行块长度为 0 的范围：</li>
+</ul>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">getContext</span><span class="p">(</span><span class="n">ctexts</span><span class="p">,</span> <span class="n">cblocks</span><span class="p">):</span>
+  <span class="n">maxTextLen</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">cblocks</span><span class="p">)</span>
+
+  <span class="n">start</span> <span class="o">=</span> <span class="n">end</span> <span class="o">=</span> <span class="n">cblocks</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">maxTextLen</span><span class="p">)</span>
+  <span class="k">while</span> <span class="n">start</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">cblocks</span><span class="p">[</span><span class="n">start</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nb">min</span><span class="p">(</span><span class="n">textLens</span><span class="p">):</span>
+    <span class="n">start</span> <span class="o">-=</span> <span class="mi">1</span>
+  <span class="k">while</span> <span class="n">end</span> <span class="o">&lt;</span> <span class="n">lines</span> <span class="o">-</span> <span class="n">blockSize</span> <span class="ow">and</span> <span class="n">cblocks</span><span class="p">[</span><span class="n">end</span><span class="p">]</span> <span class="o">&gt;</span> <span class="nb">min</span><span class="p">(</span><span class="n">textLens</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">+=</span> <span class="mi">1</span>
+
+  <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ctexts</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">])</span>
+</pre></div>
+
+
+<ul>
+<li>如果需要提取正文区域出现的图片，只需要在第一步去除tag时保留<code>&lt;img&gt;</code>标签的内容：</li>
+</ul>
+<div class="highlight"><pre><span class="n">reIMG</span>  <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;&lt;img[\s\S]*?src=[</span><span class="se">\&#39;</span><span class="s1">|&quot;]([\s\S]*?)[</span><span class="se">\&#39;</span><span class="s1">|&quot;][\s\S]*?&gt;&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">processImages</span><span class="p">(</span><span class="n">body</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">reIMG</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">r&#39;{{\1}}&#39;</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+</pre></div>
+
+
+<h3>总结</h3>
+<p>以上算法基本可以应对大部分（中文）网页正文的提取，针对有些网站正文图片多于文字的情况，可以采用保留<code>&lt;img&gt;</code> 标签中图片链接的方法，增加正文密度。目前少量测试发现的问题有：1）文章分页或动态加载的网页；2）评论长度过长喧宾夺主的网页。</p>
+<h3>参考</h3>
+<ul>
+<li>
+<p><a href="https://code.google.com/p/cx-extractor/">cx-extractor</a></p>
+</li>
+<li>
+<p><a href="https://github.com/rainyear/cix-extractor-py">cix-extractor-py</a></p>
+</li>
+</ul>
+<p>​</p>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=网页正文及内容图片提取算法&amp;url=http://blog.rainy.im/2015/09/02/web-content-and-main-image-extractor/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2015/09/02/web-content-and-main-image-extractor/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2015/09/02/web-content-and-main-image-extractor/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/python.html">Python</a><a href="http://blog.rainy.im/tag/suan-fa.html">算法</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

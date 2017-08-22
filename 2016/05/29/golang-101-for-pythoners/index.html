@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>给 Python 开发者的 Go 语言入门指南</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/go.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2016/05/29/golang-101-for-pythoners/" rel="canonical" />
+
+        <meta name="description" content="本文主要包括：">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Go">
+        <meta name="tags" content="Python">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="给 Python 开发者的 Go 语言入门指南"/>
+<meta property="og:description" content="本文主要包括："/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2016/05/29/golang-101-for-pythoners/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-05-29 18:55:19+08:00"/>
+<meta property="article:modified_time" content="2016-05-29 18:55:19+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Go"/>
+<meta property="article:tag" content="Go"/>
+<meta property="article:tag" content="Python"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "给 Python 开发者的 Go 语言入门指南",
+  "headline": "给 Python 开发者的 Go 语言入门指南",
+  "datePublished": "2016-05-29 18:55:19+08:00",
+  "dateModified": "2016-05-29 18:55:19+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2016/05/29/golang-101-for-pythoners/",
+  "description": "本文主要包括："
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">给 Python 开发者的 Go 语言入门指南</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Sun 29 May 2016">Sun 29 May 2016</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Sun 29 May 2016</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <ol>
+<li>Go 安装与配置</li>
+<li>Atom as IDE</li>
+<li>Go VS Python</li>
+</ol>
+<h3>0. 关于</h3>
+<p>之前<a href="https://github.com/rainyear/lolita/issues/16">学习过 Go 一段时间</a>，用<a href="https://github.com/rainyear/lolita/issues/5"> Vim 做为 IDE</a>，也尝试过几次<a href="https://github.com/coodict/coodict-server">用 Go 做服务器后端</a>，后来因为没有再写网站的需求就放下了一段时间。现在回忆一下用 Go 的体验，与 Python 相比可能有下面几点优势：</p>
+<ol>
+<li>高性能，高性能，高性能；</li>
+<li>低内存，低内存，低内存；</li>
+<li>异步；</li>
+</ol>
+<p>缺点有：</p>
+<ol>
+<li>库太少（相比于 Python）；</li>
+<li>内置数据结构及操作太简陋；</li>
+<li>第三方库依赖、安装、管理麻烦（墙也占了一部分原因）；</li>
+</ol>
+<p>最近来看 Go 的发展还是相当不错的，至少在服务器与后端方面的优势（高能低耗二进制包）还是非常吸引人的。新电脑上还没有配置过 Go 语言环境，刚好这次重新安装、配置一次，并从基础语法上与 Python 进行对比，方便有兴趣的 Python 开发者可以快速尝试一下 Go 语言，顺便作为笔记。</p>
+<p>本文主要包括：</p>
+<ol>
+<li>Go 安装与配置</li>
+<li>Atom as IDE</li>
+<li>Go VS Python</li>
+</ol>
+<h3>1. Go 安装与配置</h3>
+<p>所有安装、配置的步骤都在<a href="https://golang.org">官网（需科学上网）</a>（<a href="http://go.cn-mirrors.com/doc/">国内文档镜像</a>，<a href="http://golangtc.com/download">国内安装包镜像</a>）有清楚的说明，Mac OS X 已经有了 pkg 版本，可以直接双击安装。Go 语言有几个非常重要的环境变量需要搞清楚并设定好：</p>
+<p><strong><code>GOROOT</code></strong>：</p>
+<p>Go 的安装目录。这个目录是 Go 寻找内置库的地方，如果是 Mac OS X 安装包默认位置为 <code>/usr/local/go</code>，如果是从源码手动安装，若不是安装到 <code>/usr/local/go</code> 则将其设定为安装目录（若是默认位置无需设定）：</p>
+<div class="highlight"><pre><span class="c1"># add to ~/.bashrc or ~/.zshrc</span>
+<span class="nb">export</span> <span class="nv">GOROOT</span><span class="o">=</span>/path/to/where/go/installed
+</pre></div>
+
+
+<p><strong><code>GOPATH</code></strong>：</p>
+<p>你的工作目录。这个目录用于存放从网上下载的第三方库以及你自己创建的项目。与 Python 不同的是，Go 的目标并不在于创建可以随处执行的脚本，而是以项目为单位。可以任意选择一个目录作为你的 Go 工作目录：</p>
+<div class="highlight"><pre><span class="c1"># add to ~/.bashrc or ~/.zshrc</span>
+<span class="nb">export</span> <span class="nv">GOPATH</span><span class="o">=</span>/Users/rainy/Projects/go
+</pre></div>
+
+
+<p>除了这两个必备的环境变量之外，还可以设定一下系统信息：</p>
+<div class="highlight"><pre><span class="nb">export</span> <span class="nv">GOARCH</span><span class="o">=</span>amd64
+<span class="nb">export</span> <span class="nv">GOOS</span><span class="o">=</span>darwin
+<span class="nb">export</span> <span class="nv">GOBIN</span><span class="o">=</span>/usr/local/go/bin
+</pre></div>
+
+
+<p>最后一个 <code>GOBIN</code> 是指执行 <code>go get some-package</code> 的时候将生成的二进制命令保存到的目录，如果不设定默认为 <code>$GOPATH/bin</code>，最好将这一目录添加到系统路径中（若设定为 <code>/usr/local/go/bin</code> 还需要注意权限问题）：</p>
+<div class="highlight"><pre><span class="c1"># add to ~/.bashrc or ~/.zshrc</span>
+<span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span>$PATH:$GOBIN
+</pre></div>
+
+
+<p>现在就算是安装配置完成了，执行：</p>
+<div class="highlight"><pre>go version
+<span class="c1"># go version go1.6.2 darwin/amd64</span>
+</pre></div>
+
+
+<p>再试试安装一个命令行工具：</p>
+<div class="highlight"><pre>go get -u github.com/astaxie/bat
+</pre></div>
+
+
+<p><code>bat</code> 工具将会被安装到 <code>$GOBIN</code> 下，这时我们回到工作目录下，会发现目录结构变为：</p>
+<div class="highlight"><pre><span class="nb">cd</span> $GOPATH <span class="o">&amp;&amp;</span> tree -L 1
+<span class="c1"># .</span>
+<span class="c1"># ├── bin</span>
+<span class="c1"># ├── pkg</span>
+<span class="c1"># └── src</span>
+</pre></div>
+
+
+<p>其中 <code>src</code> 下面保存的是各种第三方库以及自己项目的源文件，<code>bin</code> 则是 <code>go get</code> 或 <code>go install</code> 生成的二进制执行文件，<code>pkg</code> 是平台相关的包。接下来将 Atom 配置成 Go 专用 IDE！</p>
+<h3>2. Atom as Go IDE</h3>
+<p>之前配置过 <a href="https://github.com/rainyear/lolita/issues/5">Vim</a>，但现在大部分情况都是用 Atom，而且 Atom 的插件管理更方便，所以就用 Atom 作为 IDE！</p>
+<p>首先要安装的插件是 <a href="https://atom.io/packages/go-plus"><code>go-plus</code></a>，但结果发现它有一堆的依赖插件需要安装，并且这些插件依赖一些 Go 的工具，不过现在 Atom 已经可以自动安装依赖插件了，不需要一个一个手动安装：</p>
+<p><img alt="go-plus" src="http://qncdn.rainy.im/go-plus.png"></p>
+<p>这些插件有可能会需要一些 Go 工具的支持，例如 <code>golint</code>、<code>goimport</code>、<code>gocode</code> 等，这里就体现出我上面提到的缺点之一了，如果是托管在 <code>github</code> 上的库还算好点，但如果 <code>golang.org</code> 或者 <code>code.google.com</code> 就需要科学上网了，之前也是被这些第三方库搞得焦头烂额，体验非常差。</p>
+<p>经过漫长的等待，<code>go-plus</code> 的依赖都安装完了，然后安装 Go 工具：</p>
+<div class="highlight"><pre>go get -u github.com/nsf/gocode
+go get -u github.com/golang/lint
+
+<span class="c1"># 对于 golang.org/x/ 下面的包建议去 GitHub 镜像仓库手动 Clone 项目，然后本地执行 go install</span>
+<span class="nb">cd</span> $GOPATH
+mkdir -p golang.org/x
+<span class="nb">cd</span> golang.org/x
+git clone https://github.com/golang/tools.git
+go install golang.org/x/tools/cmd/goimports
+</pre></div>
+
+
+<p>先不着急用 Atom 创建 Go 文件，先来看看此时的工作目录：</p>
+<div class="highlight"><pre><span class="nb">cd</span> $GOPATH
+tree -L 2
+<span class="c1"># .</span>
+<span class="c1"># ├── bin</span>
+<span class="c1"># ├── pkg</span>
+<span class="c1"># │   └── darwin_amd64</span>
+<span class="c1"># └── src</span>
+<span class="c1">#     ├── github.com</span>
+<span class="c1">#     ├── golang.org</span>
+<span class="c1">#     ├── gopkg.in</span>
+<span class="c1">#     └── honnef.co</span>
+</pre></div>
+
+
+<p>Go 的第三方库存放目录是以托管网站开头的（<code>import</code> 的时候也是这样），自己创建的项目也应该遵循这个规范！（注意到我这里的 <code>bin</code> 目录下没有任何可执行文件，因为我把它们移动到系统路径下了）。</p>
+<p>接下来创建一个新项目：</p>
+<div class="highlight"><pre><span class="nb">cd</span> $GOPATH
+mkdir src/github.com/rainyear/learn
+atom src/github.com/rainyear/learn
+</pre></div>
+
+
+<p><img alt="learn-go" src="http://qncdn.rainy.im/learn-go.gif"></p>
+<p>如果你还觉得 Python 的缩进是强迫症的话，那么真正的强迫症来了！Go 提供了 <code>gofmt</code> 和 <code>goimports</code> 工具，帮助你强行把代码整理干净，包括缩进、花括号、<code>import</code>，只要在 Atom 中保存一下，代码就会被重新整理一遍，这才是强迫症患者的福音！不过 Google 也将这一福利推广至 Python，推出了 <a href="https://github.com/google/yapf">Python 格式化工具: yapf</a>。</p>
+<p>上图中是通过 Atom 的 Builder 插件执行 <code>go run main.go</code> 运行的，如果整个项目完成之后，可以通过 <code>go install</code> 打包生成二进制文件（甚至可以生成跨平台的二进制包，直接部署到线上！）：</p>
+<div class="highlight"><pre><span class="nb">cd</span> $GOPATH/src/github.com/rainyear/learn
+go install
+
+<span class="c1"># 二进制包将会打包至 $GOBIN 或者 $GOPATH/bin</span>
+<span class="nb">cd</span> $GOPATH
+ls bin
+<span class="c1"># learn</span>
+./bin/learn
+<span class="c1"># Hello world!</span>
+</pre></div>
+
+
+<h3>3. Go VS Python</h3>
+<p>最后来比较一下 Go 与 Python 的一些基本语法，其中 Go 语言的例子来自<a href="https://tour.golang.org/">A Tour of Go</a>，<a href="https://github.com/rainyear/learn.go">源文件</a>：</p>
+<p><img alt="go-vs-py" src="http://qncdn.rainy.im/go-vs-py-1.png">
+<img alt="go-vs-py" src="http://qncdn.rainy.im/go-vs-py-2.png">
+<img alt="go-vs-py" src="http://qncdn.rainy.im/go-vs-py-3.png">
+<img alt="go-vs-py" src="http://qncdn.rainy.im/go-vs-py-4.png">
+<img alt="go-vs-py" src="http://qncdn.rainy.im/go-vs-py-5.png">
+<img alt="go-vs-py" src="http://qncdn.rainy.im/go-vs-py-6.png">
+<img alt="go-vs-py" src="http://qncdn.rainy.im/go-vs-py-7.png">
+<img alt="go-vs-py" src="http://qncdn.rainy.im/go-vs-py-8.png"></p>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=给 Python 开发者的 Go 语言入门指南&amp;url=http://blog.rainy.im/2016/05/29/golang-101-for-pythoners/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2016/05/29/golang-101-for-pythoners/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2016/05/29/golang-101-for-pythoners/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/go.html">Go</a><a href="http://blog.rainy.im/tag/python.html">Python</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

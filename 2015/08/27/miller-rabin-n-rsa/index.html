@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>Miller-Rabin 算法与 RSA 算法</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/sicp.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2015/08/27/miller-rabin-n-rsa/" rel="canonical" />
+
+        <meta name="description" content="Miller-Rabin算法是目前主流的基于概率的素数测试算法）RSA加密算法是计算机世界中最重要的一种[非对称加密算法]，主要介绍两种算法的数学原理以及Scheme的简单实现。">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="SICP">
+        <meta name="tags" content="Scheme">
+        <meta name="tags" content="算法">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="Miller-Rabin 算法与 RSA 算法"/>
+<meta property="og:description" content="Miller-Rabin算法是目前主流的基于概率的素数测试算法）RSA加密算法是计算机世界中最重要的一种[非对称加密算法]，主要介绍两种算法的数学原理以及Scheme的简单实现。"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2015/08/27/miller-rabin-n-rsa/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2015-08-27 13:54:05+08:00"/>
+<meta property="article:modified_time" content="2015-08-27 13:54:05+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="SICP"/>
+<meta property="article:tag" content="SICP"/>
+<meta property="article:tag" content="Scheme"/>
+<meta property="article:tag" content="算法"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "Miller-Rabin 算法与 RSA 算法",
+  "headline": "Miller-Rabin 算法与 RSA 算法",
+  "datePublished": "2015-08-27 13:54:05+08:00",
+  "dateModified": "2015-08-27 13:54:05+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2015/08/27/miller-rabin-n-rsa/",
+  "description": "Miller-Rabin算法是目前主流的基于概率的素数测试算法）RSA加密算法是计算机世界中最重要的一种[非对称加密算法]，主要介绍两种算法的数学原理以及Scheme的简单实现。"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Miller-Rabin 算法与 RSA 算法</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Thu 27 August 2015">Thu 27 August 2015</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Thu 27 August 2015</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>Miller-Rabin算法是目前主流的基于概率的素数测试算法）RSA加密算法是计算机世界中最重要的一种<a href="https://zh.wikipedia.org/wiki/%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E6%BC%94%E7%AE%97%E6%B3%95">非对称加密算法</a>。本文从SICP 习题1.28出发，主要介绍两种算法的数学原理以及Scheme的简单实现，代码保存在 <a href="https://gist.github.com/rainyear/15d23b044861d211ce52">Gist</a>。</p>
+<h3>1. Miller-Rabin 素数检验算法</h3>
+<p>一个数是素数（也叫质数），当且仅当它的约数只有1和它本身。为了检验 $n$ 是否为素数，最直接的方法就是逐一检验 $[2, n-1]$ 能否整除 $n$：</p>
+<div class="highlight"><pre><span class="p">(</span><span class="k">define </span><span class="p">(</span><span class="nf">prime-iter</span> <span class="nv">n</span> <span class="nv">i</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">cond </span><span class="p">((</span><span class="nb">= </span><span class="nv">i</span> <span class="nv">n</span><span class="p">)</span> <span class="no">#t</span><span class="p">)</span>
+        <span class="p">((</span><span class="nb">= </span><span class="p">(</span><span class="nb">remainder </span><span class="nv">n</span> <span class="nv">i</span><span class="p">)</span> <span class="mi">0</span><span class="p">)</span> <span class="no">#f</span><span class="p">)</span>
+        <span class="p">(</span><span class="k">else </span><span class="p">(</span><span class="nf">prime-iter</span> <span class="nv">n</span> <span class="p">(</span><span class="nb">+ </span><span class="nv">i</span> <span class="mi">1</span><span class="p">)))))</span>
+
+<span class="p">(</span><span class="k">define </span><span class="p">(</span><span class="nf">prime?</span> <span class="nv">n</span><span class="p">)</span>
+  <span class="p">(</span><span class="nf">prime-iter</span> <span class="nv">n</span> <span class="mi">2</span><span class="p">))</span>
+</pre></div>
+
+
+<p>但是当数字较大的时候，这一算法的效率非常低下。于是就有了基于费马小定理的概率算法：</p>
+<blockquote>
+<p><strong>费马小定理：</strong>如果 $p$ 是素数，$a$ 是小于 $p$ 的正整数，那么：$a^{p-1}\ mod\ p = 1$。</p>
+</blockquote>
+<p>所有素数都满足费马小定理的条件，因此从小于$p$的整数中随机抽取$a$，只要有一个$a$不满足上述条件则$p$为合数，抽取次数越多，全部通过费马小定理之后我们准确判定$p$为质数的概率越高：</p>
+<div class="highlight"><pre><span class="p">(</span><span class="k">define </span><span class="p">(</span><span class="nf">expmod</span> <span class="nv">base</span> <span class="nv">exp</span> <span class="nv">m</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">cond </span><span class="p">((</span><span class="nb">= </span><span class="nv">exp</span> <span class="mi">0</span><span class="p">)</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">((</span><span class="nb">even? </span><span class="nv">exp</span><span class="p">)</span> 
+           <span class="p">(</span><span class="nb">remainder </span>
+             <span class="p">(</span><span class="nf">square</span> <span class="p">(</span><span class="nf">expmod</span> <span class="nv">base</span> <span class="p">(</span><span class="nb">/ </span><span class="nv">exp</span> <span class="mi">2</span><span class="p">)</span> <span class="nv">m</span><span class="p">))</span> 
+             <span class="nv">m</span><span class="p">))</span>
+        <span class="p">(</span><span class="k">else </span><span class="p">(</span><span class="nb">remainder </span>
+                <span class="p">(</span><span class="nb">* </span><span class="nv">base</span> <span class="p">(</span><span class="nf">expmod</span> <span class="nv">base</span> <span class="p">(</span><span class="nb">- </span><span class="nv">exp</span> <span class="mi">1</span><span class="p">)</span> <span class="nv">m</span><span class="p">))</span> 
+                <span class="nv">m</span><span class="p">))))</span>
+
+<span class="p">(</span><span class="k">define </span><span class="p">(</span><span class="nf">fermat-test</span> <span class="nv">n</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">define </span><span class="p">(</span><span class="nf">try-it</span> <span class="nv">a</span><span class="p">)</span>
+    <span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nf">expmod</span> <span class="nv">a</span> <span class="nv">n</span> <span class="nv">n</span><span class="p">)</span> <span class="nv">a</span><span class="p">))</span>
+  <span class="p">(</span><span class="nf">try-it</span> <span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="p">(</span><span class="nf">random</span> <span class="p">(</span><span class="nb">- </span><span class="nv">n</span> <span class="mi">1</span><span class="p">)))))</span>
+
+<span class="p">(</span><span class="k">define </span><span class="p">(</span><span class="nf">fast-prime?</span> <span class="nv">n</span> <span class="nv">times</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">cond </span><span class="p">((</span><span class="nb">= </span><span class="nv">times</span> <span class="mi">0</span><span class="p">)</span> <span class="no">#t</span><span class="p">)</span>
+        <span class="p">((</span><span class="nf">fermat-test</span> <span class="nv">n</span><span class="p">)</span>
+             <span class="p">(</span><span class="nf">fast-prime?</span> <span class="nv">n</span> <span class="p">(</span><span class="nb">- </span><span class="nv">times</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="p">(</span><span class="k">else </span><span class="no">#f</span><span class="p">)))</span>
+</pre></div>
+
+
+<p>然而费马小定理只是质数的必要而非充分条件，有些数字每一个比它小的整数都能通过费马测试，但却是合数，这种数字称为卡迈克尔数（Carmichael numbers）。最小的卡迈克尔数是 $561$，$[1, 10^17]$ 之间有$585,355$ 个卡迈克尔数，这使得费马测试变得不可靠，于是就有了Miller-Rabin算法。</p>
+<p>Miller-Rabin算法基于如下定理：</p>
+<blockquote>
+<p>若 $p$ 是素数，$a$ 是小于 $p$ 的正整数，且 $a^2\ mod\ p = 1$，那么要么 $a=1$，要么 $a=p-1$。</p>
+<p><strong>证明：</strong> $a^2\ mod\ p = 1$，则说明 $a^2 - 1 = (a+1)(a-1)$ 能够整除 $p$，由于 $p$ 是素数，能够整除它的只有 $1$ 和 $p$ 本身，因此 $a$ 的解只能是 $a=1$ 或 $a=p-1$。</p>
+</blockquote>
+<p>基于上面的定理我们来检验最小的卡迈克尔数 $561$：首先 $2^{560}\ mod\ 561 = 1$，通过了费马测试；进而考虑到 $2^{560} = (2^{280})^2$，根据规律 $[1]$：</p>
+<p>$$
+\begin{align}
+if, &amp;\ a\ mod\ p = k \\
+then, &amp;\ a^2\ mod\ p = k^2\ mod\ p
+\end{align}
+$$</p>
+<p>结合上面的定理，那么 $2^{280}\ mod\ 561$ 也应该是 $1$ 或 $560$，经验证 $2^{280}\ mod\ 561 = 1$；继续我们发现 $2^{140}\ mod\ 561 = 67$，于是马上可以得到 $67^2\ mod\ 561 = 1$，违反了上面的定理，由此可以判断 $561$ 不是质数。</p>
+<p>在Miller-Rabin算法中，我们将 $p-1$ （一定是偶数）不断提取因子2，最终分解为：$2^sd$（其中 $d$ 是奇数），对于所有的 $r \in [0, s-1]$，只要存在 $r$ 使得 $a^d\ mod\ p = 1$ 或 $a^{2^rd}\ mod\ p = p-1$，即可推断 $p$ 有可能为素数；反之则一定为合数。</p>
+<p>有趣的是在上面Scheme实现的费马测试算法中，计算 $a^{n-1}$ 所用的正是类似将指数不断除2的递归方法，因此我们只需要对<code>(expmod base exp n)</code>方法中的递归调用<code>(remainder (square (expmod base (/ exp 2) m)) m)</code>（恰好是规律 $[1]$）进行检验：</p>
+<div class="highlight"><pre><span class="c1">;; miller-rabin algorithm</span>
+<span class="p">(</span><span class="k">define </span><span class="p">(</span><span class="nf">remainder-square</span> <span class="nv">a</span> <span class="nv">n</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">cond </span><span class="p">((</span><span class="k">or </span><span class="p">(</span><span class="nb">= </span><span class="nv">a</span> <span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="nb">= </span><span class="nv">a</span> <span class="p">(</span><span class="nb">- </span><span class="nv">n</span> <span class="mi">1</span><span class="p">)))</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">((</span><span class="nb">= </span><span class="p">(</span><span class="nb">remainder </span><span class="p">(</span><span class="nf">square</span> <span class="nv">a</span><span class="p">)</span> <span class="nv">n</span><span class="p">)</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">(</span><span class="k">else </span><span class="p">(</span><span class="nb">remainder </span><span class="p">(</span><span class="nf">square</span> <span class="nv">a</span><span class="p">)</span> <span class="nv">n</span><span class="p">))))</span>
+
+<span class="p">(</span><span class="k">define </span><span class="p">(</span><span class="nf">expmod</span> <span class="nv">base</span> <span class="nv">exp</span> <span class="nv">m</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">cond </span><span class="p">((</span><span class="nb">= </span><span class="nv">exp</span> <span class="mi">0</span><span class="p">)</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">((</span><span class="nb">even? </span><span class="nv">exp</span><span class="p">)</span> <span class="p">(</span><span class="nf">remainder-square</span> <span class="p">(</span><span class="nf">expmod</span> <span class="nv">base</span> <span class="p">(</span><span class="nb">/ </span><span class="nv">exp</span> <span class="mi">2</span><span class="p">)</span> <span class="nv">m</span><span class="p">)</span> <span class="nv">m</span><span class="p">))</span>
+        <span class="p">(</span><span class="k">else </span><span class="p">(</span><span class="nb">remainder </span><span class="p">(</span><span class="nb">* </span><span class="nv">base</span> <span class="p">(</span><span class="nf">expmod</span> <span class="nv">base</span> <span class="p">(</span><span class="nb">- </span><span class="nv">exp</span> <span class="mi">1</span><span class="p">)</span> <span class="nv">m</span><span class="p">))</span> <span class="nv">m</span><span class="p">))))</span>
+
+<span class="p">(</span><span class="k">define </span><span class="p">(</span><span class="nf">mr-test</span> <span class="nv">n</span> <span class="nv">a</span><span class="p">)</span>
+  <span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nf">expmod</span> <span class="nv">a</span> <span class="p">(</span><span class="nb">- </span><span class="nv">n</span> <span class="mi">1</span><span class="p">)</span> <span class="nv">n</span><span class="p">)</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="p">(</span><span class="k">define </span><span class="p">(</span><span class="nf">miller-rabin</span> <span class="nv">n</span> <span class="nv">t</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">cond </span><span class="p">((</span><span class="nb">= </span><span class="nv">t</span> <span class="mi">0</span><span class="p">)</span> <span class="no">#t</span><span class="p">)</span>
+        <span class="p">((</span><span class="nf">mr-test</span> <span class="nv">n</span> <span class="p">(</span><span class="nb">+ </span><span class="mi">2</span> <span class="p">(</span><span class="nf">random</span> <span class="p">(</span><span class="nb">- </span><span class="nv">n</span> <span class="mi">2</span><span class="p">))))</span> <span class="p">(</span><span class="nf">miller-rabin</span> <span class="nv">n</span> <span class="p">(</span><span class="nb">- </span><span class="nv">t</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="p">(</span><span class="k">else </span><span class="no">#f</span><span class="p">)))</span>
+
+<span class="p">(</span><span class="nf">miller-rabin</span> <span class="mi">561</span> <span class="mi">20</span><span class="p">)</span>
+<span class="c1">;;=&gt; #f</span>
+</pre></div>
+
+
+<h3>2. RSA 加密算法</h3>
+<p>RSA 算法被评为<a href="http://blog.jobbole.com/70639/">真正统治世界的十大算法</a>之一，虽然并非经过严格的权威性论证与投票表决，但大部分人应该不会对此存在异议。RSA 算法的数学原理简而言之就是：利用对大数进行因数分解的困难，实现以公开密钥对明文进行加密，而只能以私有密钥进行解密。具体的数学推导过程可以参考文章最后的链接深入了解，这里我们需要了解一个新的数学定理：<a href="https://zh.wikipedia.org/wiki/%E6%AC%A7%E6%8B%89%E5%87%BD%E6%95%B0">欧拉函数</a>。</p>
+<blockquote>
+<p>对整数 $n$，欧拉函数 $\varphi (n)$ 是小于或等于 $n$ 的正整数中与 $n$ 互质的数的数量。特别的，如果 $n$ 是素数，$\varphi (n) = n - 1$。</p>
+</blockquote>
+<p>下面我们来看Scheme简单实现的 RSA 算法及加密解密过程的实例：</p>
+<div class="highlight"><pre><span class="c1">;; 1. 随意选择两个大的质数p和q，p不等于q</span>
+<span class="p">(</span><span class="k">define </span><span class="nv">p</span> <span class="mi">61</span><span class="p">)</span>
+<span class="p">(</span><span class="k">define </span><span class="nv">q</span> <span class="mi">53</span><span class="p">)</span>
+<span class="c1">;; 计算N=pq</span>
+<span class="p">(</span><span class="k">define </span><span class="nv">N</span> <span class="p">(</span><span class="nb">* </span><span class="nv">p</span> <span class="nv">q</span><span class="p">))</span>
+
+<span class="c1">;; 2. 根据欧拉函数，求得r=(p-1)(q-1)</span>
+<span class="p">(</span><span class="k">define </span><span class="nv">r</span> <span class="p">(</span><span class="nb">* </span><span class="p">(</span><span class="nb">- </span><span class="nv">p</span> <span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="nb">- </span><span class="nv">q</span> <span class="mi">1</span><span class="p">)))</span>
+
+<span class="c1">;; 3. 选择一个小于r的整数e，e与r互质</span>
+<span class="p">(</span><span class="k">define </span><span class="nv">e</span> <span class="mi">17</span><span class="p">)</span>
+<span class="c1">;; 求得e关于r的模反元素</span>
+<span class="p">(</span><span class="k">define </span><span class="nv">d</span> <span class="p">(</span><span class="nf">modular-multiplicative-inverse</span> <span class="nv">e</span> <span class="nv">r</span><span class="p">))</span>
+
+<span class="c1">;; 模反元素计算过程</span>
+<span class="p">(</span><span class="k">define </span><span class="p">(</span><span class="nf">dividable?</span> <span class="nv">x</span> <span class="nv">y</span><span class="p">)</span>
+  <span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nb">remainder </span><span class="nv">x</span> <span class="nv">y</span><span class="p">)</span> <span class="mi">0</span><span class="p">))</span>
+<span class="p">(</span><span class="k">define </span><span class="p">(</span><span class="nf">mmii</span> <span class="nv">a</span> <span class="nv">m</span> <span class="nv">k</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">dividable?</span> <span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="nb">* </span><span class="nv">k</span> <span class="nv">m</span><span class="p">)</span> <span class="mi">1</span><span class="p">)</span> <span class="nv">a</span><span class="p">)</span>
+    <span class="p">(</span><span class="nb">/ </span><span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="nb">* </span><span class="nv">k</span> <span class="nv">m</span><span class="p">)</span> <span class="mi">1</span><span class="p">)</span> <span class="nv">a</span><span class="p">)</span>
+    <span class="p">(</span><span class="nf">mmii</span> <span class="nv">a</span> <span class="nv">m</span> <span class="p">(</span><span class="nb">+ </span><span class="nv">k</span> <span class="mi">1</span><span class="p">))))</span>
+<span class="p">(</span><span class="k">define </span><span class="p">(</span><span class="nf">modular-multiplicative-inverse</span> <span class="nv">a</span> <span class="nv">m</span><span class="p">)</span>
+  <span class="p">(</span><span class="nf">mmii</span> <span class="nv">a</span> <span class="nv">m</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="c1">;; RSA 加密需要公钥(N, e)</span>
+<span class="c1">;; RSA 解密需要私钥(N, d)</span>
+<span class="p">(</span><span class="k">define </span><span class="p">(</span><span class="nf">rsa</span> <span class="nv">m</span> <span class="nv">KNN</span> <span class="nv">Ked</span><span class="p">)</span>
+  <span class="p">(</span><span class="nf">expmod</span> <span class="nv">m</span> <span class="nv">Ked</span> <span class="nv">KNN</span><span class="p">))</span>
+
+<span class="c1">;; 4. 利用公钥对明文m进行加密</span>
+<span class="p">(</span><span class="k">define </span><span class="nv">m</span> <span class="mi">1990</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">display </span><span class="s">&quot;PlaintText: &quot;</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">display </span><span class="nv">m</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">newline</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">display </span><span class="s">&quot;Encrypted: &quot;</span><span class="p">)</span>
+<span class="p">(</span><span class="k">define </span><span class="nv">cipher</span> <span class="p">(</span><span class="nf">rsa</span> <span class="nv">m</span> <span class="nv">N</span> <span class="nv">e</span><span class="p">))</span>
+<span class="p">(</span><span class="nb">display </span><span class="nv">cipher</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">newline</span><span class="p">)</span>
+
+<span class="c1">;;=&gt; PlaintText: 1990</span>
+<span class="c1">;;=&gt; Encrypted: 1806</span>
+
+<span class="c1">;; 5. 根据私钥对密文进行解密</span>
+<span class="p">(</span><span class="nb">display </span><span class="s">&quot;Decrypted: &quot;</span><span class="p">)</span>
+<span class="p">(</span><span class="nb">display </span><span class="p">(</span><span class="nf">rsa</span> <span class="nv">cipher</span> <span class="nv">N</span> <span class="nv">d</span><span class="p">))</span>
+
+<span class="c1">;;=&gt; Decrypted: 1990</span>
+</pre></div>
+
+
+<p>想要根据公钥 $(N, e)$ 推算出私钥 $(N, d)$ ，需要对 $N$ 进行因数分解，推导出原始的 $p$ 和 $q$。上例中用到的 $p = 61, q = 53$ 很容易就可以从 $N = 3233$ 推导出来，然而当 $N$ 非常大（1024或2048位二进制）时，对其进行因数分解在当下看来几乎是不可能实现的。这也是密码学中的一个基本原理，如果解密所需的成本高于该信息的价值，那么这种加密就被认为是安全的。</p>
+<h3>参考</h3>
+<ul>
+<li><a href="http://www.matrix67.com/blog/archives/234">数论部分第一节：素数与素性测试</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/%E7%B1%B3%E5%8B%92-%E6%8B%89%E5%AE%BE%E6%A3%80%E9%AA%8C">米勒-拉宾素性检验</a></li>
+<li><a href="http://www.matrix67.com/blog/archives/5100">跨越千年的RSA算法</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/RSA%E5%8A%A0%E5%AF%86%E6%BC%94%E7%AE%97%E6%B3%95">RSA加密算法</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2013/06/rsa_algorithm_part_one.html">RSA算法原理（一）</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2013/07/rsa_algorithm_part_two.html">RSA算法原理（二）</a></li>
+</ul>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=Miller-Rabin 算法与 RSA 算法&amp;url=http://blog.rainy.im/2015/08/27/miller-rabin-n-rsa/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2015/08/27/miller-rabin-n-rsa/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2015/08/27/miller-rabin-n-rsa/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/sicp.html">SICP</a><a href="http://blog.rainy.im/tag/scheme.html">Scheme</a><a href="http://blog.rainy.im/tag/suan-fa.html">算法</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

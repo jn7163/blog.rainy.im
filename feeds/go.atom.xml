@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Yu's Tech Lab - Go</title><link href="http://blog.rainy.im/" rel="alternate"></link><link href="http://blog.rainy.im/feeds/go.atom.xml" rel="self"></link><id>http://blog.rainy.im/</id><updated>2016-05-29T18:55:19+08:00</updated><entry><title>给 Python 开发者的 Go 语言入门指南</title><link href="http://blog.rainy.im/2016/05/29/golang-101-for-pythoners/" rel="alternate"></link><published>2016-05-29T18:55:19+08:00</published><updated>2016-05-29T18:55:19+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2016-05-29:/2016/05/29/golang-101-for-pythoners/</id><summary type="html">&lt;p&gt;本文主要包括：&lt;/p&gt;</summary><content type="html">&lt;ol&gt;
+&lt;li&gt;Go 安装与配置&lt;/li&gt;
+&lt;li&gt;Atom as IDE&lt;/li&gt;
+&lt;li&gt;Go VS Python&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;0. 关于&lt;/h3&gt;
+&lt;p&gt;之前&lt;a href="https://github.com/rainyear/lolita/issues/16"&gt;学习过 Go 一段时间&lt;/a&gt;，用&lt;a href="https://github.com/rainyear/lolita/issues/5"&gt; Vim 做为 IDE&lt;/a&gt;，也尝试过几次&lt;a href="https://github.com/coodict/coodict-server"&gt;用 Go 做服务器后端&lt;/a&gt;，后来因为没有再写网站的需求就放下了一段时间。现在回忆一下用 Go 的体验，与 Python 相比可能有下面几点优势：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;高性能，高性能，高性能；&lt;/li&gt;
+&lt;li&gt;低内存，低内存，低内存；&lt;/li&gt;
+&lt;li&gt;异步；&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;缺点有：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;库太少（相比于 Python）；&lt;/li&gt;
+&lt;li&gt;内置数据结构及操作太简陋；&lt;/li&gt;
+&lt;li&gt;第三方库依赖、安装、管理麻烦（墙也占了一部分原因）；&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;最近来看 Go 的发展还是相当不错的，至少在服务器与后端方面的优势（高能低耗二进制包）还是非常吸引人的。新电脑上还没有配置过 Go 语言环境，刚好这次重新安装、配置一次，并从基础语法上与 Python 进行对比，方便有兴趣的 Python 开发者可以快速尝试一下 Go 语言，顺便作为笔记。&lt;/p&gt;
+&lt;p&gt;本文主要包括：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Go 安装与配置&lt;/li&gt;
+&lt;li&gt;Atom as IDE&lt;/li&gt;
+&lt;li&gt;Go VS Python&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;1. Go 安装与配置&lt;/h3&gt;
+&lt;p&gt;所有安装、配置的步骤都在&lt;a href="https://golang.org"&gt;官网（需科学上网）&lt;/a&gt;（&lt;a href="http://go.cn-mirrors.com/doc/"&gt;国内文档镜像&lt;/a&gt;，&lt;a href="http://golangtc.com/download"&gt;国内安装包镜像&lt;/a&gt;）有清楚的说明，Mac OS X 已经有了 pkg 版本，可以直接双击安装。Go 语言有几个非常重要的环境变量需要搞清楚并设定好：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;GOROOT&lt;/code&gt;&lt;/strong&gt;：&lt;/p&gt;
+&lt;p&gt;Go 的安装目录。这个目录是 Go 寻找内置库的地方，如果是 Mac OS X 安装包默认位置为 &lt;code&gt;/usr/local/go&lt;/code&gt;，如果是从源码手动安装，若不是安装到 &lt;code&gt;/usr/local/go&lt;/code&gt; 则将其设定为安装目录（若是默认位置无需设定）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;# add to ~/.bashrc or ~/.zshrc&lt;/span&gt;
+&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;GOROOT&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/path/to/where/go/installed
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;GOPATH&lt;/code&gt;&lt;/strong&gt;：&lt;/p&gt;
+&lt;p&gt;你的工作目录。这个目录用于存放从网上下载的第三方库以及你自己创建的项目。与 Python 不同的是，Go 的目标并不在于创建可以随处执行的脚本，而是以项目为单位。可以任意选择一个目录作为你的 Go 工作目录：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;# add to ~/.bashrc or ~/.zshrc&lt;/span&gt;
+&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;GOPATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/Users/rainy/Projects/go
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;除了这两个必备的环境变量之外，还可以设定一下系统信息：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;GOARCH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;amd64
+&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;GOOS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;darwin
+&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;GOBIN&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/usr/local/go/bin
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;最后一个 &lt;code&gt;GOBIN&lt;/code&gt; 是指执行 &lt;code&gt;go get some-package&lt;/code&gt; 的时候将生成的二进制命令保存到的目录，如果不设定默认为 &lt;code&gt;$GOPATH/bin&lt;/code&gt;，最好将这一目录添加到系统路径中（若设定为 &lt;code&gt;/usr/local/go/bin&lt;/code&gt; 还需要注意权限问题）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;# add to ~/.bashrc or ~/.zshrc&lt;/span&gt;
+&lt;span class="nb"&gt;export&lt;/span&gt; &lt;span class="nv"&gt;PATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;$PATH:$GOBIN
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;现在就算是安装配置完成了，执行：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;go version
+&lt;span class="c1"&gt;# go version go1.6.2 darwin/amd64&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;再试试安装一个命令行工具：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;go get -u github.com/astaxie/bat
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;bat&lt;/code&gt; 工具将会被安装到 &lt;code&gt;$GOBIN&lt;/code&gt; 下，这时我们回到工作目录下，会发现目录结构变为：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; $GOPATH &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; tree -L 1
+&lt;span class="c1"&gt;# .&lt;/span&gt;
+&lt;span class="c1"&gt;# ├── bin&lt;/span&gt;
+&lt;span class="c1"&gt;# ├── pkg&lt;/span&gt;
+&lt;span class="c1"&gt;# └── src&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;其中 &lt;code&gt;src&lt;/code&gt; 下面保存的是各种第三方库以及自己项目的源文件，&lt;code&gt;bin&lt;/code&gt; 则是 &lt;code&gt;go get&lt;/code&gt; 或 &lt;code&gt;go install&lt;/code&gt; 生成的二进制执行文件，&lt;code&gt;pkg&lt;/code&gt; 是平台相关的包。接下来将 Atom 配置成 Go 专用 IDE！&lt;/p&gt;
+&lt;h3&gt;2. Atom as Go IDE&lt;/h3&gt;
+&lt;p&gt;之前配置过 &lt;a href="https://github.com/rainyear/lolita/issues/5"&gt;Vim&lt;/a&gt;，但现在大部分情况都是用 Atom，而且 Atom 的插件管理更方便，所以就用 Atom 作为 IDE！&lt;/p&gt;
+&lt;p&gt;首先要安装的插件是 &lt;a href="https://atom.io/packages/go-plus"&gt;&lt;code&gt;go-plus&lt;/code&gt;&lt;/a&gt;，但结果发现它有一堆的依赖插件需要安装，并且这些插件依赖一些 Go 的工具，不过现在 Atom 已经可以自动安装依赖插件了，不需要一个一个手动安装：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="go-plus" src="http://qncdn.rainy.im/go-plus.png"&gt;&lt;/p&gt;
+&lt;p&gt;这些插件有可能会需要一些 Go 工具的支持，例如 &lt;code&gt;golint&lt;/code&gt;、&lt;code&gt;goimport&lt;/code&gt;、&lt;code&gt;gocode&lt;/code&gt; 等，这里就体现出我上面提到的缺点之一了，如果是托管在 &lt;code&gt;github&lt;/code&gt; 上的库还算好点，但如果 &lt;code&gt;golang.org&lt;/code&gt; 或者 &lt;code&gt;code.google.com&lt;/code&gt; 就需要科学上网了，之前也是被这些第三方库搞得焦头烂额，体验非常差。&lt;/p&gt;
+&lt;p&gt;经过漫长的等待，&lt;code&gt;go-plus&lt;/code&gt; 的依赖都安装完了，然后安装 Go 工具：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;go get -u github.com/nsf/gocode
+go get -u github.com/golang/lint
+
+&lt;span class="c1"&gt;# 对于 golang.org/x/ 下面的包建议去 GitHub 镜像仓库手动 Clone 项目，然后本地执行 go install&lt;/span&gt;
+&lt;span class="nb"&gt;cd&lt;/span&gt; $GOPATH
+mkdir -p golang.org/x
+&lt;span class="nb"&gt;cd&lt;/span&gt; golang.org/x
+git clone https://github.com/golang/tools.git
+go install golang.org/x/tools/cmd/goimports
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;先不着急用 Atom 创建 Go 文件，先来看看此时的工作目录：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; $GOPATH
+tree -L 2
+&lt;span class="c1"&gt;# .&lt;/span&gt;
+&lt;span class="c1"&gt;# ├── bin&lt;/span&gt;
+&lt;span class="c1"&gt;# ├── pkg&lt;/span&gt;
+&lt;span class="c1"&gt;# │   └── darwin_amd64&lt;/span&gt;
+&lt;span class="c1"&gt;# └── src&lt;/span&gt;
+&lt;span class="c1"&gt;#     ├── github.com&lt;/span&gt;
+&lt;span class="c1"&gt;#     ├── golang.org&lt;/span&gt;
+&lt;span class="c1"&gt;#     ├── gopkg.in&lt;/span&gt;
+&lt;span class="c1"&gt;#     └── honnef.co&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Go 的第三方库存放目录是以托管网站开头的（&lt;code&gt;import&lt;/code&gt; 的时候也是这样），自己创建的项目也应该遵循这个规范！（注意到我这里的 &lt;code&gt;bin&lt;/code&gt; 目录下没有任何可执行文件，因为我把它们移动到系统路径下了）。&lt;/p&gt;
+&lt;p&gt;接下来创建一个新项目：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; $GOPATH
+mkdir src/github.com/rainyear/learn
+atom src/github.com/rainyear/learn
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;img alt="learn-go" src="http://qncdn.rainy.im/learn-go.gif"&gt;&lt;/p&gt;
+&lt;p&gt;如果你还觉得 Python 的缩进是强迫症的话，那么真正的强迫症来了！Go 提供了 &lt;code&gt;gofmt&lt;/code&gt; 和 &lt;code&gt;goimports&lt;/code&gt; 工具，帮助你强行把代码整理干净，包括缩进、花括号、&lt;code&gt;import&lt;/code&gt;，只要在 Atom 中保存一下，代码就会被重新整理一遍，这才是强迫症患者的福音！不过 Google 也将这一福利推广至 Python，推出了 &lt;a href="https://github.com/google/yapf"&gt;Python 格式化工具: yapf&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;上图中是通过 Atom 的 Builder 插件执行 &lt;code&gt;go run main.go&lt;/code&gt; 运行的，如果整个项目完成之后，可以通过 &lt;code&gt;go install&lt;/code&gt; 打包生成二进制文件（甚至可以生成跨平台的二进制包，直接部署到线上！）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; $GOPATH/src/github.com/rainyear/learn
+go install
+
+&lt;span class="c1"&gt;# 二进制包将会打包至 $GOBIN 或者 $GOPATH/bin&lt;/span&gt;
+&lt;span class="nb"&gt;cd&lt;/span&gt; $GOPATH
+ls bin
+&lt;span class="c1"&gt;# learn&lt;/span&gt;
+./bin/learn
+&lt;span class="c1"&gt;# Hello world!&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;3. Go VS Python&lt;/h3&gt;
+&lt;p&gt;最后来比较一下 Go 与 Python 的一些基本语法，其中 Go 语言的例子来自&lt;a href="https://tour.golang.org/"&gt;A Tour of Go&lt;/a&gt;，&lt;a href="https://github.com/rainyear/learn.go"&gt;源文件&lt;/a&gt;：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="go-vs-py" src="http://qncdn.rainy.im/go-vs-py-1.png"&gt;
+&lt;img alt="go-vs-py" src="http://qncdn.rainy.im/go-vs-py-2.png"&gt;
+&lt;img alt="go-vs-py" src="http://qncdn.rainy.im/go-vs-py-3.png"&gt;
+&lt;img alt="go-vs-py" src="http://qncdn.rainy.im/go-vs-py-4.png"&gt;
+&lt;img alt="go-vs-py" src="http://qncdn.rainy.im/go-vs-py-5.png"&gt;
+&lt;img alt="go-vs-py" src="http://qncdn.rainy.im/go-vs-py-6.png"&gt;
+&lt;img alt="go-vs-py" src="http://qncdn.rainy.im/go-vs-py-7.png"&gt;
+&lt;img alt="go-vs-py" src="http://qncdn.rainy.im/go-vs-py-8.png"&gt;&lt;/p&gt;</content><category term="Go"></category><category term="Python"></category></entry><entry><title>JWT 在前后端分离中的应用与实践</title><link href="http://blog.rainy.im/2015/06/10/react-jwt-pretty-good-practice/" rel="alternate"></link><published>2015-06-10T13:19:56+08:00</published><updated>2015-06-10T13:19:56+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2015-06-10:/2015/06/10/react-jwt-pretty-good-practice/</id><summary type="html"></summary><content type="html">&lt;p&gt;本文主要介绍JWT（[JSON Web Token]）授权机制在前后端分离中的应用与实践，包括以下三部分：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;JWT原理介绍&lt;/li&gt;
+&lt;li&gt;JWT的安全性&lt;/li&gt;
+&lt;li&gt;React.js+Flux架构下的实践（[React-jwt example]&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;本文主要介绍JWT（&lt;a href="http://jwt.io/"&gt;JSON Web Token&lt;/a&gt;）授权机制在前后端分离中的应用与实践，包括以下三部分：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;JWT原理介绍&lt;/li&gt;
+&lt;li&gt;JWT的安全性&lt;/li&gt;
+&lt;li&gt;React.js+Flux架构下的实践（&lt;a href="https://github.com/rainyear/react-jwt-example.git"&gt;React-jwt example&lt;/a&gt;）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;0 关于前后端分离&lt;/h3&gt;
+&lt;p&gt;前后端分离是一个很有趣的议题，它不仅仅是指前后端工程师之间的相互独立的合作分工方式，更是前后端之间开发模式与交互模式的模块化、解耦化。计算机世界的经验告诉我们，对于复杂的事物，模块化总是好的，无论是后端API开发中越来越成为规范的&lt;a href="http://en.wikipedia.org/wiki/Representational_state_transfer"&gt;RESTful API&lt;/a&gt;风格，还是Web前端越来越多的模板、框架（参见&lt;a href="http://www.ruanyifeng.com/blog/2015/02/mvcmvp_mvvm.html"&gt;MVC，MVP 和 MVVM 的图示&lt;/a&gt;），包括移动应用中前后端天然分离的特质，都证实了前后端分离的重要性与必要性（更生动的细节与实例说明可以参看赫门分享的主题&lt;a href="http://2014.jsconf.cn/slides/herman-taobaoweb/#/"&gt;淘宝前后端分离实践&lt;/a&gt;）。&lt;/p&gt;
+&lt;p&gt;实现前后端分离，对于后端开发人员来说是一件很幸福的事情，因为不需要再考虑怎样在HTML中套入数据，只关心数据逻辑的处理；而前端则需要承担接收数据之后界面呈现、用户交互、数据传递等所有任务。虽然这看起来加重了前端的工作量，但实际上有越来越多丰富多样的前端框架可供选择，这让前端开发变得越来越结构化、系统化，前端工程师也不再只是“套版的”。&lt;/p&gt;
+&lt;p&gt;在所有前端框架中，Facebook推出的&lt;a href="http://facebook.github.io/react"&gt;React&lt;/a&gt;无疑是当下最热门（之一），然而React只负责界面渲染层面，相当于MVC中的V（View），因此只靠React无法完成一个完整的单页应用（&lt;a href="http://en.wikipedia.org/wiki/Single-page_application"&gt;Single Page App&lt;/a&gt;）。Facebook另外推出与之配套的&lt;a href="http://facebook.github.io/flux"&gt;Flux&lt;/a&gt;架构，主要为了避免Angular.js之类MVC的架构模式，规避数据双向绑定而采用单向绑定的数据传递方式。实际上React无论是学习还是使用都是非常简单的，而Flux则需要花更多时间去理解消化，本文第3部分我采用Flux架构的一种实现&lt;a href="https://github.com/spoike/refluxjs"&gt;Reflux.js&lt;/a&gt;，做了一个基于JWT授权机制的登入、登出的例子，顺便介绍Flux架构的细节。&lt;/p&gt;
+&lt;h3&gt;1 JWT 介绍及其原理&lt;/h3&gt;
+&lt;p&gt;JWT是我之前做Android应用的时候了解到的一种用户授权机制，虽然原生的移动手机应用与基于浏览器的Web应用之间存在很多差异，但很多情况下后端往往还是沿用已有的架构跟代码，所以用户授权往往还是采用Cookie+Session的方式，也就是需要原生应用中模拟浏览器对Cookie的操作。&lt;/p&gt;
+&lt;p&gt;Cookie+Session的存在主要是为了解决HTTP这一无状态协议下服务器如何识别用户的问题，其原理就是在用户登录通过验证后，服务端将数据加密后保存到客户端浏览器的Cookie中，同时服务器保留相对应的Session（文件或DB）。用户之后发起的请求都会携带Cookie信息，服务端需要根据Cookie寻回对应的Session，从而完成验证，确认这是之前登陆过的用户。其工作原理如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Cookie+Session" src="http://7xiijd.com1.z0.glb.clouddn.com/cookie_sessions.png"&gt;&lt;/p&gt;
+&lt;p&gt;JWT是&lt;a href="https://auth0.com/"&gt;Auth0&lt;/a&gt;提出的通过对JSON进行加密签名来实现授权验证的方案，编码之后的JWT看起来是这样的一串字符：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;由&lt;code&gt;.&lt;/code&gt;分为三段，通过解码可以得到：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;// 1. Headers&lt;/span&gt;
+&lt;span class="c1"&gt;// 包括类别（typ）、加密算法（alg）；&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;alg&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;HS256&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;typ&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;JWT&amp;quot;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="c1"&gt;// 2. Claims&lt;/span&gt;
+&lt;span class="c1"&gt;// 包括需要传递的用户信息；&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;sub&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;1234567890&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;John Doe&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;admin&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="c1"&gt;// 3. Signature&lt;/span&gt;
+&lt;span class="c1"&gt;// 根据alg算法与私有秘钥进行加密得到的签名字串；&lt;/span&gt;
+&lt;span class="c1"&gt;// 这一段是最重要的敏感信息，只能在服务端解密；&lt;/span&gt;
+&lt;span class="nx"&gt;HMACSHA256&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+    &lt;span class="nx"&gt;base64UrlEncode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;header&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;.&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+    &lt;span class="nx"&gt;base64UrlEncode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;payload&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="nx"&gt;SECREATE_KEY&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;在使用过程中，服务端通过用户登录验证之后，将Header+Claim信息加密后得到第三段签名，然后将签名返回给客户端，在后续请求中，服务端只需要对用户请求中包含的JWT进行解码，即可验证是否可以授权用户获取相应信息，其原理如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="JWT" src="http://7xiijd.com1.z0.glb.clouddn.com/json_web_token.png"&gt;&lt;/p&gt;
+&lt;p&gt;通过比较可以看出，使用JWT可以省去服务端读取Session的步骤，这样更符合RESTful的规范。但是对于客户端（或App端）来说，为了保存用户授权信息，仍然需要通过Cookie或类似的机制进行本地保存。因此JWT是用来取代服务端的Session而非客户端Cookie的方案，当然对于客户端本地存储，HTML5提供了Cookie之外更多的解决方案（localStorage/sessionStorage），究竟采用哪种存储方式，其实从Js操作上来看没有本质上的差异，不同的选择更多是出于安全性的考虑。&lt;/p&gt;
+&lt;h3&gt;2 JWT 安全性&lt;/h3&gt;
+&lt;p&gt;用户授权这样敏感的信息，安全性当然是首先需要考虑的因素。这里主要讨论在使用JWT时如何防止XSS和XSRF两种攻击。&lt;/p&gt;
+&lt;p&gt;XSS是Web中最常见的一种漏洞（我们的**学报官网就存在这个漏洞这件事我就不说了=.=），其主要原因是对用户输入信息不加过滤，导致用户（被误导）恶意输入的Js代码在访问该网页时被执行，而Js可以读取当前网站域名下保存的Cookie信息。针对这种攻击，无论是Cookie还是localStorage中的信息都有可能被窃取，但防止XSS也相对简单一些，对用户输入的所有信息进行过滤即可。另外，现在越来越多的CDN服务，让我们可以节省服务器流量，但同时也有可能引入不安全的Js脚本，例如前段时间Github被Great Cannon轰击的案例，则需要提高对某度之类服务的警惕。&lt;/p&gt;
+&lt;p&gt;另外一种更加棘手的XSRF漏洞主要利用Cookie是按照域名存储，同时访问某域名时浏览器会自动携带该域名所保存的Cookie信息这一特征。如果执意要将JWT存储在Cookie中，服务端则需要额外验证请求来源，或者在提交表单中加入随机签名并在处理表单时进行验证。&lt;/p&gt;
+&lt;p&gt;我在后面的实例中采用将JWT保存在localStorage中的方案，请求时将JWT放入Request Header中的Authorization位。对JWT安全性问题想要了解更多可以参考下面几篇文章：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="https://stormpath.com/blog/where-to-store-your-jwts-cookies-vs-html5-web-storage/"&gt;Where to Store Your JWTs - Cookies vs HTML5 Web Storage&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://stormpath.com/blog/jwt-the-right-way/"&gt;Use JWT the Right Way!&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://auth0.com/blog/2014/01/27/ten-things-you-should-know-about-tokens-and-cookies/"&gt;10 Things You Should Know about Tokens&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://stackoverflow.com/questions/27067251/where-to-store-jwt-in-browser-how-to-protect-against-csrf"&gt;Where to store JWT in browser? How to protect against CSRF?&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;3 React-jwt Example&lt;/h3&gt;
+&lt;p&gt;本节源码可见&lt;a href="https://github.com/rainyear/react-jwt-example"&gt;Github: react-jwt-example&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;前面提到的React.js框架学习成本其实非常低，只要跟着官方教程走一遍，搞清楚props、states、virtual DOM几个概念，就可以开始用了。但是只有View层什么都做不了，Facebook推出配套的Flux架构，一开始看到下面这张架构图，当时我就懵逼了。&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Flux diagram" src="http://7xiijd.com1.z0.glb.clouddn.com/flux-diagram-white-background.png"&gt;&lt;/p&gt;
+&lt;p&gt;好在Flux只是一种理论架构，虽然官方也提供了实现方案，但是我更倾向于&lt;a href="https://github.com/spoike/refluxjs"&gt;Reflux.js&lt;/a&gt;的实现方式，如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Reflux.js" src="http://7xiijd.com1.z0.glb.clouddn.com/reflux.png"&gt;&lt;/p&gt;
+&lt;p&gt;其中View Components即视图层由React负责，Stores用于存储数据，Actions则用于监听所有动作，所有数据的传递都是单向绑定的，在分割不同模块时，可以清楚地看到数据的流动方向。&lt;/p&gt;
+&lt;p&gt;我尝试写了一个简单的登录、登出以及获取用户个人数据的例子，除了Reflux之外，还用到如下模块：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="https://github.com/rackt/react-router"&gt;react-router&lt;/a&gt;: SPA路由；&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://react-bootstrap.github.io/"&gt;react-bootstrap&lt;/a&gt;: React化的Bootstrap，UI样式；&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.npmjs.com/package/reqwest"&gt;reqwest&lt;/a&gt;: Ajax请求；&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.npmjs.com/package/jwt-decode"&gt;jwt-decode&lt;/a&gt;: 客户端的JWT解码；&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;另外服务端API采用&lt;a href="https://gin-gonic.github.io/gin"&gt;Go gin&lt;/a&gt;框架，依赖于&lt;a href="http://github.com/dgrijalva/jwt-go"&gt;jwt-go&lt;/a&gt;。代码目录结构如下：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;tree -I &lt;span class="s1"&gt;&amp;#39;node_modules|.git&amp;#39;&lt;/span&gt;
+.
+├── README.md
+├── gulpfile.js
+├── index.html
+├── package.json
+├── scripts
+│   ├── actions
+│   │   └── actions.js
+│   ├── app.js
+│   ├── build
+│   │   └── dist.js
+│   ├── components
+│   │   └── HelloWorld.js
+│   ├── stores
+│   │   ├── loginStore.js
+│   │   └── userStore.js
+│   └── views
+│       ├── home.js
+│       ├── login.js
+│       └── profile.js
+└── server.go
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;完整的页面放在view中，可复用的组件放在components，用户的动作包括login、logout以及getBalance，因此需要创建相应的action来监听这些动作：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;// actions.js&lt;/span&gt;
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;actions&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;Reflux&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;createActions&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;login&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{},&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;updateProfile&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{},&lt;/span&gt; &lt;span class="c1"&gt;// login成功更新用户数据&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;loginError&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{},&lt;/span&gt; &lt;span class="c1"&gt;// login失败错误信息&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;logout&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{},&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;getBalance&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;asyncResult&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+
+&lt;span class="nx"&gt;actions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;login&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;listen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;){});&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;用户点击view中的Submit Button时，将表单信息提交给login action：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;// views/login.js&lt;/span&gt;
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;Login&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;React&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;createClass&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+  &lt;span class="p"&gt;...&lt;/span&gt;
+  &lt;span class="nx"&gt;login&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;e&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;e&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;preventDefault&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+    &lt;span class="nx"&gt;actions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;login&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+      &lt;span class="nx"&gt;name&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;refs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;name&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getValue&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt;
+      &lt;span class="nx"&gt;pass&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;refs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;pass&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getValue&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt;
+    &lt;span class="p"&gt;}),&lt;/span&gt;
+  &lt;span class="p"&gt;...&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;span class="c1"&gt;// actions.js&lt;/span&gt;
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;req&lt;/span&gt;    &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;require&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;reqwest&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="nx"&gt;actions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;login&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;listen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+  &lt;span class="nx"&gt;req&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+    &lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;HOST&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/user/token&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="nx"&gt;method&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;post&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;JSON&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;stringify&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="nx"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;json&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="nx"&gt;contentType&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;application/json&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="nx"&gt;headers&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;X-Requested-With&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;XMLHttpRequest&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="nx"&gt;success&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;resp&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;resp&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;code&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+        &lt;span class="nx"&gt;actions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;updateProfile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;resp&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;jwt&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nx"&gt;actions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;updateProfile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;resp&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;msg&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+  &lt;span class="p"&gt;})&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;根据API返回结果，将再次触发updateProfile或updateProfile action，而分别由userStore和loginStore接收：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;// stores/userStore.js&lt;/span&gt;
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;userStore&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;Reflux&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;createStore&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+  &lt;span class="nx"&gt;listenables&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;actions&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// 声明userStore所监听的action&lt;/span&gt;
+  &lt;span class="nx"&gt;updateProfile&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;jwt&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    &lt;span class="c1"&gt;// 注册监听actions.updateProfile&lt;/span&gt;
+    &lt;span class="nx"&gt;localStorage&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setItem&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;jwt&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;jwt&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;jwt_decode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;jwt&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;user&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;logd&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;trigger&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;user&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;span class="p"&gt;})&lt;/span&gt;
+&lt;span class="c1"&gt;// stores/loginStore.js&lt;/span&gt;
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;loginStore&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;Reflux&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;createStore&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+  &lt;span class="nx"&gt;listenables&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;actions&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="nx"&gt;loginError&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;msg&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+    &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;trigger&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;msg&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;store接收action数据后，通过&lt;code&gt;this.trigger(msg)&lt;/code&gt;将处理过后的数据重新传递会view：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;Login&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;React&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;createClass&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+  &lt;span class="nx"&gt;mixins&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+    &lt;span class="nx"&gt;Router&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Navigation&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="nx"&gt;Reflux&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;listenTo&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;userStore&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;onLoginSucc&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="nx"&gt;Reflux&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;listenTo&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;loginStore&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;onLoginErr&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;],&lt;/span&gt;
+  &lt;span class="nx"&gt;onLoginSucc&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(){&lt;/span&gt;
+    &lt;span class="c1"&gt;// 登录成功，跳转回首页&lt;/span&gt;
+    &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;transitionTo&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;home&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="p"&gt;},&lt;/span&gt;
+  &lt;span class="nx"&gt;onLoginErr&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;msg&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="c1"&gt;// 登录失败，显示错误信息&lt;/span&gt;
+    &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setState&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+      &lt;span class="nx"&gt;errorMsg&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;msg&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; 
+    &lt;span class="p"&gt;});&lt;/span&gt;
+  &lt;span class="p"&gt;},&lt;/span&gt;
+  &lt;span class="p"&gt;...&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;至此，从用户点击登录到登录结果传回，整个流程数据在&lt;code&gt;View-&amp;gt;Action-&amp;gt;Store-&amp;gt;View&lt;/code&gt;中完成单向传递，这就是Flux架构的基本概念。&lt;/p&gt;
+&lt;p&gt;在完成登录后，API会将验证通过的JWT传回：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;// server.go&lt;/span&gt;
+&lt;span class="nx"&gt;token&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="nx"&gt;jwt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;New&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;jwt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;SigningMethodHS256&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;// Headers&lt;/span&gt;
+&lt;span class="nx"&gt;token&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Header&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;alg&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;HS256&amp;quot;&lt;/span&gt;
+&lt;span class="nx"&gt;token&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Header&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;typ&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;JWT&amp;quot;&lt;/span&gt;
+&lt;span class="c1"&gt;// Claims&lt;/span&gt;
+&lt;span class="nx"&gt;token&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Claims&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;validUser&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Name&lt;/span&gt;
+&lt;span class="nx"&gt;token&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Claims&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;mail&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;validUser&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Mail&lt;/span&gt;
+&lt;span class="nx"&gt;token&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Claims&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;exp&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;time&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Now&lt;/span&gt;&lt;span class="p"&gt;().&lt;/span&gt;&lt;span class="nx"&gt;Add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;time&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Hour&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mi"&gt;72&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;Unix&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="nx"&gt;tokenString&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;err&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="nx"&gt;token&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;SignedString&lt;/span&gt;&lt;span class="p"&gt;([]&lt;/span&gt;&lt;span class="nb"&gt;byte&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;mySigningKey&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nx"&gt;err&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="kc"&gt;nil&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="nx"&gt;c&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;JSON&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;gin&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;H&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;code&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;500&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;msg&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Server error!&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="nx"&gt;c&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;JSON&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;gin&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;H&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;code&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;msg&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;OK&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;jwt&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;tokenString&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;当登录之后的用户在profile页面发起getBalance请求时，存储于本地的jwt将一起传递，我这里采用Header的方式传递，具体取决于API端的协议：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;// actions.js&lt;/span&gt;
+&lt;span class="nx"&gt;actions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getBalance&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;listen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(){&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;jwt&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;localStorage&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getItem&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;jwt&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="nx"&gt;req&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+    &lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;HOST&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/user/balance&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="nx"&gt;method&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;post&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="nx"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;json&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="nx"&gt;headers&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="s1"&gt;&amp;#39;Authorization&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Bearer &amp;quot;&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="nx"&gt;jwt&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="nx"&gt;success&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;resp&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;resp&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;code&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nx"&gt;actions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;updateProfile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;resp&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;jwt&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+      &lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nx"&gt;actions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;loginError&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;resp&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;msg&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+      &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="p"&gt;})&lt;/span&gt;
+&lt;span class="p"&gt;})&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;而服务端面对任何需要验证权限的请求需要通过Token验证：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;//server.go&lt;/span&gt;
+&lt;span class="nx"&gt;token&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;err&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="nx"&gt;jwt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;ParseFromRequest&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;c&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Request&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kd"&gt;func&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;token&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;jwt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Token&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;interface&lt;/span&gt;&lt;span class="p"&gt;{},&lt;/span&gt; &lt;span class="kt"&gt;error&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="nx"&gt;b&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="p"&gt;([]&lt;/span&gt;&lt;span class="nb"&gt;byte&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;mySigningKey&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;nil&lt;/span&gt;
+&lt;span class="p"&gt;})&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;a href="https://www.coinbase.com/rainyear"&gt;&lt;img alt="BitCoin donate button" src="https://img.shields.io/badge/Bitcoin-donate-2b71b1.svg?style=flat"&gt;&lt;/a&gt; &lt;a href="https://github.com/rainyear/lolita/wiki/Donation#tenpay"&gt;&lt;img alt="Tenpay donate button" src="https://img.shields.io/badge/Tenpay-donate-brightgreen.svg?style=flat"&gt;&lt;/a&gt; &lt;a href="https://github.com/rainyear/lolita/wiki/Donation#alipay"&gt;&lt;img alt="Alipay donate button" src="https://img.shields.io/badge/Alipay-donate-orange.svg?style=flat"&gt;&lt;/a&gt;&lt;/p&gt;</content><category term="Go"></category><category term="React"></category><category term="前后端分离"></category><category term="JWT"></category></entry></feed>

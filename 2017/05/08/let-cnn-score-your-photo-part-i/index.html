@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>用神经网络模型给你的照片打分（Part I）</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/python.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2017/05/08/let-cnn-score-your-photo-part-i/" rel="canonical" />
+
+        <meta name="description" content="为了更好地表征图像信息并，这次采用卷积神经网络对照片评分进行预测。而且这次评分的高低并不绝对代表照片的优劣，而是在人群中真实的评价分数。为了确保数据的完整，这次下载了全部 7.85w 张照片，约20G。">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Python">
+        <meta name="tags" content="ML">
+        <meta name="tags" content="图像">
+        <meta name="tags" content="摄影">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="用神经网络模型给你的照片打分（Part I）"/>
+<meta property="og:description" content="为了更好地表征图像信息并，这次采用卷积神经网络对照片评分进行预测。而且这次评分的高低并不绝对代表照片的优劣，而是在人群中真实的评价分数。为了确保数据的完整，这次下载了全部 7.85w 张照片，约20G。"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2017/05/08/let-cnn-score-your-photo-part-i/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-05-08 11:38:20+08:00"/>
+<meta property="article:modified_time" content="2017-05-08 11:38:20+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Python"/>
+<meta property="article:tag" content="Python"/>
+<meta property="article:tag" content="ML"/>
+<meta property="article:tag" content="图像"/>
+<meta property="article:tag" content="摄影"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "用神经网络模型给你的照片打分（Part I）",
+  "headline": "用神经网络模型给你的照片打分（Part I）",
+  "datePublished": "2017-05-08 11:38:20+08:00",
+  "dateModified": "2017-05-08 11:38:20+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2017/05/08/let-cnn-score-your-photo-part-i/",
+  "description": "为了更好地表征图像信息并，这次采用卷积神经网络对照片评分进行预测。而且这次评分的高低并不绝对代表照片的优劣，而是在人群中真实的评价分数。为了确保数据的完整，这次下载了全部 7.85w 张照片，约20G。"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">用神经网络模型给你的照片打分（Part I）</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Mon 08 May 2017">Mon 08 May 2017</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Mon 08 May 2017</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>在上一篇《<a href="http://blog.rainy.im/2017/04/11/svm-image-hist-and-ranks/">如何通过直方图判断照片的曝光</a>》中，我试图以用户对照片的评分作为评判标准，找出照片直方图与其曝光好坏之间的关系，然而结果并不理想。一方面，曝光水平与最终的评分（点赞用户数量）之间未必相关；另一方面，直方图是对图像整体亮度水平的统计结果，这一粗略的统计损失了很多图像信息（构图、内容）等。此外，上一次收集了评分大于50的1w 张照片，结果发现评分的分布存在较大偏差（实际上有75%以上的照片评分不足20），这也导致训练样本失衡。</p>
+<p>为了更好地表征图像信息并，这次采用卷积神经网络对照片评分进行预测。而且这次评分的高低并不绝对代表照片的优劣，而是在人群中真实的评价分数。为了确保数据的完整，这次下载了全部 7.85w 张照片，约20G，虽然在最后训练过程中为了节省时间不一定会全部用上，至少这次不会出现训练样本失衡的问题。同时这次也抓取了 6.97w 张照片的拍摄器材信息（EXIF），因此在开始训练之前，首先对这些数据进行一个描述性的统计分析。</p>
+<h2>问题</h2>
+<ol>
+<li>最流行的相机型号排名；</li>
+<li>不同型号相机拍摄的照片所获得的平均得分；</li>
+<li>不同标签的照片最常使用的相机型号分布；</li>
+<li>照片标签之间的相互关联关系。</li>
+</ol>
+<p>首先来看格式化存储的数据格式：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="n">cameraDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="s2">&quot;cameraInfo.pkl&quot;</span><span class="p">)</span>
+<span class="n">cameraDF</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="Pasted_Image_07_05_2017__2_15_PM.jpg" src="http://blog-10010404.cos.myqcloud.com/ED12A032D27B85B6235566494781C05A.jpg"></p>
+<p>本文采用 <a href="http://bokeh.pydata.org/en/latest/">Bokeh</a> 对 Pandas 数据进行可视化：</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">bokeh.plotting</span> <span class="kn">import</span> <span class="n">figure</span><span class="p">,</span> <span class="n">show</span>
+<span class="kn">from</span> <span class="nn">bokeh.io</span> <span class="kn">import</span> <span class="n">output_notebook</span>
+<span class="kn">from</span> <span class="nn">bokeh.models</span> <span class="kn">import</span> <span class="n">HoverTool</span>
+<span class="n">output_notebook</span><span class="p">()</span>
+</pre></div>
+
+
+<h3>1. 最流行的相机型号 Top10</h3>
+<div class="highlight"><pre><span class="n">cameraCount</span> <span class="o">=</span> <span class="n">cameraDF</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">(</span><span class="s1">&#39;Count&#39;</span><span class="p">)</span>
+<span class="n">cameraCount</span>
+</pre></div>
+
+
+<p><img alt="images_statistical_analysis.jpg" src="http://blog-10010404.cos.myqcloud.com/636F99AF19CC6330AFB8D9791AE6828A.jpg"></p>
+<p>绘制图表：</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">bokeh.charts</span> <span class="kn">import</span> <span class="n">Bar</span>
+<span class="kn">from</span> <span class="nn">bokeh.charts.attributes</span> <span class="kn">import</span> <span class="n">cat</span>
+<span class="n">bar</span> <span class="o">=</span> <span class="n">Bar</span><span class="p">(</span><span class="n">cameraCount</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">cat</span><span class="p">(</span><span class="n">sort</span><span class="o">=</span><span class="bp">False</span><span class="p">),</span> <span class="n">values</span><span class="o">=</span><span class="s1">&#39;Count&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;相机型号 Top10&quot;</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+<span class="n">bar</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">axis_label</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">bar</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">axis_label</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">bar</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">align</span> <span class="o">=</span> <span class="s1">&#39;center&#39;</span>
+<span class="n">bar</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">900</span>
+<span class="n">bar</span><span class="o">.</span><span class="n">tools</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">show</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="bokeh_plot.png" src="http://blog-10010404.cos.myqcloud.com/771278AF17DD31B1A5430F218C291FE9.png"></p>
+<p>可以看出，Canon 和 Nikon 几乎包揽前10，还有一个一骑绝尘的 SONY 微单 ILCE-7RM2。</p>
+<h3>2. 相机型号所拍照片平均得分</h3>
+<p>也许在大师手中任何器材都能拍出完美的照片，但是我们还是要看看在人群中，使用不同器材拍出的照片所获得的平均评价：</p>
+<div class="highlight"><pre><span class="n">cameraScores</span> <span class="o">=</span> <span class="n">cameraDF</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;camera&#39;</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">500</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;camera&#39;</span><span class="p">)[</span><span class="s1">&#39;favs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> \
+    <span class="o">.</span><span class="n">to_frame</span><span class="p">(</span><span class="s1">&#39;M&#39;</span><span class="p">)</span>
+<span class="n">cameraScores</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+
+<p><img alt="IMAGE" src="http://blog-10010404.cos.myqcloud.com/53DF3906C1556DF3B4291957D48A7574.jpg"></p>
+<p>绘制图表：</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">bokeh.charts.attributes</span> <span class="kn">import</span> <span class="n">cat</span>
+<span class="n">box</span> <span class="o">=</span> <span class="n">Bar</span><span class="p">(</span><span class="n">cameraScores</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="bp">False</span><span class="p">),</span>
+          <span class="n">values</span><span class="o">=</span><span class="s1">&#39;M&#39;</span><span class="p">,</span>
+          <span class="n">label</span><span class="o">=</span><span class="n">cat</span><span class="p">(</span><span class="n">sort</span><span class="o">=</span><span class="bp">False</span><span class="p">),</span>
+          <span class="n">legend</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+          <span class="n">title</span><span class="o">=</span><span class="s1">&#39;平均得分&#39;</span><span class="p">)</span>
+<span class="n">box</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">align</span> <span class="o">=</span> <span class="s1">&#39;center&#39;</span>
+<span class="n">show</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="bokeh_plot.png" src="http://blog-10010404.cos.myqcloud.com/7135895C4250D97F512560534F9BE865.png"></p>
+<h3>3. 不同标签（类型）照片最常用设备</h3>
+<p>和器材与评分的关系一样，未必存在更适合特定场景的特定器材，但我们还是可以统计一下看看，对于不同类型照片最常使用的拍摄器材。</p>
+<div class="highlight"><pre><span class="n">TOI</span> <span class="o">=</span> <span class="n">cameraDF</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">unique</span><span class="p">()[:</span><span class="mi">10</span><span class="p">]</span>
+<span class="n">tagOfInterest</span> <span class="o">=</span> <span class="n">cameraDF</span><span class="p">[</span><span class="n">cameraDF</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">TOI</span><span class="p">)]</span>
+
+<span class="n">tagOfInterest</span> <span class="o">=</span> <span class="n">tagOfInterest</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;tag&#39;</span><span class="p">,</span> <span class="s1">&#39;camera&#39;</span><span class="p">])</span>\
+    <span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>\
+    <span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;tag&#39;</span><span class="p">,</span> <span class="s1">&#39;author&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>\
+    <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;tag&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">tagOfInterest</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tagOfInterest</span><span class="o">.</span><span class="n">author</span>
+</pre></div>
+
+
+<p>绘制图表：</p>
+<p><img alt="bokeh_plot (1).png" src="http://blog-10010404.cos.myqcloud.com/2AF71910C1B97F927E59D0D77C68B9A2.png"></p>
+<p>当然这里的标签并不是相互独立的，也许人像中有相当一部分也是美女照片，至于标签之间的相互关系，我们通过下一个图表来展示。</p>
+<h3>3. 照片标签之间的关联</h3>
+<p>为了更好地将照片按照评分进行归类，一个更好的方案是按照不同的标签（类型）进行区分。例如，人像和风光照片的评价标准可能存在较大差异，因此在评分之前可以先进行归类。上面提到，不同标签之间可能存在重叠（例如人像和美女），因此我们再来统计一下照片标签之间的关联。</p>
+<div class="highlight"><pre><span class="n">TagRelationship</span> <span class="o">=</span> <span class="p">[]</span> 
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cameraDF</span><span class="p">)):</span>
+    <span class="n">tag</span> <span class="o">=</span> <span class="n">cameraDF</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;tag&#39;</span><span class="p">]</span>
+    <span class="n">other_tags</span> <span class="o">=</span> <span class="n">cameraDF</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;other_tags&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">TOI</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">o_t</span> <span class="ow">in</span> <span class="n">other_tags</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">o_t</span> <span class="o">!=</span> <span class="n">tag</span> <span class="ow">and</span> <span class="n">o_t</span> <span class="ow">in</span> <span class="n">TOI</span><span class="p">:</span>
+                <span class="n">TagRelationship</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;main_tag&#39;</span><span class="p">:</span> <span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;rel_tag&#39;</span><span class="p">:</span> <span class="n">o_t</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+
+<span class="n">tagRelSum</span> <span class="o">=</span> <span class="n">TagRelationshipDF</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;main_tag&#39;</span><span class="p">,</span> <span class="s1">&#39;rel_tag&#39;</span><span class="p">])[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> \
+    <span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+<span class="kn">from</span> <span class="nn">bokeh.charts</span> <span class="kn">import</span> <span class="n">Chord</span>
+<span class="n">chd</span> <span class="o">=</span> <span class="n">Chord</span><span class="p">(</span><span class="n">tagRelSum</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s1">&#39;main_tag&#39;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s1">&#39;rel_tag&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">)</span>
+<span class="n">show</span><span class="p">(</span><span class="n">chd</span><span class="p">)</span>
+</pre></div>
+
+
+<p><img alt="bokeh_plot (2).png" src="http://blog-10010404.cos.myqcloud.com/C6321A1F5B804C191105F8BB5C57E561.png"></p>
+<h3>总结</h3>
+<p>以上是对照片信息（EXIF）的一个简单统计，从中多多少少可以找到一些我们想要知道问题的答案。接下来就我下载了 20G 的照片真正想要做的————对照片进行评分，数据量不算特别大，但是要训练起来也不会太快，让我们拭目以待。</p>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=用神经网络模型给你的照片打分（Part I）&amp;url=http://blog.rainy.im/2017/05/08/let-cnn-score-your-photo-part-i/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2017/05/08/let-cnn-score-your-photo-part-i/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2017/05/08/let-cnn-score-your-photo-part-i/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/python.html">Python</a><a href="http://blog.rainy.im/tag/ml.html">ML</a><a href="http://blog.rainy.im/tag/tu-xiang.html">图像</a><a href="http://blog.rainy.im/tag/she-ying.html">摄影</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Yu's Tech Lab - R</title><link href="http://blog.rainy.im/" rel="alternate"></link><link href="http://blog.rainy.im/feeds/r.atom.xml" rel="self"></link><id>http://blog.rainy.im/</id><updated>2015-05-16T13:24:09+08:00</updated><entry><title>RStudio 中的 R Markdown</title><link href="http://blog.rainy.im/2015/05/16/rmarkdown-in-rstudio/" rel="alternate"></link><published>2015-05-16T13:24:09+08:00</published><updated>2015-05-16T13:24:09+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2015-05-16:/2015/05/16/rmarkdown-in-rstudio/</id><summary type="html">&lt;p&gt;RStudio 另一个隐藏功能是可以当做 Markdown 编辑器来用（R Markdown），可以根据数据处理结果快速生成报告文档，这一功能主要通过 [Package Knit]及相关组件完成。&lt;/p&gt;</summary><content type="html">&lt;p&gt;RStudio 是 R 语言的一款开源的 GUI 软件，可以让“用不起Matlab只好用R”的用户体验到很像 Matlab 一样的开发环境，包括变量的显示、&lt;a href="http://blog.rainy.im/2014/07/26/r-packages-guides/"&gt;package 的基本操作&lt;/a&gt;、帮助文档等一系列图形界面。RStudio 另一个隐藏功能是可以当做 Markdown 编辑器来用（R Markdown），可以根据数据处理结果快速生成报告文档，这一功能主要通过 &lt;a href="http://yihui.name/knitr/"&gt;Package Knit&lt;/a&gt; 及相关组件完成。R Markdown 的两大特别之处，一是通过 &lt;a href="http://pandoc.org/"&gt;Pandoc&lt;/a&gt; 将 Markdown 转化成 LaTex，再由强大的 LaTex 转换成 HTML、PDF、Word，理论上来说借助 LaTex 可以生成学术论文、期刊杂志、数据报告等规范格式的文档；另一大特点是整合了 R 语言的环境，可以在 Markdown 语法中 code block 直接执行 R 语言代码并将结果插入文档。&lt;/p&gt;
+&lt;h3&gt;安装 package rmarkdown&lt;/h3&gt;
+&lt;p&gt;可以通过 RStudio 中的新建按钮创建 R Markdown 文件，此时可能提示安装 rmarkdown 包：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;install.packages&lt;span class="p"&gt;(&lt;/span&gt;rmarkdown&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;创建文档可以选择文档标题、作者以及将要输出的文档格式等，这些也可以在之后更改：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="New R Markdown info" src="http://7xiijd.com1.z0.glb.clouddn.com/rmarkdown-create-info.png"&gt;&lt;/p&gt;
+&lt;p&gt;第一次按 Kint PDF（或 Kint HTML）时可能出现错误：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;Knit PDF &lt;span class="o"&gt;:&lt;/span&gt; pandoc document conversion failed with error &lt;span class="m"&gt;43&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;可以通过安装 github 上最新的版本解决：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;install.packages&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;devtools&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# 如果以前没有安装 devtools 包&lt;/span&gt;
+devtools&lt;span class="o"&gt;::&lt;/span&gt;install_github&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;rstudio/rmarkdown&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;第二个问题当是文档中有中文的情况，可能提示：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;!&lt;/span&gt; Package inputenc Error&lt;span class="o"&gt;:&lt;/span&gt; Unicode char \u8&lt;span class="o"&gt;:&lt;/span&gt;年 not set up &lt;span class="kr"&gt;for&lt;/span&gt; use with LaTeX.
+Try running pandoc with &lt;span class="o"&gt;--&lt;/span&gt;latex&lt;span class="o"&gt;-&lt;/span&gt;engine&lt;span class="o"&gt;=&lt;/span&gt;xelatex.
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;如果有中文，LaTex 引擎需要选择为 xelatex，可以通过下图的方式进行更改：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="R Markdown xelatex" src="http://7xiijd.com1.z0.glb.clouddn.com/rmarkdown-pdf.png"&gt;&lt;/p&gt;
+&lt;p&gt;或者直接在文档头信息中加入：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="l l-Scalar l-Scalar-Plain"&gt;output&lt;/span&gt;&lt;span class="p p-Indicator"&gt;:&lt;/span&gt;
+  &lt;span class="l l-Scalar l-Scalar-Plain"&gt;pdf_document&lt;/span&gt;&lt;span class="p p-Indicator"&gt;:&lt;/span&gt;
+    &lt;span class="l l-Scalar l-Scalar-Plain"&gt;latex_engine&lt;/span&gt;&lt;span class="p p-Indicator"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;xelatex&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;这样就可以正常输出为 PDF 文档了，但是会发现所有的中文全部都是空白，这个主要是 LaTex 的配置问题，中文需要中文字体来渲染，可以通过在文件头中引入 LaTex 文件进行配置：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="l l-Scalar l-Scalar-Plain"&gt;outputs&lt;/span&gt;&lt;span class="p p-Indicator"&gt;:&lt;/span&gt;
+  &lt;span class="l l-Scalar l-Scalar-Plain"&gt;pdf_document&lt;/span&gt;&lt;span class="p p-Indicator"&gt;:&lt;/span&gt;
+    &lt;span class="l l-Scalar l-Scalar-Plain"&gt;includes&lt;/span&gt;&lt;span class="p p-Indicator"&gt;:&lt;/span&gt;
+      &lt;span class="l l-Scalar l-Scalar-Plain"&gt;in_header&lt;/span&gt;&lt;span class="p p-Indicator"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;header.tex&lt;/span&gt;
+    &lt;span class="l l-Scalar l-Scalar-Plain"&gt;latex_engine&lt;/span&gt;&lt;span class="p p-Indicator"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;xelatex&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;其中 &lt;code&gt;header.tex&lt;/code&gt; 可以是：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;\usepackage&lt;/span&gt;&lt;span class="nb"&gt;{&lt;/span&gt;xeCJK&lt;span class="nb"&gt;}&lt;/span&gt;
+&lt;span class="k"&gt;\setCJKmainfont&lt;/span&gt;&lt;span class="nb"&gt;{&lt;/span&gt;楷体&lt;span class="nb"&gt;}&lt;/span&gt;  &lt;span class="c"&gt;% 字体可以更换&lt;/span&gt;
+&lt;span class="k"&gt;\setmainfont&lt;/span&gt;&lt;span class="nb"&gt;{&lt;/span&gt;Georgia&lt;span class="nb"&gt;}&lt;/span&gt; &lt;span class="c"&gt;% 設定英文字型&lt;/span&gt;
+&lt;span class="k"&gt;\setromanfont&lt;/span&gt;&lt;span class="nb"&gt;{&lt;/span&gt;Georgia&lt;span class="nb"&gt;}&lt;/span&gt; &lt;span class="c"&gt;% 字型&lt;/span&gt;
+&lt;span class="k"&gt;\setmonofont&lt;/span&gt;&lt;span class="nb"&gt;{&lt;/span&gt;Courier New&lt;span class="nb"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;更多详细配置可以参考&lt;a href="http://rmarkdown.rstudio.com/"&gt;官方文档&lt;/a&gt;。&lt;/p&gt;
+&lt;h3&gt;在 code block 中选择展示 R 语言执行结果&lt;/h3&gt;
+&lt;p&gt;具体使用方式见下图：&lt;/p&gt;
+&lt;p&gt;&lt;a href="http://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf"&gt;&lt;img alt="rmarkdown cheat sheet" src="http://7xiijd.com1.z0.glb.clouddn.com/rmarkdown-cheatsheet.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;```{r, comment='# &amp;gt;', collapse=TRUE}
+a &amp;lt;- 1
+typeof(a);mode(a);class(a)&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;输出结果为：
+
+&lt;span class="sb"&gt;``&lt;/span&gt;`r
+a &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;span class="kp"&gt;typeof&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;a&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="kp"&gt;mode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;a&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="kp"&gt;class&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;a&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;# &amp;gt; [1] &amp;quot;double&amp;quot;&lt;/span&gt;
+&lt;span class="c1"&gt;# &amp;gt; [1] &amp;quot;numeric&amp;quot;&lt;/span&gt;
+&lt;span class="c1"&gt;# &amp;gt; [1] &amp;quot;numeric&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;甚至可以直接生成图像并插入文档（当然结果这里是看不到了，可以在生成的 PDF 或 HTML 中看到绘图结果）：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;x &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="kp"&gt;seq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;from &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;-5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; to &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; by &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;0.01&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+y &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; dnorm&lt;span class="p"&gt;(&lt;/span&gt;x&lt;span class="p"&gt;)&lt;/span&gt;
+plot&lt;span class="p"&gt;(&lt;/span&gt;x&lt;span class="p"&gt;,&lt;/span&gt; y&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;本文内容在 R Markdown 中生成的 PDF 部分效果如下：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Rmarkdown output PDF" src="http://7xiijd.com1.z0.glb.clouddn.com/rmarkdown-output.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="RMarkdown plot" src="http://7xiijd.com1.z0.glb.clouddn.com/rmarkdown-plot.png"&gt;&lt;/p&gt;
+&lt;p&gt;参考：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="https://github.com/yihui/knitr/issues/799#issuecomment-49585463"&gt;Github issues&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</content><category term="R"></category><category term="Markdown"></category></entry><entry><title>R 语言 package 基本操作</title><link href="http://blog.rainy.im/2015/05/12/r-packages-guides/" rel="alternate"></link><published>2015-05-12T14:38:45+08:00</published><updated>2015-05-12T14:38:45+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2015-05-12:/2015/05/12/r-packages-guides/</id><summary type="html">&lt;p&gt;小星星同学借口说在学习《Learning statistics with R》的时候被安装 package 卡住了，导致后面的学习存在很多障碍，由于我也很长时间没有接触 R，有些生疏了，所以没办法马上解决，但是我觉得几个 package 不应该太大，安装出问题一定是打开的姿势不对。&lt;/p&gt;</summary><content type="html">&lt;p&gt;小星星同学借口说在学习《Learning statistics with R》的时候被安装 package 卡住了，导致后面的学习存在很多障碍，由于我也很长时间没有接触 R，有些生疏了，所以没办法马上解决，但是我觉得几个 package 不应该太大，安装出问题一定是打开的姿势不对。&lt;/p&gt;
+&lt;p&gt;首先来说，package 或者是 library 之类的“包”，是所有语言或者 projects 中非常重要的一部分核心内容，它们是所有先辈们智慧的结晶，这些 package 往往封装了许多底层或者通用的功能，让我们不必重造太多轮子。然而在复杂的项目中 package 的安装或者载入可能会伴随很多依赖性、兼容性等问题，优秀的项目往往提供相应的包管理工具来解决这些问题，同时也可以简化用户的操作。R 语言中 package 的下载、安装同样有两种方式，用&lt;code&gt;install.package()&lt;/code&gt;命令自动下载安装或者手动下载压缩包并手动载入，两者各有利弊，自动载入方便快捷，不需要对逐一安装层层依赖，但是容易对新手（如小星星同学）产生不可知的后果，一旦出错就不知道究竟发生了什么，该怎么办，最后只好卡在这里一动不动 &lt;code&gt;-,-&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;晚上我自己试了一下，安装了所需要的 &lt;code&gt;lsr, psych, car&lt;/code&gt; 三个 package，耗时大概十分钟不到...，下面是总结的一些基本操作：&lt;/p&gt;
+&lt;h3&gt;1. 查看当前电脑已经安装过的 package:&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="m"&gt;.&lt;/span&gt;packages&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kc"&gt;TRUE&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;//&lt;/span&gt; 返回结果大致如下：
+&lt;span class="o"&gt;//&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;alr4&amp;quot;&lt;/span&gt;        &lt;span class="s"&gt;&amp;quot;base&amp;quot;&lt;/span&gt;        &lt;span class="s"&gt;&amp;quot;bitops&amp;quot;&lt;/span&gt;      &lt;span class="s"&gt;&amp;quot;boot&amp;quot;&lt;/span&gt; &lt;span class="kc"&gt;...&lt;/span&gt;
+&lt;span class="o"&gt;//&lt;/span&gt; &lt;span class="kc"&gt;...&lt;/span&gt;
+&lt;span class="o"&gt;//&lt;/span&gt; 刚开始大概有 &lt;span class="m"&gt;30&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;
+
+&lt;span class="kn"&gt;library&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="o"&gt;//&lt;/span&gt; 会返回每个 package 更为详细的解释
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;2. 查看已经加载的 package:&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;//&lt;/span&gt; 已经安装过的 package 并不代表会加载到 R 语言的运行环境中，可以通过如下命令&lt;span class="p"&gt;(&lt;/span&gt;函数&lt;span class="p"&gt;)&lt;/span&gt;查看
+&lt;span class="kp"&gt;search&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="o"&gt;//&lt;/span&gt; 返回结果大致如下：
+&lt;span class="o"&gt;//&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;.GlobalEnv&amp;quot;&lt;/span&gt;        &lt;span class="s"&gt;&amp;quot;package:stats&amp;quot;&lt;/span&gt;     &lt;span class="s"&gt;&amp;quot;tools:RGUI&amp;quot;&lt;/span&gt;  &lt;span class="kc"&gt;...&lt;/span&gt;
+&lt;span class="o"&gt;//&lt;/span&gt; &lt;span class="kc"&gt;...&lt;/span&gt;
+&lt;span class="o"&gt;//&lt;/span&gt; search 返回 R 运行环境的搜索路径，因此不仅包括 package ，也包括一些会用到的工具，如 GUI 图形界面等
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;3. 载入需要的 package:&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;//&lt;/span&gt; 现在需要载入电脑中已安装但是未被加载近来的 package
+&lt;span class="kn"&gt;library&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;package &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;survival&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;//&lt;/span&gt; 或简写为
+&lt;span class="kn"&gt;library&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;survival&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;--&lt;/span&gt; 载入需要的程辑包：splines &lt;span class="o"&gt;--&lt;/span&gt;
+&lt;span class="o"&gt;//&lt;/span&gt; 同时也会载入其依赖的 package
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;4. (从运行环境中)移除不需要的 package:&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;//&lt;/span&gt; 当不再需要某些包可以从运行环境中移除&lt;span class="o"&gt;:&lt;/span&gt;
+&lt;span class="kn"&gt;detach&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; name &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;package:survival&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;//&lt;/span&gt; 或简写为&lt;span class="o"&gt;:&lt;/span&gt;
+&lt;span class="kn"&gt;detach&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;package:splines&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;//&lt;/span&gt; 如果安装了 lsr 这个包，可以更方便地移除&lt;span class="o"&gt;:&lt;/span&gt;
+unlibrary&lt;span class="p"&gt;(&lt;/span&gt; survival &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;5. 下载并安装新的 packages:&lt;/h3&gt;
+&lt;p&gt;以天朝尤其是校园网的网速，如果选用默认的镜像下载，很有可能遇到意想不到惊喜，所以最好还是指定镜像来安装，&lt;code&gt;install.package()&lt;/code&gt; 方法提供了一些参数，其中 &lt;code&gt;repos = ""&lt;/code&gt; 指定镜像的 URL，&lt;a href="http://cran.r-project.org/mirrors.html"&gt;官网&lt;/a&gt;提供了很多可选镜像，就近选择&lt;a href="http://mirror.bjtu.edu.cn/cran/"&gt;http://mirror.bjtu.edu.cn/cran/&lt;/a&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;install.packages&lt;span class="p"&gt;(&lt;/span&gt; pkgs &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;car&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; repos &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;http://mirror.bjtu.edu.cn/cran/&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; dependencies &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;TRUE&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;//&lt;/span&gt; dependencies &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;TRUE&lt;/span&gt; 指定自动下载相关依赖，所以可能需要一定时间
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;UPDATE@2015年05月12日&lt;/strong&gt;&lt;/p&gt;
+&lt;h3&gt;6. 图形界面 RStudio 中的操作&lt;/h3&gt;
+&lt;p&gt;开源项目 &lt;a href="http://www.rstudio.com/"&gt;RStudio&lt;/a&gt; 为 R 提供图形界面的支持，使 R 看起来用起来都更像 Matlab 了。RStudio 中 package 的操作可以在 Packages 窗口中通过点选的方式进行载入、移除、安装、更新等操作：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="rstudio packages window" src="http://7xiijd.com1.z0.glb.clouddn.com/rstudio-packages-window.png"&gt;&lt;/p&gt;
+&lt;p&gt;也可以通过 &lt;code&gt;RStudio-&amp;gt;Preferences...-&amp;gt;Packages&lt;/code&gt;选择对应的镜像：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="rstudio preferences" src="http://7xiijd.com1.z0.glb.clouddn.com/rstudio-preferences.png"&gt;&lt;/p&gt;</content><category term="R"></category></entry></feed>

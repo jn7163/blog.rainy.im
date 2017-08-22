@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>Mac 多屏幕窗口管理神器</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/lua.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2016/12/16/hammerspoon-the-manager-of-macos-windows/" rel="canonical" />
+
+        <meta name="description" content="与 Windows 上贴边停靠、甩一甩甩掉其它窗口的功能相比，macOS ...">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Lua">
+        <meta name="tags" content="工具">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="Mac 多屏幕窗口管理神器"/>
+<meta property="og:description" content="与 Windows 上贴边停靠、甩一甩甩掉其它窗口的功能相比，macOS ..."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2016/12/16/hammerspoon-the-manager-of-macos-windows/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-12-16 08:41:32+08:00"/>
+<meta property="article:modified_time" content="2016-12-16 08:41:32+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Lua"/>
+<meta property="article:tag" content="Lua"/>
+<meta property="article:tag" content="工具"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "Mac 多屏幕窗口管理神器",
+  "headline": "Mac 多屏幕窗口管理神器",
+  "datePublished": "2016-12-16 08:41:32+08:00",
+  "dateModified": "2016-12-16 08:41:32+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2016/12/16/hammerspoon-the-manager-of-macos-windows/",
+  "description": "与 Windows 上贴边停靠、甩一甩甩掉其它窗口的功能相比，macOS ..."
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Mac 多屏幕窗口管理神器</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Fri 16 December 2016">Fri 16 December 2016</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Fri 16 December 2016</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>使用多个显示器可以避免在任务窗口或应用之间来回切换，从而提高效率。然而随着工作空间的扩大，同时也带来了其它问题，包括：</p>
+<ol>
+<li>使用鼠标的效率进一步降低；</li>
+<li>活动窗口过多容易失去焦点；</li>
+<li>更多时候是以上两点同时发生：找半天不知道鼠标指针在哪，多屏幕之间拖动、管理窗口变得更加困难。</li>
+</ol>
+<p>不管你是不是 VIM 党，不停地在鼠标与键盘之间切换绝对是一件分心且低效的事，很多“懒人”宁可花时间记住数量庞大的组合快捷键（当然如果记不住也没关系，有一款作弊神器可以帮助你快速查看当前应用的快捷键：Cheatsheet），也不愿让自己的右手离开键盘。</p>
+<p><img alt="" src="http://qncdn.rainy.im/blog/cheatsheet.png"></p>
+<p>虽然为了避免使用鼠标你甚至可以给 Chrome 装上 VIM 映射的插件，但总有些时候不得不依赖鼠标完成一些精确的点击、拖动等操作，然而根据心理物理学中著名的费茨定律（Fitt's law），鼠标移动时间与目标距离成正比，与目标大小成反比：</p>
+<p><img alt="" src="http://qncdn.rainy.im/blog/fitts_law.gif"></p>
+<p>也就是说随着工作空间的扩大，使用鼠标的效率将会越来越低。除了鼠标的问题之外，当同时有多个应用窗口在你面前打开的时候，即使想要通过组合快捷键操作，也容易搞混当前捕获焦点的应用是哪个。当然就算有多个窗口重叠出现，你可以通过查看左上角工具栏所显示的应用名称来确定当前焦点，不过费茨定律对于视觉搜索也是同样适用的，对于连眼睛都懒得抬起来的人来说宁可通过 Command+Tab 尝试切换来找到当前焦点的应用。</p>
+<p>不过这个问题可以通过另外一款作弊神器来解决：<a href="https://hazeover.com/">HazeOver</a></p>
+<p><img alt="" src="http://qncdn.rainy.im/blog/hazeover.jpg"></p>
+<p>它可以让当前出于焦点的窗口正常显示，而其它所有窗口都蒙上一层半透明的黑纱：</p>
+<p><img alt="" src="http://qncdn.rainy.im/blog/hazeover_show.png"></p>
+<p>macOS 提供了一个有趣的小功能，只要快速晃动鼠标就可以让指针放大，从而让你快速定位自己的鼠标。然而这点微小的工作远远无法弥补它在窗口管理上的不足。与 Windows 上贴边停靠、甩一甩甩掉其它窗口的功能相比，macOS 窗口左上角红黄绿的三个小圆点几乎毫无存在感，抛开面积太小不易点击不说，绿色的放大按钮只能进入或退出全屏模式，虽然后来加入了长按进入双全屏模式，也基本上是个鸡肋：在小屏幕笔记本上没什么用，有扩展屏的时候更没必要用。于是乎在苹果强大的生态号召力之下出现了许多第三方解决方案，但是我的需求很简单，我觉得将一块屏幕划分成皿、田之类的格局没有任何必要，我只需要最简单的功能：</p>
+<ol>
+<li>可以最大化但不是全屏；</li>
+<li>可以占据左半边或右半边；</li>
+<li>可以在不同显示器之间快速移动。</li>
+</ol>
+<p>前两条根本就是 Windows 的基本功能，我尝试了一些窗口管理应用之后，最终选择可以通过代码精确配置的 <a href="http://www.hammerspoon.org/">Hammerspoon</a>，与一般的工具不同，首先它是开源的，其次使用 Lua 脚本作为配置文件。</p>
+<p><img alt="" src="http://qncdn.rainy.im/blog/hammerspoon.png"></p>
+<p>我的配置文件在 <a href="https://gist.github.com/rainyear/2ec3b464cda37573c240e1ded78c176b">这里 Gist-hammerspoon.init.lua</a>，保存到本地<code>~/.hammerspoon/init.lua</code>，然后 <code>Reload Config</code> 即可。Hammerspoon 还提供一个 Console 界面，可以方便调试：</p>
+<p><img alt="" src="http://qncdn.rainy.im/blog/hammerspoon_show.png"></p>
+<h3>配置文件说明</h3>
+<div class="highlight"><pre><span class="c1">-- 一般组合键为 Shift + Command + ?</span>
+<span class="kd">local</span> <span class="n">hyper</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;</span><span class="s">shift&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="s">cmd&#39;</span><span class="p">}</span>
+
+<span class="c1">-- 最大化窗口</span>
+<span class="c1">-- 快捷键为 Shift + Command + ↑</span>
+<span class="n">hs</span><span class="p">.</span><span class="n">hotkey</span><span class="p">.</span><span class="n">bind</span><span class="p">(</span><span class="n">hyper</span><span class="p">,</span> <span class="s1">&#39;</span><span class="s">up&#39;</span><span class="p">,</span> <span class="k">function</span><span class="p">()</span>
+    <span class="n">hs</span><span class="p">.</span><span class="n">grid</span><span class="p">.</span><span class="n">maximizeWindow</span><span class="p">()</span>
+<span class="k">end</span><span class="p">)</span>
+
+<span class="c1">-- 让窗口占据左半边（Windows 下面的向左贴边停靠）</span>
+<span class="c1">-- 快捷键为 Shift + Command + ←</span>
+<span class="n">hs</span><span class="p">.</span><span class="n">hotkey</span><span class="p">.</span><span class="n">bind</span><span class="p">(</span><span class="n">hyper</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s">Left&quot;</span><span class="p">,</span> <span class="k">function</span><span class="p">()</span>
+  <span class="kd">local</span> <span class="n">win</span> <span class="o">=</span> <span class="n">hs</span><span class="p">.</span><span class="n">window</span><span class="p">.</span><span class="n">focusedWindow</span><span class="p">()</span>
+    <span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="n">win</span><span class="p">:</span><span class="n">frame</span><span class="p">()</span>
+    <span class="kd">local</span> <span class="n">screen</span> <span class="o">=</span> <span class="n">win</span><span class="p">:</span><span class="n">screen</span><span class="p">()</span>
+    <span class="kd">local</span> <span class="n">max</span> <span class="o">=</span> <span class="n">screen</span><span class="p">:</span><span class="n">frame</span><span class="p">()</span>
+
+    <span class="n">f</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">max</span><span class="p">.</span><span class="n">x</span>
+    <span class="n">f</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">max</span><span class="p">.</span><span class="n">y</span>
+    <span class="n">f</span><span class="p">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">max</span><span class="p">.</span><span class="n">w</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">f</span><span class="p">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">max</span><span class="p">.</span><span class="n">h</span>
+    <span class="n">win</span><span class="p">:</span><span class="n">setFrame</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="k">end</span><span class="p">)</span>
+
+<span class="c1">-- 向右停靠类似</span>
+
+<span class="c1">-- 将当前窗口移动到第 n 个屏幕</span>
+<span class="c1">-- 并最大化窗口</span>
+<span class="c1">-- 快捷键为 Ctrl + Command + 屏幕数字</span>
+<span class="kd">local</span> <span class="n">hyper2</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;</span><span class="s">ctrl&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="s">cmd&#39;</span><span class="p">}</span>
+<span class="n">moveto</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">screens</span> <span class="o">=</span> <span class="n">hs</span><span class="p">.</span><span class="n">screen</span><span class="p">.</span><span class="n">allScreens</span><span class="p">()</span>
+  <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="o">#</span><span class="n">screens</span> <span class="k">then</span>
+    <span class="n">hs</span><span class="p">.</span><span class="n">alert</span><span class="p">.</span><span class="n">show</span><span class="p">(</span><span class="s2">&quot;</span><span class="s">No enough screens &quot;</span> <span class="o">..</span> <span class="o">#</span><span class="n">screens</span><span class="p">)</span>
+  <span class="k">else</span>
+    <span class="kd">local</span> <span class="n">toWin</span> <span class="o">=</span> <span class="n">hs</span><span class="p">.</span><span class="n">screen</span><span class="p">.</span><span class="n">allScreens</span><span class="p">()[</span><span class="n">n</span><span class="p">]:</span><span class="n">name</span><span class="p">()</span>
+    <span class="n">hs</span><span class="p">.</span><span class="n">alert</span><span class="p">.</span><span class="n">show</span><span class="p">(</span><span class="s2">&quot;</span><span class="s">Move &quot;</span> <span class="o">..</span> <span class="n">win</span><span class="p">:</span><span class="n">application</span><span class="p">():</span><span class="n">name</span><span class="p">()</span> <span class="o">..</span> <span class="s2">&quot;</span><span class="s"> to &quot;</span> <span class="o">..</span> <span class="n">toWin</span><span class="p">)</span>
+    <span class="n">hs</span><span class="p">.</span><span class="n">layout</span><span class="p">.</span><span class="n">apply</span><span class="p">({{</span><span class="kc">nil</span><span class="p">,</span> <span class="n">win</span><span class="p">:</span><span class="n">title</span><span class="p">(),</span> <span class="n">toWin</span><span class="p">,</span> <span class="n">hs</span><span class="p">.</span><span class="n">layout</span><span class="p">.</span><span class="n">maximized</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span><span class="p">}})</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">hs</span><span class="p">.</span><span class="n">hotkey</span><span class="p">.</span><span class="n">bind</span><span class="p">(</span><span class="n">hyper2</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s">1&quot;</span><span class="p">,</span> <span class="k">function</span><span class="p">()</span>
+  <span class="kd">local</span> <span class="n">win</span> <span class="o">=</span> <span class="n">hs</span><span class="p">.</span><span class="n">window</span><span class="p">.</span><span class="n">focusedWindow</span><span class="p">()</span>
+  <span class="n">moveto</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="k">end</span><span class="p">)</span>
+<span class="n">hs</span><span class="p">.</span><span class="n">hotkey</span><span class="p">.</span><span class="n">bind</span><span class="p">(</span><span class="n">hyper2</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s">2&quot;</span><span class="p">,</span> <span class="k">function</span><span class="p">()</span>
+  <span class="kd">local</span> <span class="n">win</span> <span class="o">=</span> <span class="n">hs</span><span class="p">.</span><span class="n">window</span><span class="p">.</span><span class="n">focusedWindow</span><span class="p">()</span>
+  <span class="n">moveto</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="k">end</span><span class="p">)</span>
+<span class="n">hs</span><span class="p">.</span><span class="n">hotkey</span><span class="p">.</span><span class="n">bind</span><span class="p">(</span><span class="n">hyper2</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s">3&quot;</span><span class="p">,</span> <span class="k">function</span><span class="p">()</span>
+  <span class="kd">local</span> <span class="n">win</span> <span class="o">=</span> <span class="n">hs</span><span class="p">.</span><span class="n">window</span><span class="p">.</span><span class="n">focusedWindow</span><span class="p">()</span>
+  <span class="n">moveto</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="k">end</span><span class="p">)</span>
+</pre></div>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=Mac 多屏幕窗口管理神器&amp;url=http://blog.rainy.im/2016/12/16/hammerspoon-the-manager-of-macos-windows/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2016/12/16/hammerspoon-the-manager-of-macos-windows/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2016/12/16/hammerspoon-the-manager-of-macos-windows/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/lua.html">Lua</a><a href="http://blog.rainy.im/tag/gong-ju.html">工具</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>Psychtoolbox 3 精确时间控制（1）</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/psychology.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2015/05/01/psychtoolbox-3-accurate-timing-1/" rel="canonical" />
+
+        <meta name="description" content="Psychtoolbox 3 中一些基本概念与基本原理的介绍，重点总结精确到帧的呈现时间的控制与精确的键盘（鼠标）输入时间的控制。">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Psychology">
+        <meta name="tags" content="Matlab">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="Psychtoolbox 3 精确时间控制（1）"/>
+<meta property="og:description" content="Psychtoolbox 3 中一些基本概念与基本原理的介绍，重点总结精确到帧的呈现时间的控制与精确的键盘（鼠标）输入时间的控制。"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2015/05/01/psychtoolbox-3-accurate-timing-1/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2015-05-01 05:26:08+08:00"/>
+<meta property="article:modified_time" content="2015-05-01 05:26:08+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Psychology"/>
+<meta property="article:tag" content="Psychology"/>
+<meta property="article:tag" content="Matlab"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "Psychtoolbox 3 精确时间控制（1）",
+  "headline": "Psychtoolbox 3 精确时间控制（1）",
+  "datePublished": "2015-05-01 05:26:08+08:00",
+  "dateModified": "2015-05-01 05:26:08+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2015/05/01/psychtoolbox-3-accurate-timing-1/",
+  "description": "Psychtoolbox 3 中一些基本概念与基本原理的介绍，重点总结精确到帧的呈现时间的控制与精确的键盘（鼠标）输入时间的控制。"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Psychtoolbox 3 精确时间控制（1）</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Fri 01 May 2015">Fri 01 May 2015</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Fri 01 May 2015</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>Psychtoolbox 3 中一些基本概念与基本原理的介绍，重点总结精确到帧的呈现时间的控制与精确的键盘（鼠标）输入时间的控制。</p>
+<h3>1. Textures, Windows, Screens 等基本概念</h3>
+<p>PTB 中 screen 指代显示器，Screen 0 代表默认显示器，Screen 1 代表双屏系统中第二个显示器，以此类推。<code>Screen('Screens')</code>返回可用显示器的列表。</p>
+<p>PTB 中 (onscreen) window 是用来展示实验刺激的，一个显示器（screen）最多只能有一个全屏显示的 window。所有的绘制操作都在 window 中执行。window 都是<a href="http://en.wikipedia.org/wiki/Multiple_buffering#Double_buffering_in_computer_graphics">双缓冲</a>的，也就是包含了后缓冲区（backbuffer）和前缓冲区（frontbuffer）两部分。如果把显示器看作是一个舞台，后缓冲区相当于舞台的后台，将要绘制的图形在这里完成准备工作；而前缓冲区相当于看得见的舞台部分，也就是显示器呈现刺激的部分，如一般实验室采用的 CRT 显示器，在前缓冲区中阴极射线管通过扫描完成一次成像。当我们通过一些绘制指令（如<code>Screen('DrawTexture',...)</code>）完成绘制的准备工作后，需要通过调用<code>Screen('Flip',...)</code>指令，完成前后缓冲区的切换，同时保证这一切换过程（一般1ms之内即可完成）发生在两次（帧）扫描的间隔（也就是电子枪回溯到屏幕左上角的时间段），避免造成成像断裂等现象。<code>Flip</code> 指令最重要的功能是将图像绘制过程与实际呈现过程分离。</p>
+<p>(offscreen) window 就是之前版本中的 Texture，唯一的不同是指令名称和执行效率。细微的差别就不再赘述。</p>
+<h3>2. Flip 指令</h3>
+<div class="highlight"><pre><span class="n">Screen</span><span class="p">(</span><span class="s">&#39;Flip?&#39;</span><span class="p">)</span> <span class="c">% 可以通过 Screen(&#39;Func?&#39;)进行查询该指令的说明文档</span>
+<span class="n">Usage</span><span class="p">:</span>
+<span class="p">[</span><span class="n">VBLTimestamp</span> <span class="n">StimulusOnsetTime</span> <span class="n">FlipTimestamp</span> <span class="n">Missed</span> <span class="n">Beampos</span><span class="p">]</span> 
+<span class="p">=</span> <span class="n">Screen</span><span class="p">(</span><span class="s">&#39;Flip&#39;</span><span class="p">,</span> <span class="n">windowPtr</span> <span class="p">[,</span> <span class="n">when</span><span class="p">]</span> <span class="p">[,</span> <span class="n">dontclear</span><span class="p">]</span> <span class="p">[,</span> <span class="n">dontsync</span><span class="p">]</span> <span class="p">[,</span> <span class="n">multiflip</span><span class="p">]);</span>
+</pre></div>
+
+
+<p>Flip 指令返回的第一个值 <code>VBLTimestamp</code> 是指上一帧扫描结束的时间点，接下来阴极射线管的电子枪需要回到屏幕左上角进行下一帧的扫描，这一间隔称为垂直空白间隙（vertical blank interval, VBL）。同时前后缓冲区的切换也从这一时间点开始。此时 PTB 会进入休眠状态，一直等到切换过程结束才会重新请求 CPU 资源，在这期间 CPU 可以保证系统其它部分的正常运行。等到切换完成之后，PTB 立即执行下面两件事：</p>
+<ol>
+<li>查询电子枪（beam）当前的位置，并返回给变量 <code>Beampos</code>；</li>
+<li>通过<code>GetSecs()</code>查询当前精确的时间戳。</li>
+</ol>
+<p>一般的多任务操作系统（OS X &amp; Windows），在具体事件的时间点上都可能存在非常细微的随机误差，例如 VBL 开始的时间（<code>VBLTimestamp</code>）、PTB 重新占用 CPU 的时间，一般这一时间差不会超过 1ms，但偶尔也有可能出现几毫秒的误差。为了补偿这一误差，PTB 利用电子枪回溯的位置作为另外一个高分辨率的时钟进行精确时间的控制，其计算的原理如下图所示：</p>
+<p><img alt="flip" src="http://7xiijd.com1.z0.glb.clouddn.com/flip.png"></p>
+<p>Flip 返回的第二个值 <code>StimulusOnsetTime</code> 代表第二帧开始进行扫描的时间，即：<code>StimulusOnsetTime = VBLTimestamp + VBL</code>。</p>
+<p>Beamposition 的查询必须依赖于显卡硬件的支持，当无法通过硬件查询准确的 Beamposition 时，也就无法获取 VBL 时间。这时 PTB 一般会报错：</p>
+<div class="highlight"><pre><span class="o">-----</span> ! <span class="n">PTB</span> <span class="o">-</span> <span class="n">ERROR</span><span class="p">:</span> <span class="n">SYNCHRONIZATION</span> <span class="n">FAILURE</span> ! <span class="o">----</span>
+<span class="n">One</span> <span class="n">or</span> <span class="n">more</span> <span class="n">internal</span> <span class="n">checks</span> <span class="p">(</span><span class="n">see</span> <span class="n">Warnings</span> <span class="n">above</span><span class="p">)</span> <span class="n">indicate</span> <span class="n">that</span> <span class="n">synchronization</span> <span class="n">of</span> <span class="n">Psychtoolbox</span> <span class="n">to</span> <span class="n">the</span> <span class="n">vertical</span> <span class="n">retrace</span> <span class="p">(</span><span class="n">VBL</span><span class="p">)</span> <span class="n">is</span> <span class="n">not</span> <span class="n">working</span> <span class="n">on</span> <span class="n">your</span> <span class="n">setup</span><span class="p">.</span>
+</pre></div>
+
+
+<p>如果对时间精确度的要求不是那么严格，或者程序还在调试阶段，可以通过<code>Screen('Preference', 'SkipSyncTests', 1)</code>跳过这一错误。此时，Flip 指令返回 <code>StimulusOnsetTime = VBLTimestamp; beampos = -1;</code>。</p>
+<h3>3. Accurate Timing Demo</h3>
+<p>了解了以上原理，再来看精确时间控制的<a href="http://peterscarfe.com/accurateTimingDemo.html">Demo</a>：</p>
+<p>首先是最简单随意的呈现方式，这样无法保证精确控制时间，只是为了与后面的方法进行比较：</p>
+<div class="highlight"><pre><span class="k">for</span> <span class="n">frame</span> <span class="p">=</span> <span class="mi">1</span><span class="p">:</span><span class="n">numFrames</span>
+    <span class="c">% Color the screen red</span>
+    <span class="n">Screen</span><span class="p">(</span><span class="s">&#39;FillRect&#39;</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span> <span class="mf">0.5</span> <span class="mf">0.5</span><span class="p">]);</span>
+    <span class="c">% Flip to the screen</span>
+    <span class="n">Screen</span><span class="p">(</span><span class="s">&#39;Flip&#39;</span><span class="p">,</span> <span class="n">window</span><span class="p">);</span>
+<span class="k">end</span>
+</pre></div>
+
+
+<p>上一例子中没有明确给出 Flip 执行的时间，这导致我们无法精确控制刺激呈现的时间。下面的例子中，首先在后缓冲区准备绘制之前读取前一帧结束的时间<code>vbl</code>，然后在连续呈现<code>numFrames</code>帧刺激的过程中，明确指定每一次 Flip 的时间为上一帧扫描结束后的<code>(waitframes - 0.5)*ifi</code>。当<code>waitframes = 1;</code>时，前后两次 Flip 之间的间隔一定为IFI，也就是连续呈现两帧，从而确保刺激呈现的时间为两帧。</p>
+<div class="highlight"><pre><span class="n">waitframes</span> <span class="p">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="n">vbl</span> <span class="p">=</span> <span class="n">Screen</span><span class="p">(</span><span class="s">&#39;Flip&#39;</span><span class="p">,</span> <span class="n">window</span><span class="p">);</span>
+<span class="k">for</span> <span class="n">frame</span> <span class="p">=</span> <span class="mi">1</span><span class="p">:</span><span class="n">numFrames</span>
+    <span class="c">% Color the screen red</span>
+    <span class="n">Screen</span><span class="p">(</span><span class="s">&#39;FillRect&#39;</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]);</span>
+    <span class="c">% Flip to the screen</span>
+    <span class="n">vbl</span> <span class="p">=</span> <span class="n">Screen</span><span class="p">(</span><span class="s">&#39;Flip&#39;</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">vbl</span> <span class="o">+</span> <span class="p">(</span><span class="n">waitframes</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">ifi</span><span class="p">);</span>
+<span class="k">end</span>
+</pre></div>
+
+
+<p>上一例子中我们希望 PTB 可以在连续两帧中呈现刺激，以保证刺激呈现时间。但现实并不一定如此，因为计算机操作系统需要同时维持所有软硬件组成的正常运转，如键盘、鼠标、网络连接等等，这就可能导致 CPU 无法及时响应 PTB 的请求。为了让 CPU 优先处理 PTB 的请求，我们需要提高 PTB 的优先等级；除此之外，还可以在绘制指令与 Flip 之间插入<code>Screen('DrawingFinished', window);</code>来阻止其它绘制，保证更好的时间精确度：</p>
+<div class="highlight"><pre><span class="n">topPriorityLevel</span> <span class="p">=</span> <span class="n">MaxPriority</span><span class="p">(</span><span class="n">window</span><span class="p">);</span>
+<span class="n">Priority</span><span class="p">(</span><span class="n">topPriorityLevel</span><span class="p">);</span>
+<span class="n">vbl</span> <span class="p">=</span> <span class="n">Screen</span><span class="p">(</span><span class="s">&#39;Flip&#39;</span><span class="p">,</span> <span class="n">window</span><span class="p">);</span>
+<span class="k">for</span> <span class="n">frame</span> <span class="p">=</span> <span class="mi">1</span><span class="p">:</span><span class="n">numFrames</span>
+    <span class="c">% Color the screen red</span>
+    <span class="n">Screen</span><span class="p">(</span><span class="s">&#39;FillRect&#39;</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span> <span class="mi">0</span> <span class="mf">0.5</span><span class="p">]);</span>
+    <span class="c">% Tell PTB no more drawing commands will be issued until the next flip</span>
+    <span class="n">Screen</span><span class="p">(</span><span class="s">&#39;DrawingFinished&#39;</span><span class="p">,</span> <span class="n">window</span><span class="p">);</span>
+    <span class="c">% Flip to the screen</span>
+    <span class="n">vbl</span> <span class="p">=</span> <span class="n">Screen</span><span class="p">(</span><span class="s">&#39;Flip&#39;</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">vbl</span> <span class="o">+</span> <span class="p">(</span><span class="n">waitframes</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">ifi</span><span class="p">);</span>
+<span class="k">end</span>
+<span class="n">Priority</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+
+
+<h3>4. 其它精确时间控制的设定及方法</h3>
+<p>对于现代计算机硬件来说，基本上可以通过代码的控制做到精确的时间控制。如果实验仪器是一些相对老旧的硬件设备（例如……），可能需要一些额外的系统配置来辅助精确时间的控制。</p>
+<p><strong>4.1 系统设置：</strong></p>
+<ol>
+<li>退出系统中无用的应用程序、后台服务等，不要占用过多 CPU；</li>
+<li>禁用杀毒软件；</li>
+<li>确保有足够的内存，必要时利用虚拟内存；</li>
+<li>确保节能选项不会减慢 CPU；</li>
+<li>关闭蓝牙、WIFI、网络连接以及 CD/DVD 等外接设备；</li>
+<li>不要盲目采用过高分辨率，这样可能加重显卡负担，增加处理时间误差。</li>
+</ol>
+<p><strong>4.2 Matlab设置：</strong></p>
+<ol>
+<li><code>matlab -nojvm</code> 模式运行（如果没有必要用到 Java 辅助工具，如 <code>GetChar</code>等）；</li>
+<li>尽量减少 Matlab 图形界面窗口；</li>
+<li>阅读 Matlab 文档，优化代码，充分利用内存加快执行速度；</li>
+<li><code>help mlint</code> 查看执行效率的瓶颈及代码可能存在的问题。</li>
+</ol>
+<p><strong>4.3 程序编写中需要注意的问题：</strong></p>
+<ul>
+<li>PTB 输出的 log 信息：</li>
+</ul>
+<p>通过 <code>Screen('Preference', 'Verbosity', level);</code> 控制 PTB 执行过程中的输出信息，在程序调试时可以选择较高的 <code>level</code> 便于找到问题；正式实验可以采用 <code>Screen('Preference', 'Verbosity', 0);</code> 禁用所有输出信息，节省执行时间和资源。</p>
+<ul>
+<li>函数的预加载：</li>
+</ul>
+<p>Matlab 中的 <code>.M &amp; .MEX</code> 源文件的加载需要一定的时间，如文件的定位、加载、执行等，这一初始化时间可能需要几百毫秒，所以在实验试次开始之前应该先执行一次需要的函数。</p>
+<ul>
+<li>同一源文件内的<code>function</code>比通过文件加载的<code>function</code>快：</li>
+</ul>
+<p>Matlab 中的<code>function</code>可以直接在当前脚本中定义，也可以通过单独的脚本文件定义（函数名与文件名一致），调试过程中为方便可以将不同的<code>function</code>切分成独立的脚本文件，但在正式实验时应该将必要的<code>function</code>整合到同一个执行脚本。</p>
+<ul>
+<li>优化代码结构：</li>
+</ul>
+<p>实验程序的主体，trial loop 内的代码应该以如下顺序执行：</p>
+<div class="highlight"><pre><span class="c">% 1. 绘制命令</span>
+<span class="n">Screen</span><span class="p">(</span><span class="s">&#39;DrawDots&#39;</span><span class="p">,</span><span class="c">...), Screen(&#39;DrawText&#39;,...),Screen(&#39;DrawTexture&#39;,...)...</span>
+<span class="c">% 2. 阻止多余绘制</span>
+<span class="n">Screen</span><span class="p">(</span><span class="s">&#39;DrawingFinished&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">);</span>
+<span class="c">% 3. 其它与显卡操作无关的代码，如声音、键盘、鼠标以及其它Matlab逻辑等</span>
+<span class="n">KbWait</span><span class="p">;</span>
+<span class="c">% 4. Flip 指令让预备绘制刺激登台</span>
+<span class="n">vbl</span> <span class="p">=</span> <span class="n">Screen</span><span class="p">(</span><span class="s">&#39;Flip&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">vbl</span><span class="o">+</span><span class="mf">0.5</span><span class="o">*</span><span class="n">ifi</span><span class="p">);</span>
+</pre></div>
+
+
+<h3>5. 总结</h3>
+<p>上述内容主要针对 CRT 显示器，CRT 与 液晶平板（LCD）的原理及优劣 Elze （2010）的文章中有详细介绍，文章还总结了2003-2009三本心理学杂志中75篇实验材料呈现时间低于50ms的研究，从各个研究中作者给出或推断的实验方法来看，许多研究者对显示器上刺激呈现时间的基本概念与操作还存在一些误解，导致实验实际呈现的时间并非研究者所认为的时间。一直以来都有争议而且最近比较热闹的心理学研究重复验证，其实很大程度上与实验条件控制有关，比如有些研究者文章中声称研究中刺激呈现时间为50ms，但是我们并不知道是如何做到的，实验程序中是否存在不合适的操作等。所以说应该建议研究者投稿录用后把实验程序开源，放到 Github 上，供所有人查看，也大大节约了重复实验的时间成本。哈哈，但是又有几个人愿意这样做呢~</p>
+<p>到此为止基本介绍了 PTB 3 中对实验刺激呈现时间进行精确控制的方法以及相关注意事项，在实验过程中除了准确地呈现实验刺激之外，还需要准确地记录被试做出反应的时间，这主要涉及到键盘、鼠标或者特定的反应输入设备的精确控制。PTB 3 中如何准确地处理响应输入呢，下一节再说吧。</p>
+<p>参考：</p>
+<ol>
+<li><a href="https://github.com/Psychtoolbox-3/Psychtoolbox-3/wiki/FAQ%3A-Textures%2C-Windows%2C-Screens">FAQ: Textures, Windows, Screens</a></li>
+<li><a href="https://github.com/Psychtoolbox-3/Psychtoolbox-3/wiki/FAQ%3A-Performance-Tuning">FAQ: Performance Tuning</a></li>
+<li><a href="http://peterscarfe.com/accurateTimingDemo.html">Accurate Timing Demo</a></li>
+<li>Elze, T. (2010). Misspecifications of stimulus presentation durations in experimental psychology: A systematic review of the psychophysics literature. PloS one, 5(9), e12792.</li>
+</ol>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=Psychtoolbox 3 精确时间控制（1）&amp;url=http://blog.rainy.im/2015/05/01/psychtoolbox-3-accurate-timing-1/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2015/05/01/psychtoolbox-3-accurate-timing-1/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2015/05/01/psychtoolbox-3-accurate-timing-1/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/psychology.html">Psychology</a><a href="http://blog.rainy.im/tag/matlab.html">Matlab</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

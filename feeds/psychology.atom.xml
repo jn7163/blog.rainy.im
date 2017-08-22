@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Yu's Tech Lab - Psychology</title><link href="http://blog.rainy.im/" rel="alternate"></link><link href="http://blog.rainy.im/feeds/psychology.atom.xml" rel="self"></link><id>http://blog.rainy.im/</id><updated>2015-11-29T13:41:47+08:00</updated><entry><title>APA格式化工具</title><link href="http://blog.rainy.im/2015/11/29/apa-toolkit/" rel="alternate"></link><published>2015-11-29T13:41:47+08:00</published><updated>2015-11-29T13:41:47+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2015-11-29:/2015/11/29/apa-toolkit/</id><summary type="html">&lt;p&gt;这个工具的作用就是输入所有参考文献，生成正文中引用文献和直接引用两种格式。&lt;/p&gt;</summary><content type="html">&lt;p&gt;APA格式是心理学文献中常用的引用格式，包括文章最后参考文献列表的格式和文中引用文献标注的格式，在写论文的时候要整理这些格式也是一件非常痛苦的事情，不过好在有很多文献管理工具可以自动生成引用格式，但我已经不用乱七八糟的工具很久了。忘了什么时候我曾经写过一个解析&lt;a href="http://rainy.im/apa/"&gt;APA格式的工具&lt;/a&gt;，因为Google Scholar可以自动生成文献的APA引用格式，只是在文中引用时还需要自己手动去写，这个工具的作用就是输入所有参考文献，生成正文中引用文献和直接引用两种格式，如：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="apa-example" src="http://7xiijd.com1.z0.glb.clouddn.com/apa-example.png"&gt;&lt;/p&gt;
+&lt;h3&gt;包括如下功能：&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;自动检测（批量）输入的APA格式是否正确，尤其是有些自动生产的引用缺少页码，需要去原杂志找；&lt;/li&gt;
+&lt;li&gt;按作者姓氏自动排序；&lt;/li&gt;
+&lt;li&gt;引用文献：文中括号里引用的格式，包括多人文献在文中第二次以上出现时的格式；&lt;/li&gt;
+&lt;li&gt;直接引用：引用文献原文的格式，也包括文中第二次以上出现时的格式。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;具体步骤：&lt;/h3&gt;
+&lt;h4&gt;1. 先去Google Scholar（好吧，百度学术做得也不错啦，毕竟速度快，给跪还不行么）搜到文献，Copy出APA格式；&lt;/h4&gt;
+&lt;p&gt;&lt;img alt="xueshu" src="http://7xiijd.com1.z0.glb.clouddn.com/xueshu.png"&gt;&lt;/p&gt;
+&lt;h4&gt;2. 全部参考文献添加完之后，一起Copy到输入框，&lt;a href="http://rainy.im/apa/"&gt;开始&lt;/a&gt;！&lt;/h4&gt;
+&lt;p&gt;&lt;img alt="input" src="http://7xiijd.com1.z0.glb.clouddn.com/input.png"&gt;&lt;/p&gt;
+&lt;h4&gt;3. Copy Copy Copy！&lt;/h4&gt;
+&lt;p&gt;&lt;img alt="output" src="http://7xiijd.com1.z0.glb.clouddn.com/output.png"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;看起来很智能化诶！但是并不能保证100%没有错误，欢迎提交BUG，但并不保证会改&lt;code&gt;:D&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;源码地址：&lt;a href="https://github.com/ZJU-Psy/APA6.js"&gt;APA6.js&lt;/a&gt;&lt;/p&gt;</content><category term="Psychology"></category></entry><entry><title>自然场景实验材料处理工具（2）</title><link href="http://blog.rainy.im/2015/05/13/natural-scene-image-toolkits-2/" rel="alternate"></link><published>2015-05-13T05:49:08+08:00</published><updated>2015-05-13T05:49:08+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2015-05-13:/2015/05/13/natural-scene-image-toolkits-2/</id><summary type="html">&lt;p&gt;事实再一次证明，要用正确的工具做正确的事情。编程语言并没有好坏之分（至少在大部分应用情景下），我在[自然场景实验材料处理工具（1）]中用 Go 做了一些简单的图片尺寸过滤、裁减、缩放等处理，虽然也可以很好完成任务，但第二个实验中的实验材料稍有不同，处理方式也稍有不同，重新修改调试的时间成本可能要比 Python + OpenCV 重做还要高。（with Python）&lt;/p&gt;</summary><content type="html">&lt;p&gt;事实再一次证明，要用正确的工具做正确的事情。编程语言并没有好坏之分（至少在大部分应用情景下），我在&lt;a href="/2015/04/23/natural-scene-image-toolkits/"&gt;自然场景实验材料处理工具（1）&lt;/a&gt;中用 Go 做了一些简单的图片尺寸过滤、裁减、缩放等处理，虽然也可以很好完成任务，但第二个实验中的实验材料稍有不同，处理方式也稍有不同，重新修改调试的时间成本可能要比 Python + OpenCV 重做还要高。总之，理性对待工具，&lt;code&gt;Don't get too attached to things -,-&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;主要用 Python + OpenCV 几何处理的方法：&lt;/p&gt;
+&lt;h3&gt;1. 过滤尺寸&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;cv2&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;validSize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;imgin&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+  &lt;span class="n"&gt;img&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;imread&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;imgin&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;d&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;img&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;h&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="ow"&gt;or&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt;  &lt;span class="bp"&gt;False&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;2. 裁减周围 N pix&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;cv2&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;crop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;imgin&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;imgout&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;N&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+  &lt;span class="n"&gt;img&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;imread&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;imgin&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;d&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;img&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;h&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;N&lt;/span&gt; &lt;span class="ow"&gt;or&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;N&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;To smale to crop &lt;/span&gt;&lt;span class="si"&gt;%s&lt;/span&gt;&lt;span class="s2"&gt;!&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="n"&gt;imgin&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt;
+  &lt;span class="n"&gt;cropped&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;img&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;N&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;N&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;N&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;N&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;:]&lt;/span&gt;
+
+  &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;imwrite&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;imgout&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cropped&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;3. 裁剪至比例后缩放&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;cv2&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;scaleTo&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;imgin&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;imgout&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;W&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;H&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+  &lt;span class="n"&gt;img&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;imread&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;imgin&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;d&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;img&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;shape&lt;/span&gt;
+
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;h&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mf"&gt;1.0&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="n"&gt;H&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mf"&gt;1.0&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;W&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;w2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mf"&gt;1.0&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;h&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;W&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;H&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;img&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;img&lt;/span&gt;&lt;span class="p"&gt;[:,&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mf"&gt;1.0&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;w2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;&lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mf"&gt;1.0&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;w2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;w2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;:]&lt;/span&gt;
+  &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;h2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mf"&gt;1.0&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;H&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;W&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;img&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;img&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mf"&gt;1.0&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;h2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;&lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mf"&gt;1.0&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;h2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;h2&lt;/span&gt;&lt;span class="p"&gt;,:,:]&lt;/span&gt;
+
+  &lt;span class="n"&gt;dest&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;resize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;img&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;W&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;H&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;interpolation&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;INTER_CUBIC&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="n"&gt;cv2&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;imwrite&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;imgout&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dest&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;参考：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_imgproc/py_geometric_transformations/py_geometric_transformations.html#geometric-transformations"&gt;Geometric Transformations of Images&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</content><category term="Psychology"></category><category term="Python"></category><category term="OpenCV"></category></entry><entry><title>Psychtoolbox 3 精确时间控制（1）</title><link href="http://blog.rainy.im/2015/05/01/psychtoolbox-3-accurate-timing-1/" rel="alternate"></link><published>2015-05-01T05:26:08+08:00</published><updated>2015-05-01T05:26:08+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2015-05-01:/2015/05/01/psychtoolbox-3-accurate-timing-1/</id><summary type="html">&lt;p&gt;Psychtoolbox 3 中一些基本概念与基本原理的介绍，重点总结精确到帧的呈现时间的控制与精确的键盘（鼠标）输入时间的控制。&lt;/p&gt;</summary><content type="html">&lt;p&gt;Psychtoolbox 3 中一些基本概念与基本原理的介绍，重点总结精确到帧的呈现时间的控制与精确的键盘（鼠标）输入时间的控制。&lt;/p&gt;
+&lt;h3&gt;1. Textures, Windows, Screens 等基本概念&lt;/h3&gt;
+&lt;p&gt;PTB 中 screen 指代显示器，Screen 0 代表默认显示器，Screen 1 代表双屏系统中第二个显示器，以此类推。&lt;code&gt;Screen('Screens')&lt;/code&gt;返回可用显示器的列表。&lt;/p&gt;
+&lt;p&gt;PTB 中 (onscreen) window 是用来展示实验刺激的，一个显示器（screen）最多只能有一个全屏显示的 window。所有的绘制操作都在 window 中执行。window 都是&lt;a href="http://en.wikipedia.org/wiki/Multiple_buffering#Double_buffering_in_computer_graphics"&gt;双缓冲&lt;/a&gt;的，也就是包含了后缓冲区（backbuffer）和前缓冲区（frontbuffer）两部分。如果把显示器看作是一个舞台，后缓冲区相当于舞台的后台，将要绘制的图形在这里完成准备工作；而前缓冲区相当于看得见的舞台部分，也就是显示器呈现刺激的部分，如一般实验室采用的 CRT 显示器，在前缓冲区中阴极射线管通过扫描完成一次成像。当我们通过一些绘制指令（如&lt;code&gt;Screen('DrawTexture',...)&lt;/code&gt;）完成绘制的准备工作后，需要通过调用&lt;code&gt;Screen('Flip',...)&lt;/code&gt;指令，完成前后缓冲区的切换，同时保证这一切换过程（一般1ms之内即可完成）发生在两次（帧）扫描的间隔（也就是电子枪回溯到屏幕左上角的时间段），避免造成成像断裂等现象。&lt;code&gt;Flip&lt;/code&gt; 指令最重要的功能是将图像绘制过程与实际呈现过程分离。&lt;/p&gt;
+&lt;p&gt;(offscreen) window 就是之前版本中的 Texture，唯一的不同是指令名称和执行效率。细微的差别就不再赘述。&lt;/p&gt;
+&lt;h3&gt;2. Flip 指令&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;Screen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Flip?&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c"&gt;% 可以通过 Screen(&amp;#39;Func?&amp;#39;)进行查询该指令的说明文档&lt;/span&gt;
+&lt;span class="n"&gt;Usage&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;VBLTimestamp&lt;/span&gt; &lt;span class="n"&gt;StimulusOnsetTime&lt;/span&gt; &lt;span class="n"&gt;FlipTimestamp&lt;/span&gt; &lt;span class="n"&gt;Missed&lt;/span&gt; &lt;span class="n"&gt;Beampos&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; 
+&lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Screen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Flip&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;windowPtr&lt;/span&gt; &lt;span class="p"&gt;[,&lt;/span&gt; &lt;span class="n"&gt;when&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;[,&lt;/span&gt; &lt;span class="n"&gt;dontclear&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;[,&lt;/span&gt; &lt;span class="n"&gt;dontsync&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;[,&lt;/span&gt; &lt;span class="n"&gt;multiflip&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Flip 指令返回的第一个值 &lt;code&gt;VBLTimestamp&lt;/code&gt; 是指上一帧扫描结束的时间点，接下来阴极射线管的电子枪需要回到屏幕左上角进行下一帧的扫描，这一间隔称为垂直空白间隙（vertical blank interval, VBL）。同时前后缓冲区的切换也从这一时间点开始。此时 PTB 会进入休眠状态，一直等到切换过程结束才会重新请求 CPU 资源，在这期间 CPU 可以保证系统其它部分的正常运行。等到切换完成之后，PTB 立即执行下面两件事：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;查询电子枪（beam）当前的位置，并返回给变量 &lt;code&gt;Beampos&lt;/code&gt;；&lt;/li&gt;
+&lt;li&gt;通过&lt;code&gt;GetSecs()&lt;/code&gt;查询当前精确的时间戳。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;一般的多任务操作系统（OS X &amp;amp; Windows），在具体事件的时间点上都可能存在非常细微的随机误差，例如 VBL 开始的时间（&lt;code&gt;VBLTimestamp&lt;/code&gt;）、PTB 重新占用 CPU 的时间，一般这一时间差不会超过 1ms，但偶尔也有可能出现几毫秒的误差。为了补偿这一误差，PTB 利用电子枪回溯的位置作为另外一个高分辨率的时钟进行精确时间的控制，其计算的原理如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img alt="flip" src="http://7xiijd.com1.z0.glb.clouddn.com/flip.png"&gt;&lt;/p&gt;
+&lt;p&gt;Flip 返回的第二个值 &lt;code&gt;StimulusOnsetTime&lt;/code&gt; 代表第二帧开始进行扫描的时间，即：&lt;code&gt;StimulusOnsetTime = VBLTimestamp + VBL&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;Beamposition 的查询必须依赖于显卡硬件的支持，当无法通过硬件查询准确的 Beamposition 时，也就无法获取 VBL 时间。这时 PTB 一般会报错：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;-----&lt;/span&gt; ! &lt;span class="n"&gt;PTB&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;ERROR&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;SYNCHRONIZATION&lt;/span&gt; &lt;span class="n"&gt;FAILURE&lt;/span&gt; ! &lt;span class="o"&gt;----&lt;/span&gt;
+&lt;span class="n"&gt;One&lt;/span&gt; &lt;span class="n"&gt;or&lt;/span&gt; &lt;span class="n"&gt;more&lt;/span&gt; &lt;span class="n"&gt;internal&lt;/span&gt; &lt;span class="n"&gt;checks&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;see&lt;/span&gt; &lt;span class="n"&gt;Warnings&lt;/span&gt; &lt;span class="n"&gt;above&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;indicate&lt;/span&gt; &lt;span class="n"&gt;that&lt;/span&gt; &lt;span class="n"&gt;synchronization&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="n"&gt;Psychtoolbox&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;vertical&lt;/span&gt; &lt;span class="n"&gt;retrace&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;VBL&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;is&lt;/span&gt; &lt;span class="n"&gt;not&lt;/span&gt; &lt;span class="n"&gt;working&lt;/span&gt; &lt;span class="n"&gt;on&lt;/span&gt; &lt;span class="n"&gt;your&lt;/span&gt; &lt;span class="n"&gt;setup&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;如果对时间精确度的要求不是那么严格，或者程序还在调试阶段，可以通过&lt;code&gt;Screen('Preference', 'SkipSyncTests', 1)&lt;/code&gt;跳过这一错误。此时，Flip 指令返回 &lt;code&gt;StimulusOnsetTime = VBLTimestamp; beampos = -1;&lt;/code&gt;。&lt;/p&gt;
+&lt;h3&gt;3. Accurate Timing Demo&lt;/h3&gt;
+&lt;p&gt;了解了以上原理，再来看精确时间控制的&lt;a href="http://peterscarfe.com/accurateTimingDemo.html"&gt;Demo&lt;/a&gt;：&lt;/p&gt;
+&lt;p&gt;首先是最简单随意的呈现方式，这样无法保证精确控制时间，只是为了与后面的方法进行比较：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;frame&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;numFrames&lt;/span&gt;
+    &lt;span class="c"&gt;% Color the screen red&lt;/span&gt;
+    &lt;span class="n"&gt;Screen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;FillRect&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;window&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mf"&gt;0.5&lt;/span&gt; &lt;span class="mf"&gt;0.5&lt;/span&gt; &lt;span class="mf"&gt;0.5&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+    &lt;span class="c"&gt;% Flip to the screen&lt;/span&gt;
+    &lt;span class="n"&gt;Screen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Flip&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;window&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;上一例子中没有明确给出 Flip 执行的时间，这导致我们无法精确控制刺激呈现的时间。下面的例子中，首先在后缓冲区准备绘制之前读取前一帧结束的时间&lt;code&gt;vbl&lt;/code&gt;，然后在连续呈现&lt;code&gt;numFrames&lt;/code&gt;帧刺激的过程中，明确指定每一次 Flip 的时间为上一帧扫描结束后的&lt;code&gt;(waitframes - 0.5)*ifi&lt;/code&gt;。当&lt;code&gt;waitframes = 1;&lt;/code&gt;时，前后两次 Flip 之间的间隔一定为IFI，也就是连续呈现两帧，从而确保刺激呈现的时间为两帧。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;waitframes&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;vbl&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Screen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Flip&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;window&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;frame&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;numFrames&lt;/span&gt;
+    &lt;span class="c"&gt;% Color the screen red&lt;/span&gt;
+    &lt;span class="n"&gt;Screen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;FillRect&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;window&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mf"&gt;0.5&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+    &lt;span class="c"&gt;% Flip to the screen&lt;/span&gt;
+    &lt;span class="n"&gt;vbl&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Screen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Flip&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;window&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;vbl&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;waitframes&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mf"&gt;0.5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;ifi&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;上一例子中我们希望 PTB 可以在连续两帧中呈现刺激，以保证刺激呈现时间。但现实并不一定如此，因为计算机操作系统需要同时维持所有软硬件组成的正常运转，如键盘、鼠标、网络连接等等，这就可能导致 CPU 无法及时响应 PTB 的请求。为了让 CPU 优先处理 PTB 的请求，我们需要提高 PTB 的优先等级；除此之外，还可以在绘制指令与 Flip 之间插入&lt;code&gt;Screen('DrawingFinished', window);&lt;/code&gt;来阻止其它绘制，保证更好的时间精确度：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;topPriorityLevel&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;MaxPriority&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;window&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;Priority&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;topPriorityLevel&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;vbl&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Screen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Flip&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;window&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;frame&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;numFrames&lt;/span&gt;
+    &lt;span class="c"&gt;% Color the screen red&lt;/span&gt;
+    &lt;span class="n"&gt;Screen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;FillRect&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;window&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mf"&gt;0.5&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="mf"&gt;0.5&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+    &lt;span class="c"&gt;% Tell PTB no more drawing commands will be issued until the next flip&lt;/span&gt;
+    &lt;span class="n"&gt;Screen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;DrawingFinished&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;window&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="c"&gt;% Flip to the screen&lt;/span&gt;
+    &lt;span class="n"&gt;vbl&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Screen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Flip&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;window&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;vbl&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;waitframes&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mf"&gt;0.5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;ifi&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="n"&gt;Priority&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;4. 其它精确时间控制的设定及方法&lt;/h3&gt;
+&lt;p&gt;对于现代计算机硬件来说，基本上可以通过代码的控制做到精确的时间控制。如果实验仪器是一些相对老旧的硬件设备（例如……），可能需要一些额外的系统配置来辅助精确时间的控制。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;4.1 系统设置：&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;退出系统中无用的应用程序、后台服务等，不要占用过多 CPU；&lt;/li&gt;
+&lt;li&gt;禁用杀毒软件；&lt;/li&gt;
+&lt;li&gt;确保有足够的内存，必要时利用虚拟内存；&lt;/li&gt;
+&lt;li&gt;确保节能选项不会减慢 CPU；&lt;/li&gt;
+&lt;li&gt;关闭蓝牙、WIFI、网络连接以及 CD/DVD 等外接设备；&lt;/li&gt;
+&lt;li&gt;不要盲目采用过高分辨率，这样可能加重显卡负担，增加处理时间误差。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;4.2 Matlab设置：&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;matlab -nojvm&lt;/code&gt; 模式运行（如果没有必要用到 Java 辅助工具，如 &lt;code&gt;GetChar&lt;/code&gt;等）；&lt;/li&gt;
+&lt;li&gt;尽量减少 Matlab 图形界面窗口；&lt;/li&gt;
+&lt;li&gt;阅读 Matlab 文档，优化代码，充分利用内存加快执行速度；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;help mlint&lt;/code&gt; 查看执行效率的瓶颈及代码可能存在的问题。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;4.3 程序编写中需要注意的问题：&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;PTB 输出的 log 信息：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;通过 &lt;code&gt;Screen('Preference', 'Verbosity', level);&lt;/code&gt; 控制 PTB 执行过程中的输出信息，在程序调试时可以选择较高的 &lt;code&gt;level&lt;/code&gt; 便于找到问题；正式实验可以采用 &lt;code&gt;Screen('Preference', 'Verbosity', 0);&lt;/code&gt; 禁用所有输出信息，节省执行时间和资源。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;函数的预加载：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Matlab 中的 &lt;code&gt;.M &amp;amp; .MEX&lt;/code&gt; 源文件的加载需要一定的时间，如文件的定位、加载、执行等，这一初始化时间可能需要几百毫秒，所以在实验试次开始之前应该先执行一次需要的函数。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;同一源文件内的&lt;code&gt;function&lt;/code&gt;比通过文件加载的&lt;code&gt;function&lt;/code&gt;快：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Matlab 中的&lt;code&gt;function&lt;/code&gt;可以直接在当前脚本中定义，也可以通过单独的脚本文件定义（函数名与文件名一致），调试过程中为方便可以将不同的&lt;code&gt;function&lt;/code&gt;切分成独立的脚本文件，但在正式实验时应该将必要的&lt;code&gt;function&lt;/code&gt;整合到同一个执行脚本。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;优化代码结构：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;实验程序的主体，trial loop 内的代码应该以如下顺序执行：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;% 1. 绘制命令&lt;/span&gt;
+&lt;span class="n"&gt;Screen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;DrawDots&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="c"&gt;...), Screen(&amp;#39;DrawText&amp;#39;,...),Screen(&amp;#39;DrawTexture&amp;#39;,...)...&lt;/span&gt;
+&lt;span class="c"&gt;% 2. 阻止多余绘制&lt;/span&gt;
+&lt;span class="n"&gt;Screen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;DrawingFinished&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;win&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="c"&gt;% 3. 其它与显卡操作无关的代码，如声音、键盘、鼠标以及其它Matlab逻辑等&lt;/span&gt;
+&lt;span class="n"&gt;KbWait&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="c"&gt;% 4. Flip 指令让预备绘制刺激登台&lt;/span&gt;
+&lt;span class="n"&gt;vbl&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Screen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;Flip&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;win&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;vbl&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mf"&gt;0.5&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;ifi&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;5. 总结&lt;/h3&gt;
+&lt;p&gt;上述内容主要针对 CRT 显示器，CRT 与 液晶平板（LCD）的原理及优劣 Elze （2010）的文章中有详细介绍，文章还总结了2003-2009三本心理学杂志中75篇实验材料呈现时间低于50ms的研究，从各个研究中作者给出或推断的实验方法来看，许多研究者对显示器上刺激呈现时间的基本概念与操作还存在一些误解，导致实验实际呈现的时间并非研究者所认为的时间。一直以来都有争议而且最近比较热闹的心理学研究重复验证，其实很大程度上与实验条件控制有关，比如有些研究者文章中声称研究中刺激呈现时间为50ms，但是我们并不知道是如何做到的，实验程序中是否存在不合适的操作等。所以说应该建议研究者投稿录用后把实验程序开源，放到 Github 上，供所有人查看，也大大节约了重复实验的时间成本。哈哈，但是又有几个人愿意这样做呢~&lt;/p&gt;
+&lt;p&gt;到此为止基本介绍了 PTB 3 中对实验刺激呈现时间进行精确控制的方法以及相关注意事项，在实验过程中除了准确地呈现实验刺激之外，还需要准确地记录被试做出反应的时间，这主要涉及到键盘、鼠标或者特定的反应输入设备的精确控制。PTB 3 中如何准确地处理响应输入呢，下一节再说吧。&lt;/p&gt;
+&lt;p&gt;参考：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href="https://github.com/Psychtoolbox-3/Psychtoolbox-3/wiki/FAQ%3A-Textures%2C-Windows%2C-Screens"&gt;FAQ: Textures, Windows, Screens&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/Psychtoolbox-3/Psychtoolbox-3/wiki/FAQ%3A-Performance-Tuning"&gt;FAQ: Performance Tuning&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://peterscarfe.com/accurateTimingDemo.html"&gt;Accurate Timing Demo&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Elze, T. (2010). Misspecifications of stimulus presentation durations in experimental psychology: A systematic review of the psychophysics literature. PloS one, 5(9), e12792.&lt;/li&gt;
+&lt;/ol&gt;</content><category term="Psychology"></category><category term="Matlab"></category></entry><entry><title>自然场景实验材料处理工具（1）</title><link href="http://blog.rainy.im/2015/04/29/natural-scene-image-toolkits/" rel="alternate"></link><published>2015-04-29T06:12:19+08:00</published><updated>2015-04-29T06:12:19+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2015-04-29:/2015/04/29/natural-scene-image-toolkits/</id><summary type="html">&lt;p&gt;以自然场景图像作为实验材料，通常需要每一试次都采用陌生图片，因此每个类别都需要几百上千张实验图片。从下载收集到筛选再到统一尺寸，这工作量当然是由计算机完成最合适。（with Golang）&lt;/p&gt;</summary><content type="html">&lt;p&gt;以自然场景图像作为实验材料，通常需要每一试次都采用陌生图片，因此每个类别都需要几百上千张实验图片。从下载收集到筛选再到统一尺寸，这工作量当然是由计算机完成最合适。本来会用 Python+OpenCV 处理，但是最近迷上 Golang，以前觉得 Python 的代码块比 &lt;code&gt;{}&lt;/code&gt; 干净又便捷，但是用过 &lt;code&gt;goimports &amp;amp; gofmt&lt;/code&gt; 之后，就再也回不去了，享受闭上眼睛写代码的快感吧 :P&lt;/p&gt;
+&lt;h3&gt;1. 采集&lt;/h3&gt;
+&lt;p&gt;主要有两个图片库：&lt;a href="http://image-net.org/"&gt;ImageNet&lt;/a&gt; &amp;amp; &lt;a href="http://groups.csail.mit.edu/vision/SUN/"&gt;SUN&lt;/a&gt;，其中ImageNet是Fei-Fei大婶的&lt;a href="http://www.ted.com/talks/fei_fei_li_how_we_re_teaching_computers_to_understand_pictures"&gt;TED演讲&lt;/a&gt;中推荐的，膜拜Orz…&lt;/p&gt;
+&lt;p&gt;SUN 整个下载下载有40G左右，ImageNet 只给想要类别的图片链接，需要自己下载，这个代码就不放了。&lt;/p&gt;
+&lt;h3&gt;2. 筛选&lt;/h3&gt;
+&lt;p&gt;ImageNet 大部分图片来自 flickr ，图片内容是否可用只能手动筛选，但可以排除一些下载失败、文件太小、尺寸太小的图片(&lt;a href="https://github.com/ZJU-Psy/natural-scene-image-toolkits/blob/master/filter.go?ts=2"&gt;See filter.go&lt;/a&gt;)。&lt;/p&gt;
+&lt;h3&gt;3. 统一尺寸&lt;/h3&gt;
+&lt;p&gt;呈现时必须以相同的尺寸，按照目标尺寸进行缩放时需要先通过裁减得到与目标相同宽高比的图像，否则会变形(&lt;a href="https://github.com/ZJU-Psy/natural-scene-image-toolkits/blob/master/shoes.go?ts=2"&gt;See shoes.go&lt;/a&gt;):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kn"&gt;import&lt;/span&gt;  &lt;span class="s"&gt;&amp;quot;github.com/oliamb/cutter&amp;quot;&lt;/span&gt;
+&lt;span class="kd"&gt;func&lt;/span&gt; &lt;span class="nx"&gt;crop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;pathsrc&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;pathdest&lt;/span&gt; &lt;span class="kt"&gt;string&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="nx"&gt;image&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Image&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="nx"&gt;file&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;err&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="nx"&gt;os&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;pathsrc&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nx"&gt;err&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="kc"&gt;nil&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Fatal&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;err&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="c1"&gt;// decode jpeg into image.Image&lt;/span&gt;
+  &lt;span class="nx"&gt;img&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;err&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="nx"&gt;jpeg&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Decode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;file&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nx"&gt;err&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="kc"&gt;nil&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Fatal&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;err&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="nx"&gt;file&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Close&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="nx"&gt;ow&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;oh&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="nx"&gt;img&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Bounds&lt;/span&gt;&lt;span class="p"&gt;().&lt;/span&gt;&lt;span class="nx"&gt;Max&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;X&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;img&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Bounds&lt;/span&gt;&lt;span class="p"&gt;().&lt;/span&gt;&lt;span class="nx"&gt;Max&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Y&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nx"&gt;ow&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nx"&gt;oh&lt;/span&gt; &lt;span class="p"&gt;&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;WIDTH&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;HEIGHT&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;ow&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;WIDTH&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="nb"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;HEIGHT&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nb"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;oh&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;oh&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;HEIGHT&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="nb"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;WIDTH&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="nb"&gt;float64&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;ow&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="nx"&gt;croped&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;_&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="nx"&gt;cutter&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Crop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;img&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;cutter&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Config&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;Width&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;   &lt;span class="nx"&gt;ow&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="nx"&gt;Height&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;  &lt;span class="nx"&gt;oh&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="nx"&gt;Options&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;cutter&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Copy&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="p"&gt;})&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nx"&gt;pathdest&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;out&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;err&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="nx"&gt;os&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;pathdest&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nx"&gt;err&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="kc"&gt;nil&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Fatal&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;err&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="k"&gt;defer&lt;/span&gt; &lt;span class="nx"&gt;out&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Close&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+    &lt;span class="c1"&gt;// write new image to file&lt;/span&gt;
+    &lt;span class="nx"&gt;jpeg&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Encode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;out&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;croped&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;nil&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;croped&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;然后进行缩放：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;func&lt;/span&gt; &lt;span class="nx"&gt;scale&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;img&lt;/span&gt; &lt;span class="nx"&gt;image&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Image&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;dest&lt;/span&gt; &lt;span class="kt"&gt;string&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="kt"&gt;error&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="nx"&gt;m&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="nx"&gt;resize&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Resize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;uint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;WIDTH&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="nb"&gt;uint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nx"&gt;HEIGHT&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="nx"&gt;img&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;resize&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Lanczos3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="nx"&gt;out&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;err&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="nx"&gt;os&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;dest&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nx"&gt;err&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="kc"&gt;nil&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Fatal&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;err&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="k"&gt;defer&lt;/span&gt; &lt;span class="nx"&gt;out&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Close&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// write new image to file&lt;/span&gt;
+  &lt;span class="nx"&gt;jpeg&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Encode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;out&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;m&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;nil&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="kc"&gt;nil&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;4. 中文词库&lt;/h3&gt;
+&lt;p&gt;需要（大量）指定类别的中文词汇，如动物名称。首先考虑从搜狗输入法词库中提取，参考&lt;a href="http://blog.csdn.net/zhangzhenhu/article/details/7014271"&gt;搜狗词库转为txt格式（小小输入法）&lt;/a&gt;，稍加改动，只保留两个字的词汇(&lt;a href="https://github.com/ZJU-Psy/natural-scene-image-toolkits/blob/master/sougou-dict.py?ts=2"&gt;See sougou-dict.py&lt;/a&gt;)。从&lt;a href="http://pinyin.sogou.com/dict/"&gt;搜狗输入法词库&lt;/a&gt;下载需词汇类别，然后：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;$ python sougou-dict.py animal.scel
+&lt;/pre&gt;&lt;/div&gt;</content><category term="Psychology"></category><category term="Scene"></category><category term="Go"></category></entry></feed>

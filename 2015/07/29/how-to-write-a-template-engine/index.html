@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>怎样写一个模板引擎</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/python.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2015/07/29/how-to-write-a-template-engine/" rel="canonical" />
+
+        <meta name="description" content="表面上看来模板引擎复杂的地方是抽象语法树的构建和操作，但实际上其核心问题在于变量名和值的区分，也就是程序和数据的区分。">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Python">
+        <meta name="tags" content="Js">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="怎样写一个模板引擎"/>
+<meta property="og:description" content="表面上看来模板引擎复杂的地方是抽象语法树的构建和操作，但实际上其核心问题在于变量名和值的区分，也就是程序和数据的区分。"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2015/07/29/how-to-write-a-template-engine/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2015-07-29 04:25:02+08:00"/>
+<meta property="article:modified_time" content="2015-07-29 04:25:02+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Python"/>
+<meta property="article:tag" content="Python"/>
+<meta property="article:tag" content="Js"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "怎样写一个模板引擎",
+  "headline": "怎样写一个模板引擎",
+  "datePublished": "2015-07-29 04:25:02+08:00",
+  "dateModified": "2015-07-29 04:25:02+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2015/07/29/how-to-write-a-template-engine/",
+  "description": "表面上看来模板引擎复杂的地方是抽象语法树的构建和操作，但实际上其核心问题在于变量名和值的区分，也就是程序和数据的区分。"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">怎样写一个模板引擎</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Wed 29 July 2015">Wed 29 July 2015</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Wed 29 July 2015</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>模板引擎是Web开发中通常用于动态生成网页的工具，例如PHP常用的<a href="http://www.smarty.net/">Smarty</a>、Python的<a href="http://jinja.pocoo.org/">Jinja</a>、Node的<a href="http://jade-lang.com/">Jade</a>等。本文通过Python(<a href="http://alexmic.net/building-a-template-engine/">Approach: Building a toy template engine in Python</a>)和Js(<a href="http://ejohn.org/blog/javascript-micro-templating/">JavaScript Micro-Templating</a>)的两个简单模板引擎项目学习怎样写一个模板引擎。</p>
+<p>一般模板由下面三部分组成：</p>
+<ul>
+<li>文本</li>
+<li>变量</li>
+<li>组块</li>
+</ul>
+<p>通常变量和代码组块由特定的分隔符标识，如：</p>
+<div class="highlight"><pre><span class="n">Hello</span><span class="p">,</span> <span class="p">{{</span><span class="n">name</span><span class="p">}}</span><span class="err">!</span>
+<span class="p">{</span><span class="o">%</span> <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="s2">&quot;admin&quot;</span> <span class="o">%</span><span class="p">}</span>
+<span class="o">&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s2">&quot;/dashboard&quot;</span><span class="o">&gt;</span><span class="n">Dashboard</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;</span>
+<span class="p">{</span><span class="o">%</span> <span class="n">end</span> <span class="o">%</span><span class="p">}</span>
+</pre></div>
+
+
+<p>对文本的渲染就是返回文本本身；变量和组块的渲染依赖于我们赋予变量名的值和约定的组块语法规则（如条件、循环等）。要将字符串当做变量进行求值，首先想到的是<code>eval</code>方法：</p>
+<div class="highlight"><pre><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;rainy&quot;</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Hello, &quot;</span> <span class="o">+</span> <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;!&quot;</span><span class="p">)</span>
+
+<span class="c1"># Hello, rainy!</span>
+</pre></div>
+
+
+<p>许多编程语言中的<code>eval</code>方法用于将字符串转化成表达式进行求值，完成类似编译器本身的工作，而实质上模板引擎更像是一个针对于模板的编译器。我们知道编译器一般采用<a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">抽象语法树(AST)</a>这种树形结构来对程序源码进行表征，如果我们将模板看作是源码，同样可以将其表征为抽象语法树，例如上面的模板文件可以表示为：</p>
+<p><img alt="template engine AST" src="http://7xiijd.com1.z0.glb.clouddn.com/template_engine_ast.jpg"></p>
+<p>要将模板文件变成上图所示的AST结构，首先需要按照分隔符划分，例如在Python中：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="n">VAR_TOKEN_START</span> <span class="o">=</span> <span class="s1">&#39;{{&#39;</span>
+<span class="n">VAR_TOKEN_END</span> <span class="o">=</span> <span class="s1">&#39;}}&#39;</span>
+<span class="n">BLOCK_TOKEN_START</span> <span class="o">=</span> <span class="s1">&#39;{%&#39;</span>
+<span class="n">BLOCK_TOKEN_END</span> <span class="o">=</span> <span class="s1">&#39;%}&#39;</span>
+
+<span class="n">TOK_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;(</span><span class="si">%s</span><span class="s2">.*?</span><span class="si">%s</span><span class="s2">|</span><span class="si">%s</span><span class="s2">.*?</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span>
+    <span class="n">VAR_TOKEN_START</span><span class="p">,</span>
+    <span class="n">VAR_TOKEN_END</span><span class="p">,</span>
+    <span class="n">BLOCK_TOKEN_START</span><span class="p">,</span>
+    <span class="n">BLOCK_TOKEN_END</span>
+<span class="p">))</span>
+
+<span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Hello, {{name}}!</span>
+<span class="s2">{</span><span class="si">% i</span><span class="s2">f role == &quot;admin&quot; %}</span>
+<span class="s2">&lt;a href=&quot;/dashboard&quot;&gt;Dashboard&lt;/a&gt;</span>
+<span class="s2">{</span><span class="si">% e</span><span class="s2">nd %}&quot;&quot;&quot;</span>
+
+<span class="n">TOK_REGEX</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+<span class="c1"># OUTPUT =&gt;</span>
+<span class="p">[</span><span class="s1">&#39;Hello, &#39;</span><span class="p">,</span>
+ <span class="s1">&#39;{{name}}&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;{</span><span class="si">% i</span><span class="s1">f role == &quot;admin&quot; %}&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&lt;a href=&quot;/dashboard&quot;&gt;Dashboard&lt;/a&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;{</span><span class="si">% e</span><span class="s1">nd %}&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;&#39;</span><span class="p">]</span>
+</pre></div>
+
+
+<p>构建成AST之后对每一节点逐一进行渲染（render），例如对变量的渲染可以用下面的方法：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="n">context</span><span class="p">[</span><span class="n">tok</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">context</span>
+<span class="k">class</span> <span class="nc">VarTmpl</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">var</span>
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">resolve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+
+<span class="n">tmpl</span> <span class="o">=</span> <span class="n">VarTmpl</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+
+<span class="n">tmpl</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;rainy&quot;</span><span class="p">)</span>     <span class="c1">#=&gt; rainy</span>
+<span class="n">tmpl</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;python&quot;</span><span class="p">)</span>    <span class="c1">#=&gt; python</span>
+</pre></div>
+
+
+<p>对组块的渲染稍微复杂一些但原理上类似于<code>eval</code>：</p>
+<div class="highlight"><pre><span class="n">role</span> <span class="o">=</span> <span class="s1">&#39;user&#39;</span>
+<span class="nb">eval</span><span class="p">(</span><span class="s1">&#39;role == &quot;admin&quot;&#39;</span><span class="p">)</span>
+<span class="c1"># OUTPUT</span>
+<span class="bp">False</span>
+</pre></div>
+
+
+<p>只不过所有组块的语法和求值规则需要重新定义，有兴趣可以查看<a href="https://github.com/alexmic/microtemplates">源码</a>。下面再来看基于Js的一种解决方案。</p>
+<p>从上文可以看出，模板引擎的核心在于区分字符串和表达式，而表达式本身又是以字符串的形式呈现。为了实现字符串与表达式之间的切换，上面Python的版本采用<code>eval</code>（或者更专业点的：<a href="http://stackoverflow.com/questions/15197673/using-pythons-eval-vs-ast-literal-eval">ast.literal_eval</a>）。当然Js中也有与之类似的<code>eval</code>方法，但Js还有另外一个非常灵活的特性，在定义一个函数时，可以用下面两种方式：</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">Tmpl</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">context</span><span class="p">){</span>
+  <span class="kd">with</span><span class="p">(</span><span class="nx">context</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="nx">Tmpl</span><span class="p">({</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;rainy&quot;</span><span class="p">});</span>    <span class="c1">//=&gt; rainy</span>
+
+<span class="kd">var</span> <span class="nx">raw</span> <span class="o">=</span> <span class="s2">&quot;name&quot;</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">Tmpl</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Function</span><span class="p">(</span><span class="s2">&quot;context&quot;</span><span class="p">,</span> 
+               <span class="s2">&quot;with(context){console.log(&quot;</span><span class="o">+</span>
+                      <span class="nx">raw</span><span class="o">+</span>
+               <span class="s2">&quot;);}&quot;</span><span class="p">);</span>
+
+<span class="nx">Tmpl</span><span class="p">({</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;rainy&quot;</span><span class="p">});</span>   <span class="c1">//=&gt; rainy</span>
+<span class="nx">Tmpl</span><span class="p">({</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;js&quot;</span><span class="p">});</span>      <span class="c1">//=&gt; js</span>
+</pre></div>
+
+
+<p>也就是说我们可以通过<code>new Function()</code>的方法实现字符串向表达式的转化，结合上文提到的<code>分割-求值-重组</code>的步骤，我们再来看John Resig的简化版本：</p>
+<div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">tmpl</span> <span class="o">=</span> <span class="kd">function</span> <span class="nx">tmpl</span><span class="p">(</span><span class="nx">str</span><span class="p">,</span> <span class="nx">data</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Function</span><span class="p">(</span><span class="s2">&quot;obj&quot;</span><span class="p">,</span> <span class="s2">&quot;var p=[];&quot;</span><span class="o">+</span>
+                 <span class="s2">&quot;with(obj){p.push(&#39;&quot;</span> <span class="o">+</span>
+                 <span class="nx">str</span>
+                    <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[\r\t\n]/g</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+<span class="c1">// 去掉了单引号处理部分，简化版本中模板文件中暂时不能出现单引号；</span>
+                    <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;&lt;%&quot;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;\t&quot;</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\t=(.*?)%&gt;/g</span><span class="p">,</span> <span class="s2">&quot;&#39;,$1,&#39;&quot;</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;\t&quot;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;&#39;);&quot;</span><span class="p">)</span>
+                    <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;%&gt;&quot;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;p.push(&#39;&quot;</span><span class="p">)</span>
+                 <span class="o">+</span> <span class="s2">&quot;&#39;);}return p.join(&#39;&#39;);&quot;</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">data</span> <span class="o">?</span> <span class="nx">fn</span><span class="p">(</span> <span class="nx">data</span> <span class="p">)</span> <span class="o">:</span> <span class="nx">fn</span><span class="p">;</span>
+  <span class="p">};</span>
+<span class="p">})();</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">tmpl</span><span class="p">(</span><span class="s2">&quot;Hello, &lt;%=name%&gt;!&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;rainy&quot;</span><span class="p">}));</span>
+<span class="c1">// OUTPUT</span>
+<span class="s2">&quot;Hello, rainy!&quot;</span>
+</pre></div>
+
+
+<p>在这段15行不到的（微型）模板引擎中，首先还是根据约定的分隔符将模板分割：</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="s2">&quot;Hello, &lt;%=name%&gt;!&quot;</span><span class="p">;</span>
+<span class="nx">str</span> <span class="o">=</span> <span class="nx">str</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;&lt;%&quot;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;\t&quot;</span><span class="p">);</span>       <span class="c1">//=&gt; &#39;Hello, \t=name%&gt;!&#39;</span>
+<span class="nx">str</span> <span class="o">=</span> <span class="nx">str</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\t=(.*?)%&gt;/g</span><span class="p">,</span> <span class="s2">&quot;&#39;,$1,&#39;&quot;</span><span class="p">);</span>
+<span class="c1">//=&gt; &#39;Hello, \&#39;,name,\&#39;!&#39;</span>
+</pre></div>
+
+
+<p>注意这一行是在<code>new Function()</code>的定义中，相当于：</p>
+<div class="highlight"><pre><span class="kd">function</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">str</span><span class="p">,</span> <span class="nx">data</span><span class="p">){</span>
+  <span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="kd">with</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span>
+    <span class="nx">p</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">&#39;Hello, &#39;</span><span class="p">,</span><span class="nx">name</span><span class="p">,</span><span class="s1">&#39;!&#39;</span><span class="p">);</span>
+   <span class="c1">// p === [&#39;Hello, &#39;, name, &#39;!&#39;];</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>而在<code>with(data){}</code>作用范围内，<code>name === data.name</code>，因此得到：</p>
+<div class="highlight"><pre><span class="nx">p</span> <span class="o">===</span> <span class="p">[</span><span class="s1">&#39;Hello, &#39;</span><span class="p">,</span> <span class="s1">&#39;rainy&#39;</span><span class="p">,</span> <span class="s1">&#39;!&#39;</span><span class="p">];</span>
+<span class="nx">p</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="s2">&quot;Hello, rainy!&quot;</span><span class="p">;</span>
+</pre></div>
+
+
+<p>以上就是这一微型模板引擎的核心部分，如果需要处理单引号的问题，可以在<code>str</code>处理过程中加上：</p>
+<div class="highlight"><pre><span class="nx">str</span>
+  <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[\r\t\n]/g</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&#39;/g</span><span class="p">,</span> <span class="s2">&quot;\r&quot;</span><span class="p">)</span>             <span class="c1">// 全部单引号替换为\r</span>
+  <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;&lt;%&quot;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;\t&quot;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\t=(.*?)%&gt;/g</span><span class="p">,</span> <span class="s2">&quot;&#39;,$1,&#39;&quot;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;\t&quot;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;&#39;);&quot;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;%&gt;&quot;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;p.push(&#39;&quot;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\r/g</span><span class="p">,</span> <span class="s2">&quot;\\&#39;&quot;</span><span class="p">)</span>           <span class="c1">// 置换回单引号</span>
+</pre></div>
+
+
+<h3>总结</h3>
+<p>表面上看来模板引擎复杂的地方是抽象语法树的构建和操作，但实际上其核心问题在于变量名和值的区分，也就是程序和数据的区分。而有趣的是，在Lisp语言中，“数据即程序、程序即数据”，它们之间并无本质差异，有兴趣可以展开阅读一下这篇文章：<a href="http://www.defmacro.org/ramblings/lisp.html">The Nature of Lisp</a>。模板引擎非常实用，从实用性出发深入探索，一不小心拓展到其它领域，这才是programming最大的乐趣所在:D</p>
+<h3>参考</h3>
+<ul>
+<li><a href="">Approach: Building a toy template engine in Python</a></li>
+<li><a href="http://ejohn.org/blog/javascript-micro-templating/">JavaScript Micro-Templating</a></li>
+<li><a href="http://alexeyrybak.com/blitz/blitz_en.html">Blitz templates, template engine extension for PHP</a></li>
+<li><a href="https://github.com/rainyear/Blitz-featured">Blitz-featured</a></li>
+</ul>
+<p><a href="https://www.coinbase.com/rainyear"><img alt="BitCoin donate button" src="https://img.shields.io/badge/Bitcoin-donate-2b71b1.svg?style=flat"></a> <a href="https://github.com/rainyear/lolita/wiki/Donation#tenpay"><img alt="Tenpay donate button" src="https://img.shields.io/badge/Tenpay-donate-brightgreen.svg?style=flat"></a> <a href="https://github.com/rainyear/lolita/wiki/Donation#alipay"><img alt="Alipay donate button" src="https://img.shields.io/badge/Alipay-donate-orange.svg?style=flat"></a></p>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=怎样写一个模板引擎&amp;url=http://blog.rainy.im/2015/07/29/how-to-write-a-template-engine/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2015/07/29/how-to-write-a-template-engine/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2015/07/29/how-to-write-a-template-engine/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/python.html">Python</a><a href="http://blog.rainy.im/tag/js.html">Js</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

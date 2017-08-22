@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>Python 类型检查</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/python.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2017/01/20/python-type-hints/" rel="canonical" />
+
+        <meta name="description" content="众所周知， Python 是一门强类型、动态类型检查的语言。所谓动态类型，是指在定义变量时，我们无需指定变量的类型，Python 解释器会在运行时自动检查。">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Python">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="Python 类型检查"/>
+<meta property="og:description" content="众所周知， Python 是一门强类型、动态类型检查的语言。所谓动态类型，是指在定义变量时，我们无需指定变量的类型，Python 解释器会在运行时自动检查。"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2017/01/20/python-type-hints/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2017-01-20 09:17:08+08:00"/>
+<meta property="article:modified_time" content="2017-01-20 09:17:08+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Python"/>
+<meta property="article:tag" content="Python"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "Python 类型检查",
+  "headline": "Python 类型检查",
+  "datePublished": "2017-01-20 09:17:08+08:00",
+  "dateModified": "2017-01-20 09:17:08+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2017/01/20/python-type-hints/",
+  "description": "众所周知， Python 是一门强类型、动态类型检查的语言。所谓动态类型，是指在定义变量时，我们无需指定变量的类型，Python 解释器会在运行时自动检查。"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Python 类型检查</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Fri 20 January 2017">Fri 20 January 2017</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Fri 20 January 2017</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>众所周知， Python 是一门强类型、动态类型检查的语言。所谓动态类型，是指在定义变量时，我们无需指定变量的类型，Python 解释器会在运行时自动检查。与静态类型语言（如 C 语言）相比，这不仅仅是少写了几个类型声明字符：</p>
+<div class="highlight"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="cp">#define BUFF 100</span>
+
+<span class="kt">char</span><span class="o">*</span> <span class="nf">greeting</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">name</span><span class="p">){</span>
+  <span class="kt">char</span><span class="o">*</span> <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">char</span><span class="p">)</span> <span class="o">*</span> <span class="n">BUFF</span><span class="p">);</span>
+    <span class="n">sprintf</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s">&quot;Hello, %s!&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">msg</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Greeting: &lt;%s&gt;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">greeting</span><span class="p">(</span><span class="s">&quot;C99&quot;</span><span class="p">));</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">greeting</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">&quot;Hello, {}!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Greeting: &lt;</span><span class="si">%s</span><span class="s2">&gt;&quot;</span> <span class="o">%</span> <span class="n">greeting</span><span class="p">(</span><span class="s2">&quot;Python35&quot;</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+
+<p>动态类型从一定程度上将我们的思维从对计算机的工作模拟中解放出来，可以将更多精力集中在需要解决的问题上：就像上面的例子，我们不需要费心思考虑<code>greeting</code>函数所接受的参数是什么类型、返回值是什么类型，而只需要考虑<code>greeting</code>函数需要实现的功能即可。</p>
+<p>当然并不是说动态类型一定优于静态类型，上面的例子用 C 语言和 Python 相比也有失公允，如果换成 Go 语言：</p>
+<div class="highlight"><pre><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">greeting</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;Hello, %s&quot;</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Greeting: &lt;%s&gt;&quot;</span><span class="p">,</span> <span class="nx">greeting</span><span class="p">(</span><span class="s">&quot;Go&quot;</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>静态类型的优势（从某种程度上说也是缺点）在于定义方法时制定一种强制性的协议（接口），只有遵循协议才能正确地使用。这对多人合作、开发第三方库、快速定位 BUG 等是很有帮助的。静态类型还有一大优势是可以让 IDE 帮助提示接口用法和类型检查，进一步提高效率。既然有这么多优势，那 Python 要不要也学习一个？实际上 Python 3.5  中的 <a href="https://www.python.org/dev/peps/pep-0484/#abstract">PEP 484</a> 和 Python 3.6 的 <a href="https://www.python.org/dev/peps/pep-0526/">PEP 526</a> 分别加入了类型提示（Type Hints）的语法，其中 PEP 484 主要关于函数、方法、类的参数和返回值的类型声明语法，而 PEP 526添加了对变量类型的声明：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">greeting</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;Hello, {}!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+
+
+<h3>Mypy</h3>
+<p><a href="http://www.mypy-lang.org/">Mypy</a> 是官方推荐一个静态类型检查工具：</p>
+<div class="highlight"><pre>python3 -m pip install mypy
+</pre></div>
+
+
+<p>可以用 <code>mypy</code> 命令直接检查 Python 程序：</p>
+<div class="highlight"><pre>mypy greeting.py
+</pre></div>
+
+
+<p>为了方便使用，可以将其应用到 IDE 中，以 Atom 为例，可以安装插件<a href="https://github.com/elarivie/linter-mypy">linter-mypy</a>：</p>
+<div class="highlight"><pre>python3 -m pip install typed-ast
+apm install linter
+apm install linter-mypy
+</pre></div>
+
+
+<p><img alt="Atom mypy linter.jpg" src="http://qcdn.rainy.im/8528FAB9097FCF6BF0AE97EBF1ED637F.jpg"></p>
+<p>Mypy 支持的常用类型如下表所示（来自<a href="http://mypy.readthedocs.io/en/latest/builtin_types.html">官方文档</a>）：</p>
+<p><img alt="builtin types.png" src="http://qcdn.rainy.im/6CCE3E43E95EB245D11E03653B6306D9.png"></p>
+<p>其中<code>List</code>/<code>Dict</code>/<code>Iterable</code>/<code>Sequence</code>/<code>Any</code>来自标准库 <a href="http://docs.pyhub.cc/library/typing.html"><code>typing</code></a>。这里的 <code>Sequence</code>和<code>Iterable</code>分别对应<code>collections.abc.Sequence</code>和<code>collections.abc.Iterable</code>，简单来区分<code>Sequence</code>是可以通过数字下标索引的，而<code>Iterable</code>可以代表生成器：</p>
+<p><img alt="Sequence.jpg" src="http://qcdn.rainy.im/27617AF7633F8A4BC7EDB5818C91430B.jpg"></p>
+<h3>Python 2.x</h3>
+<p>添加了类型注释的代码可以直接通过 Python 3.5 解释器执行，但是对于 Python 2.x 则是完全不兼容的。如果要在 Python 2.x 中使用，首先需要安装 <code>typing</code>：</p>
+<div class="highlight"><pre>pip install typing
+</pre></div>
+
+
+<p>然后可以用单行注释的形式强行添加：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">send_email</span><span class="p">(</span><span class="n">address</span><span class="p">,</span>     <span class="c1"># type: Union[str, List[str]]</span>
+               <span class="n">sender</span><span class="p">,</span>      <span class="c1"># type: str</span>
+               <span class="n">cc</span><span class="p">,</span>          <span class="c1"># type: Optional[List[str]]</span>
+               <span class="n">bcc</span><span class="p">,</span>         <span class="c1"># type: Optional[List[str]]</span>
+               <span class="n">subject</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+               <span class="n">body</span><span class="o">=</span><span class="bp">None</span>    <span class="c1"># type: List[str]</span>
+               <span class="p">):</span>
+    <span class="c1"># type: (...) -&gt; bool</span>
+    <span class="sd">&quot;&quot;&quot;Send an email message.  Return True if successful.&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+
+
+<h3>总结</h3>
+<p>Python 3.5+ 从语法上支持静态类型提示，在不影响正常使用习惯的情况下为我们提供静态类型检查的功能，虽说不能与真正的静态类型语言相比，但也保证了更大的灵活性，这也符合 Python 的一贯的设计思想：“It's a tool, not a rule.”</p>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=Python 类型检查&amp;url=http://blog.rainy.im/2017/01/20/python-type-hints/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2017/01/20/python-type-hints/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2017/01/20/python-type-hints/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/python.html">Python</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>字符串匹配算法</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/python.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2016/04/23/string-find/" rel="canonical" />
+
+        <meta name="description" content="字符串匹配算法。">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Python">
+        <meta name="tags" content="算法">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="字符串匹配算法"/>
+<meta property="og:description" content="字符串匹配算法。"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2016/04/23/string-find/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-04-23 19:05:25+08:00"/>
+<meta property="article:modified_time" content="2016-04-23 19:05:25+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Python"/>
+<meta property="article:tag" content="Python"/>
+<meta property="article:tag" content="算法"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "字符串匹配算法",
+  "headline": "字符串匹配算法",
+  "datePublished": "2016-04-23 19:05:25+08:00",
+  "dateModified": "2016-04-23 19:05:25+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2016/04/23/string-find/",
+  "description": "字符串匹配算法。"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">字符串匹配算法</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Sat 23 April 2016">Sat 23 April 2016</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Sat 23 April 2016</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>我们经常需要确定一个较短的字符串（模式串）在一个较长字符串（主串）中是否出现或者出现的最小位置。例如 Python 中字符串类型的的 <code>find</code> 和 <code>index</code> 方法：</p>
+<div class="highlight"><pre><span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;I Love Python&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Py&#39;</span><span class="p">))</span>  <span class="c1"># 7</span>
+<span class="k">print</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Pyc&#39;</span><span class="p">))</span> <span class="c1"># -1</span>
+</pre></div>
+
+
+<p><code>index</code> 方法与 <code>find</code> 的唯一区别在于当主串中不存在模式串时会抛出 <code>ValueError</code>：</p>
+<div class="highlight"><pre><span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+  <span class="n">File</span> <span class="s2">&quot;&lt;stdin&gt;&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">ValueError</span><span class="p">:</span> <span class="n">substring</span> <span class="ow">not</span> <span class="n">found</span>
+</pre></div>
+
+
+<p>关于 Python(CPython) 中的字符串匹配算法后面会提到，先来看一下直观的算法和知名的 KMP 算法。</p>
+<h3>1. 顺序匹配算法</h3>
+<p>这是最直观的算法，就是将模式串沿着主串从左向右滑动，直到找到主串中与之相匹配的子字符串，并返回其位置。为了演示这一算法我们先构建一个虚拟的字符串类型：</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">String</span><span class="p">:</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ss</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">=</span> <span class="n">ss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="n">length</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">ss</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</pre></div>
+
+
+<p>这个字符串类型通过数组存储连续的字符，并保留了字符串的长度值。</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+  <span class="n">i</span> <span class="o">=</span> <span class="n">pos</span>
+  <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">S</span><span class="o">.</span><span class="n">length</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">T</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+      <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span>
+      <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">if</span> <span class="n">j</span> <span class="o">&gt;=</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">i</span> <span class="o">-</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span>
+  <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</pre></div>
+
+
+<p>分析一下这个算法可以发现，在 <code>find(String('I Love Python'), String('Py'))</code> 的例子中，时间复杂度为 <code>O(n+m)</code>，因为主串的下标是一直向前移动的。但是对于 <code>find(String('PPPPPPPython'), String('Py'))</code> 这样的情况，每当遇到模式串的第二个字符不匹配时，即 <code>P != y</code> ，<code>i</code> 和 <code>j</code> 都需要退回去重新向前移动，这就会导致复杂度变为 <code>O(n*m)</code>。KMP 算法就是针对这种情况的改进。</p>
+<h3>2. KMP 算法</h3>
+<p>这一改进算法由 Knuth、Pratt、Morris 同时发现，故得名 KMP。改进的原理也比较简单，我们希望可以尽量减少由于模式串匹配到一半发现不匹配时所导致的 <code>i</code> 和 <code>j</code> 退回的步数，例如直到模式串的第 <code>k</code> 个字符才发现 <code>S[k] != T[k]</code>，但是 <code>k</code> 之前已经比较过的字符串我们不希望白白浪费掉，然后回过头来重复比较一次，而且这写比较过的字符长度越长越好。例如模式串为：<code>T = String('ABABC')</code>，而主串为<code>S = String('ABABDCCC')</code>，这是如果 <code>k = 4</code> ，即 <code>T[4] != S[4]</code>，但此时 <code>T[2:4] = 'AB'</code> 恰好等于 <code>T[0:2] = 'AB'</code>，也就是说不需要再从头比较一次 <code>S[2:4] == T[0:2]</code>，因为 <code>T = String('ABABC')</code> 本身的性质已经决定了它们一定是相等的（否则也不会一直匹配到 <code>k=4</code> 才出现不匹配）。</p>
+<p>总结来说就是，我们利用模式串中 <code>T[0:k] == T[m-k:m]</code> 的性质（如果存在的话），在字符串比较的时候可以省略一定的步数从而减少不必要的重复比较。虽然这需要我们付出额外的时间去检验模式串的这一性质，但由于模式串的长度往往小于主串，这样的付出还是值得的。然而如果模式串根本不具备这样的性质，例如完全是由不同字符组成的 <code>String('ABCDE')</code>，那么 KMP 算法反而增加了复杂度。</p>
+<p>为了获取模式串的 KMP 性质，我们需要一个额外的数组来记录<strong>当第 <code>j</code> 个字符与主串不匹配时，我们可以跳过模式串的前 <code>k</code> 个字符</strong>，这个数组满足：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">nxt</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+  <span class="k">if</span> <span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="n">T</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="n">k</span><span class="p">:</span><span class="n">j</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="mi">0</span>
+</pre></div>
+
+
+<p>可以将长度为 <code>m</code> 的模式串 <code>T</code> 的每一个 <code>nxt(T,j)</code> 保存在一个数组中：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">kmp_next</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+  <span class="n">nxt</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span>
+  <span class="n">i</span>   <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">j</span>   <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+  <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">T</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+      <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
+        <span class="n">nxt</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">j</span> <span class="o">=</span> <span class="n">nxt</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+  <span class="k">return</span> <span class="n">nxt</span>
+</pre></div>
+
+
+<p>再来完成 KMP 算法只需要对上面的顺序匹配法稍加改动即可：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">KMP</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">post</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+  <span class="n">nxt</span> <span class="o">=</span> <span class="n">kmp_next</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+  <span class="n">i</span>   <span class="o">=</span> <span class="n">pos</span>
+  <span class="n">j</span>   <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">S</span><span class="o">.</span><span class="n">length</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+      <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">j</span> <span class="o">=</span> <span class="n">nxt</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+  <span class="k">if</span> <span class="n">j</span> <span class="o">&gt;=</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">i</span> <span class="o">-</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span>
+  <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</pre></div>
+
+
+<h3>3. Python 源码中的实现方式</h3>
+<p>为了探究一下 Python 中字符串匹配算法是什么样的，我去看了一下 GitHub 上的源码，位于 <a href="https://github.com/python/cpython/blob/f24143b25e4f83368ff6182bebe14f885073015c/Objects/stringlib/fastsearch.h#L129">Objects/stringlib/fastsearch.h</a>。</p>
+<p>根据头部注释的说明：</p>
+<blockquote>
+<p>based on a mix between boyer-moore and horspool,</p>
+</blockquote>
+<p>也就是混合了 <a href="https://en.wikipedia.org/wiki/Boyer–Moore_string_search_algorithm"><code>B-M</code></a> 和 <a href="https://en.wikipedia.org/wiki/Boyer–Moore–Horspool_algorithm"><code>Horspool</code></a>，另外注释中也提供了一篇详细说明的文章地址：<a href="http://effbot.org/zone/stringlib.htm">The stringlib Library</a>，这里暂时不做深入研究。</p>
+<h3>4. One More Think</h3>
+<p>上面都是关于在较长字符串中匹配寻找较短字符串的算法，还有另外一种问题是关于寻找任意两个字符串中的公共子序列，也就是常说的<strong>最长公共子序列（Longgest Common Subsequence, LCS）</strong>问题。其中这里的子序列是指<strong>所有与源字符串中出现顺序相同但不一定位置相同的子字符串</strong>，例如 <code>PYT</code> 和 <code>PYO</code> 都是 <code>PYTHON</code> 的子序列。</p>
+<p>这一问题的暴力解法复杂度相当可怕，因为每个长度为 <code>m</code> 的字符串共有 <code>2^m</code> 个子序列，因此一般采用动态规划（Dynamic Programming）的算法来解决。首先需要构造 LCS 问题的最优子结构：</p>
+<p>设定字符串 <code>X = [x1,x2,...,xm]</code> 的第 <code>i</code> 个前缀为 <code>Xi = [x1, x2,...,xi]</code>，<code>X0</code> 为空；假设两个字符串 <code>X = [x1, x2,...,xm]</code> 和 <code>Y = [y1, y2,...,yn]</code> 的 LCS 为 <code>Z = [z1, z2,...,zk]</code>，则可以将问题分解为：</p>
+<ol>
+<li>如果 <code>xm == yn</code>，则 <code>zk == xm == yn</code> 且 <code>Zk-1</code> 是 <code>Xm-1</code> 和 <code>Yn-1</code> 的一个 LCS；</li>
+<li>如果 <code>xm != yn</code>，且 <code>zk != xm</code>，则 <code>Z</code> 是 <code>Xm-1</code> 和 <code>Yn</code> 的一个 LCS；</li>
+<li>如果 <code>xm != yn</code>，且 <code>zk != yn</code>，则 <code>Z</code> 是 <code>Xm</code> 和 <code>Yn-1</code> 的一个 LCS。</li>
+</ol>
+<p>由此可以找到 LCS 问题的重叠子问题中的递归解，设定二维数组 <code>subs[i][j]</code> 存储了 <code>Xi</code> 和 <code>Yj</code> 的 LCS 的长度，则有：</p>
+<ol>
+<li>当 <code>i == 0 or j == 0</code> 时，<code>subs[i][j] = 0</code>；</li>
+<li>当 <code>i &gt; 0 and j &gt; 0 and xi == yj</code> 时，<code>subs[i][j] = subs[i-1][j-1] + 1</code>；</li>
+<li>当 <code>i &gt; 0 and j &gt; 0 and xi != yj</code> 时，<code>subs[i][j] = max(subs[i][j-1], subs[i-1][j])</code>。</li>
+</ol>
+<p>转化成代码：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">LCS_lengths</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+  <span class="n">subs</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="c1"># 初始化二维表</span>
+  <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span> <span class="c1"># 长度为 X.length + 1 是为了保存 X0</span>
+    <span class="n">subs</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+  <span class="c1"># 这里有一个坑，考虑一下为什么不可以用下面的方式进行初始化？</span>
+  <span class="c1"># subs = [[0] * (Y.length + 1)] * (X.length + 1)</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">Y</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="c1"># 字符串中下标是从 0 开始的，但这里的 i, j 是从 X1, Y1 开始的</span>
+        <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+      <span class="k">elif</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]:</span>
+        <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+  <span class="k">return</span> <span class="n">subs</span>
+</pre></div>
+
+
+<p>检验一下：</p>
+<div class="highlight"><pre><span class="n">X</span> <span class="o">=</span> <span class="n">String</span><span class="p">(</span><span class="s1">&#39;ABCBDAB&#39;</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">String</span><span class="p">(</span><span class="s1">&#39;BDCABA&#39;</span><span class="p">)</span>
+<span class="n">subs</span> <span class="o">=</span> <span class="n">LCS_lengths</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">subs</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">[[0, 0, 0, 0, 0, 0, 0],</span>
+<span class="sd"> [0, 0, 0, 0, 1, 1, 1],</span>
+<span class="sd"> [0, 1, 1, 1, 1, 2, 2],</span>
+<span class="sd"> [0, 1, 1, 2, 2, 2, 2],</span>
+<span class="sd"> [0, 1, 1, 2, 2, 3, 3],</span>
+<span class="sd"> [0, 1, 2, 2, 2, 3, 3],</span>
+<span class="sd"> [0, 1, 2, 2, 3, 3, 4],</span>
+<span class="sd"> [0, 1, 2, 2, 3, 4, 4]]</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># 最后一个元素就是 Xm 与 Yn 的 LCS 长度：</span>
+<span class="k">print</span><span class="p">(</span><span class="n">subs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="c1"># 4</span>
+</pre></div>
+
+
+<p>上面的方法只帮助我们找到了 LCS 的长度，如果想要一个最常子序列的字符串呢？这时需要在生成 <code>subs</code> 的过程中记录每一次的比较，方便我们进行回溯：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">LCS_lengths</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+  <span class="n">subs</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">road_map</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">subs</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">road_map</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">Y</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">Y</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">road_map</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;M&#39;</span> <span class="c1"># Match</span>
+      <span class="k">elif</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]:</span>
+        <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">road_map</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Y&#39;</span> <span class="c1"># find from Yj-1</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+        <span class="n">road_map</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span> <span class="c1"># find from Xi-1</span>
+  <span class="k">return</span> <span class="n">subs</span><span class="p">,</span> <span class="n">road_map</span>
+<span class="k">def</span> <span class="nf">LCS_find</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+  <span class="n">_</span><span class="p">,</span> <span class="n">road_map</span> <span class="o">=</span> <span class="n">LCS_lengths</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">_find</span><span class="p">(</span><span class="n">road</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">lcs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="k">if</span> <span class="n">road</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;M&#39;</span><span class="p">:</span>
+      <span class="n">_find</span><span class="p">(</span><span class="n">road</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">lcs</span><span class="p">)</span>
+      <span class="n">lcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">road</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span>
+      <span class="n">_find</span><span class="p">(</span><span class="n">road</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">lcs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">_find</span><span class="p">(</span><span class="n">road</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">lcs</span><span class="p">)</span>
+
+    <span class="n">lcs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">_find</span><span class="p">(</span><span class="n">road_map</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="n">Y</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="n">lcs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lcs</span>
+<span class="k">print</span><span class="p">(</span><span class="n">LCS_find</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">))</span>
+<span class="c1"># [&#39;B&#39;, &#39;C&#39;, &#39;B&#39;, &#39;A&#39;]</span>
+<span class="sb">``</span><span class="err">`</span><span class="o">%</span>                                                                                     <span class="err">➜</span>  <span class="err">算法与数据结构</span>  <span class="n">pbpaste</span> <span class="o">|</span> <span class="n">pbcopy</span>
+<span class="err">➜</span>  <span class="err">算法与数据结构</span>  <span class="n">pbpaste</span>
+<span class="c1"># 字符串匹配算法</span>
+
+<span class="err">我们经常需要确定一个较短的字符串（模式串）在一个较长字符串（主串）中是否出现或者出现的最小位置。例如</span> <span class="n">Python</span> <span class="err">中字符串类型的的</span> <span class="sb">`find`</span> <span class="err">和</span> <span class="sb">`index`</span> <span class="err">方法：</span>
+
+<span class="sb">``</span><span class="err">`</span><span class="n">python</span>
+<span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;I Love Python&#39;</span>
+<span class="k">print</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Py&#39;</span><span class="p">))</span>  <span class="c1"># 7</span>
+<span class="k">print</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;Pyc&#39;</span><span class="p">))</span> <span class="c1"># -1</span>
+</pre></div>
+
+
+<p><code>index</code> 方法与 <code>find</code> 的唯一区别在于当主串中不存在模式串时会抛出 <code>ValueError</code>：</p>
+<div class="highlight"><pre><span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+  <span class="n">File</span> <span class="s2">&quot;&lt;stdin&gt;&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">ValueError</span><span class="p">:</span> <span class="n">substring</span> <span class="ow">not</span> <span class="n">found</span>
+</pre></div>
+
+
+<p>关于 Python(CPython) 中的字符串匹配算法后面会提到，先来看一下直观的算法和知名的 KMP 算法。</p>
+<h3>1. 顺序匹配算法</h3>
+<p>这是最直观的算法，就是将模式串沿着主串从左向右滑动，直到找到主串中与之相匹配的子字符串，并返回其位置。为了演示这一算法我们先构建一个虚拟的字符串类型：</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">String</span><span class="p">:</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ss</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">=</span> <span class="n">ss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="n">length</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">ss</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</pre></div>
+
+
+<p>这个字符串类型通过数组存储连续的字符，并保留了字符串的长度值。</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+  <span class="n">i</span> <span class="o">=</span> <span class="n">pos</span>
+  <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">S</span><span class="o">.</span><span class="n">length</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">T</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+      <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span>
+      <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">if</span> <span class="n">j</span> <span class="o">&gt;=</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">i</span> <span class="o">-</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span>
+  <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</pre></div>
+
+
+<p>分析一下这个算法可以发现，在 <code>find(String('I Love Python'), String('Py'))</code> 的例子中，时间复杂度为 <code>O(n+m)</code>，因为主串的下标是一直向前移动的。但是对于 <code>find(String('PPPPPPPython'), String('Py'))</code> 这样的情况，每当遇到模式串的第二个字符不匹配时，即 <code>P != y</code> ，<code>i</code> 和 <code>j</code> 都需要退回去重新向前移动，这就会导致复杂度变为 <code>O(n*m)</code>。KMP 算法就是针对这种情况的改进。</p>
+<h3>2. KMP 算法</h3>
+<p>这一改进算法由 Knuth、Pratt、Morris 同时发现，故得名 KMP。改进的原理也比较简单，我们希望可以尽量减少由于模式串匹配到一半发现不匹配时所导致的 <code>i</code> 和 <code>j</code> 退回的步数，例如直到模式串的第 <code>k</code> 个字符才发现 <code>S[k] != T[k]</code>，但是 <code>k</code> 之前已经比较过的字符串我们不希望白白浪费掉，然后回过头来重复比较一次，而且这写比较过的字符长度越长越好。例如模式串为：<code>T = String('ABABC')</code>，而主串为<code>S = String('ABABDCCC')</code>，这是如果 <code>k = 4</code> ，即 <code>T[4] != S[4]</code>，但此时 <code>T[2:4] = 'AB'</code> 恰好等于 <code>T[0:2] = 'AB'</code>，也就是说不需要再从头比较一次 <code>S[2:4] == T[0:2]</code>，因为 <code>T = String('ABABC')</code> 本身的性质已经决定了它们一定是相等的（否则也不会一直匹配到 <code>k=4</code> 才出现不匹配）。</p>
+<p>总结来说就是，我们利用模式串中 <code>T[0:k] == T[m-k:m]</code> 的性质（如果存在的话），在字符串比较的时候可以省略一定的步数从而减少不必要的重复比较。虽然这需要我们付出额外的时间去检验模式串的这一性质，但由于模式串的长度往往小于主串，这样的付出还是值得的。然而如果模式串根本不具备这样的性质，例如完全是由不同字符组成的 <code>String('ABCDE')</code>，那么 KMP 算法反而增加了复杂度。</p>
+<p>为了获取模式串的 KMP 性质，我们需要一个额外的数组来记录<strong>当第 <code>j</code> 个字符与主串不匹配时，我们可以跳过模式串的前 <code>k</code> 个字符</strong>，这个数组满足：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">nxt</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+  <span class="k">if</span> <span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="n">T</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="n">k</span><span class="p">:</span><span class="n">j</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="mi">0</span>
+</pre></div>
+
+
+<p>可以将长度为 <code>m</code> 的模式串 <code>T</code> 的每一个 <code>nxt(T,j)</code> 保存在一个数组中：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">kmp_next</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+  <span class="n">nxt</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span>
+  <span class="n">i</span>   <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">j</span>   <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+  <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">T</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+      <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
+        <span class="n">nxt</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">j</span> <span class="o">=</span> <span class="n">nxt</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+  <span class="k">return</span> <span class="n">nxt</span>
+</pre></div>
+
+
+<p>再来完成 KMP 算法只需要对上面的顺序匹配法稍加改动即可：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">KMP</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">post</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+  <span class="n">nxt</span> <span class="o">=</span> <span class="n">kmp_next</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+  <span class="n">i</span>   <span class="o">=</span> <span class="n">pos</span>
+  <span class="n">j</span>   <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">S</span><span class="o">.</span><span class="n">length</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+      <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">j</span> <span class="o">=</span> <span class="n">nxt</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+  <span class="k">if</span> <span class="n">j</span> <span class="o">&gt;=</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">i</span> <span class="o">-</span> <span class="n">T</span><span class="o">.</span><span class="n">length</span>
+  <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</pre></div>
+
+
+<h3>3. Python 源码中的实现方式</h3>
+<p>为了探究一下 Python 中字符串匹配算法是什么样的，我去看了一下 GitHub 上的源码，位于 <a href="https://github.com/python/cpython/blob/f24143b25e4f83368ff6182bebe14f885073015c/Objects/stringlib/fastsearch.h#L129">Objects/stringlib/fastsearch.h</a>。</p>
+<p>根据头部注释的说明：</p>
+<blockquote>
+<p>based on a mix between boyer-moore and horspool,</p>
+</blockquote>
+<p>也就是混合了 <a href="https://en.wikipedia.org/wiki/Boyer–Moore_string_search_algorithm"><code>B-M</code></a> 和 <a href="https://en.wikipedia.org/wiki/Boyer–Moore–Horspool_algorithm"><code>Horspool</code></a>，另外注释中也提供了一篇详细说明的文章地址：<a href="http://effbot.org/zone/stringlib.htm">The stringlib Library</a>，这里暂时不做深入研究。</p>
+<h3>4. One More Think</h3>
+<p>上面都是关于在较长字符串中匹配寻找较短字符串的算法，还有另外一种问题是关于寻找任意两个字符串中的公共子序列，也就是常说的<strong>最长公共子序列（Longgest Common Subsequence, LCS）</strong>问题。其中这里的子序列是指<strong>所有与源字符串中出现顺序相同但不一定位置相同的子字符串</strong>，例如 <code>PYT</code> 和 <code>PYO</code> 都是 <code>PYTHON</code> 的子序列。</p>
+<p>这一问题的暴力解法复杂度相当可怕，因为每个长度为 <code>m</code> 的字符串共有 <code>2^m</code> 个子序列，因此一般采用动态规划（Dynamic Programming）的算法来解决。首先需要构造 LCS 问题的最优子结构：</p>
+<p>设定字符串 <code>X = [x1,x2,...,xm]</code> 的第 <code>i</code> 个前缀为 <code>Xi = [x1, x2,...,xi]</code>，<code>X0</code> 为空；假设两个字符串 <code>X = [x1, x2,...,xm]</code> 和 <code>Y = [y1, y2,...,yn]</code> 的 LCS 为 <code>Z = [z1, z2,...,zk]</code>，则可以将问题分解为：</p>
+<ol>
+<li>如果 <code>xm == yn</code>，则 <code>zk == xm == yn</code> 且 <code>Zk-1</code> 是 <code>Xm-1</code> 和 <code>Yn-1</code> 的一个 LCS；</li>
+<li>如果 <code>xm != yn</code>，且 <code>zk != xm</code>，则 <code>Z</code> 是 <code>Xm-1</code> 和 <code>Yn</code> 的一个 LCS；</li>
+<li>如果 <code>xm != yn</code>，且 <code>zk != yn</code>，则 <code>Z</code> 是 <code>Xm</code> 和 <code>Yn-1</code> 的一个 LCS。</li>
+</ol>
+<p>由此可以找到 LCS 问题的重叠子问题中的递归解，设定二维数组 <code>subs[i][j]</code> 存储了 <code>Xi</code> 和 <code>Yj</code> 的 LCS 的长度，则有：</p>
+<ol>
+<li>当 <code>i == 0 or j == 0</code> 时，<code>subs[i][j] = 0</code>；</li>
+<li>当 <code>i &gt; 0 and j &gt; 0 and xi == yj</code> 时，<code>subs[i][j] = subs[i-1][j-1] + 1</code>；</li>
+<li>当 <code>i &gt; 0 and j &gt; 0 and xi != yj</code> 时，<code>subs[i][j] = max(subs[i][j-1], subs[i-1][j])</code>。</li>
+</ol>
+<p>转化成代码：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">LCS_lengths</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+  <span class="n">subs</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="c1"># 初始化二维表</span>
+  <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span> <span class="c1"># 长度为 X.length + 1 是为了保存 X0</span>
+    <span class="n">subs</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+  <span class="c1"># 这里有一个坑，考虑一下为什么不可以用下面的方式进行初始化？</span>
+  <span class="c1"># subs = [[0] * (Y.length + 1)] * (X.length + 1)</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">Y</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="c1"># 字符串中下标是从 0 开始的，但这里的 i, j 是从 X1, Y1 开始的</span>
+        <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+      <span class="k">elif</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]:</span>
+        <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+  <span class="k">return</span> <span class="n">subs</span>
+</pre></div>
+
+
+<p>检验一下：</p>
+<div class="highlight"><pre><span class="n">X</span> <span class="o">=</span> <span class="n">String</span><span class="p">(</span><span class="s1">&#39;ABCBDAB&#39;</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">String</span><span class="p">(</span><span class="s1">&#39;BDCABA&#39;</span><span class="p">)</span>
+<span class="n">subs</span> <span class="o">=</span> <span class="n">LCS_lengths</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">subs</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">[[0, 0, 0, 0, 0, 0, 0],</span>
+<span class="sd"> [0, 0, 0, 0, 1, 1, 1],</span>
+<span class="sd"> [0, 1, 1, 1, 1, 2, 2],</span>
+<span class="sd"> [0, 1, 1, 2, 2, 2, 2],</span>
+<span class="sd"> [0, 1, 1, 2, 2, 3, 3],</span>
+<span class="sd"> [0, 1, 2, 2, 2, 3, 3],</span>
+<span class="sd"> [0, 1, 2, 2, 3, 3, 4],</span>
+<span class="sd"> [0, 1, 2, 2, 3, 4, 4]]</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># 最后一个元素就是 Xm 与 Yn 的 LCS 长度：</span>
+<span class="k">print</span><span class="p">(</span><span class="n">subs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="c1"># 4</span>
+</pre></div>
+
+
+<p>上面的方法只帮助我们找到了 LCS 的长度，如果想要一个最常子序列的字符串呢？这时需要在生成 <code>subs</code> 的过程中记录每一次的比较，方便我们进行回溯：</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">LCS_lengths</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+  <span class="n">subs</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">road_map</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">subs</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">road_map</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">Y</span><span class="o">.</span><span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">Y</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">road_map</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;M&#39;</span> <span class="c1"># Match</span>
+      <span class="k">elif</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]:</span>
+        <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">road_map</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Y&#39;</span> <span class="c1"># find from Yj-1</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">subs</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+        <span class="n">road_map</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span> <span class="c1"># find from Xi-1</span>
+  <span class="k">return</span> <span class="n">subs</span><span class="p">,</span> <span class="n">road_map</span>
+<span class="k">def</span> <span class="nf">LCS_find</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+  <span class="n">_</span><span class="p">,</span> <span class="n">road_map</span> <span class="o">=</span> <span class="n">LCS_lengths</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">_find</span><span class="p">(</span><span class="n">road</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">lcs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="k">if</span> <span class="n">road</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;M&#39;</span><span class="p">:</span>
+      <span class="n">_find</span><span class="p">(</span><span class="n">road</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">lcs</span><span class="p">)</span>
+      <span class="n">lcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">road</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span>
+      <span class="n">_find</span><span class="p">(</span><span class="n">road</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">lcs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">_find</span><span class="p">(</span><span class="n">road</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">lcs</span><span class="p">)</span>
+
+    <span class="n">lcs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">_find</span><span class="p">(</span><span class="n">road_map</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="n">Y</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="n">lcs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lcs</span>
+<span class="k">print</span><span class="p">(</span><span class="n">LCS_find</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">))</span>
+<span class="c1"># [&#39;B&#39;, &#39;C&#39;, &#39;B&#39;, &#39;A&#39;]</span>
+</pre></div>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=字符串匹配算法&amp;url=http://blog.rainy.im/2016/04/23/string-find/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2016/04/23/string-find/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2016/04/23/string-find/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/python.html">Python</a><a href="http://blog.rainy.im/tag/suan-fa.html">算法</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

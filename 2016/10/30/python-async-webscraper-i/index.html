@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>Python 异步网络爬虫 I</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/python.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2016/10/30/python-async-webscraper-i/" rel="canonical" />
+
+        <meta name="description" content="什么是异步（Asynchronous）编程？">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="Python">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="Python 异步网络爬虫 I"/>
+<meta property="og:description" content="什么是异步（Asynchronous）编程？"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2016/10/30/python-async-webscraper-i/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2016-10-30 13:03:46+08:00"/>
+<meta property="article:modified_time" content="2016-10-30 13:03:46+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="Python"/>
+<meta property="article:tag" content="Python"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "Python 异步网络爬虫 I",
+  "headline": "Python 异步网络爬虫 I",
+  "datePublished": "2016-10-30 13:03:46+08:00",
+  "dateModified": "2016-10-30 13:03:46+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2016/10/30/python-async-webscraper-i/",
+  "description": "什么是异步（Asynchronous）编程？"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Python 异步网络爬虫 I</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Sun 30 October 2016">Sun 30 October 2016</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Sun 30 October 2016</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <ul>
+<li>为什么要使用异步编程？</li>
+<li>在 Python 中有哪些实现异步编程的方法？</li>
+<li>Python 3.5 如何使用 <code>async/await</code> 实现异步网络爬虫？</li>
+</ul>
+<p>本文主要讨论下面几个问题：</p>
+<ul>
+<li>什么是异步（Asynchronous）编程？</li>
+<li>为什么要使用异步编程？</li>
+<li>在 Python 中有哪些实现异步编程的方法？</li>
+<li>Python 3.5 如何使用 <code>async/await</code> 实现异步网络爬虫？</li>
+</ul>
+<p>所谓<strong>异步</strong>是相对于<strong>同步（Synchronous）</strong>的概念来说的，之所以容易造成混乱，是因为刚开始接触这两个概念时容易把<strong>同步</strong>看做是<strong>同时</strong>，而<strong>同时</strong>不是意味着<strong>并行（Parallel）</strong>吗？然而实际上同步或者异步是针对于<strong>时间轴</strong>的概念，同步意味着<strong>顺序、统一的时间轴</strong>，而异步则意味着<strong>乱序、效率优先的时间轴</strong>。比如在爬虫运行时，先抓取 A 页面，然后从中提取下一层页面 B 的链接，此时的爬虫程序的运行只能是同步的，B 页面只能等到 A 页面处理完成之后才能抓取；然而对于独立的两个页面 A1 和 A2，在处理 A1 网络请求的时间里，与其让 CPU 空闲而 A2 等在后面，不如先处理 A2，等到谁先完成网络请求谁就先来进行处理，这样可以更加充分地利用 CPU，但是 A1 和 A2 的执行顺序则是不确定的，也就是异步的。</p>
+<p>很显然，在某些情况下采用异步编程可以提高程序运行效率，减少不必要的等待时间，而之所以能够做到这一点，是因为计算机的 CPU 与其它设备是独立运作的，同时 CPU 的运行效率远高于其他设备的读写（I/O）效率。为了利用异步编程的优势，人们想出了很多方法来重新安排、调度（Schedule）程序的运行顺序，从而最大化 CPU 的使用率，其中包括进程、线程、协程等（具体可参考《<a href="https://segmentfault.com/a/1190000001813992">Python 中的进程、线程、协程、同步、异步、回调</a>》）。在 Python 3.5 以前通过 <code>@types.coroutine</code> 作为修饰器的方式将一个生成器（Generator）转化为一个协程，而在 Python 3.5 中则通过关键词 <code>async/await</code> 来定义一个协程，同时也将 <code>asyncio</code> 纳入为标准库，用于实现基于协程的异步编程。</p>
+<p>要使用 <code>asyncio</code> 需要理解下面几个概念：</p>
+<ul>
+<li>Event loop</li>
+<li>Coroutine</li>
+<li>Future &amp; Task</li>
+</ul>
+<h3>Event loop</h3>
+<p>了解 JavaScript 或 Node.js 肯定对事件循环不陌生，我们可以把它看作是一种循环式（loop）的调度机制，它可以安排需要 CPU 执行的操作优先执行，而会被 I/O 阻塞的行为则进入等待队列：</p>
+<p><img alt="asynch-javascript-promises-img2.png" src="http://qncdn.rainy.im/blog/asynch-javascript-promises-img2.png-wm"></p>
+<p><code>asyncio</code> 自带了事件循环：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">asyncio</span>
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">anscio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+<span class="c1"># loop.run_until_complete(coro())</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+
+<p>当然你也可以选择其它的实现形式，例如 <code>Sanic</code> 框架采用的 <a href="https://github.com/MagicStack/uvloop"><code>uvloop</code></a>，用起来也非常简单（ 至于性能上是否更优我没有验证过，但至少在 Jupyter Notebook 上 <code>uvloop</code> 用起来更方便）：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">uvloop</span>
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">uvloop</span><span class="o">.</span><span class="n">new_event_loop</span><span class="p">()</span>
+<span class="n">asyncio</span><span class="o">.</span><span class="n">set_event_loop</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span>
+</pre></div>
+
+
+<h3>Coroutine</h3>
+<p>Python 3.5 以后推荐使用 <code>async/await</code> 关键词来定义协程，它具有如下特性：</p>
+<ul>
+<li>通过 <code>await</code> 将可能阻塞的行为挂起，直到有结果之后继续执行，Event loop 也是据此来对多个协程的执行进行调度的；</li>
+<li>协程并不像一般的函数一样，通过 <code>coro()</code> 进行调用并不会执行它，而只有将它放入 Event loop 进行调度才能执行。</li>
+</ul>
+<p>一个简单的例子：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">uvloop</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">uvloop</span><span class="o">.</span><span class="n">new_event_loop</span><span class="p">()</span>
+<span class="n">asyncio</span><span class="o">.</span><span class="n">set_event_loop</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span>
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Computing {} + {}...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+    <span class="n">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<span class="n">tasks</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">compute</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">tasks</span><span class="p">))</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1">### OUTPUT</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">0 0</span>
+<span class="sd">1 1</span>
+<span class="sd">2 2</span>
+<span class="sd">Computing 0 + 0...</span>
+<span class="sd">Computing 1 + 1...</span>
+<span class="sd">Computing 2 + 2...</span>
+<span class="sd">CPU times: user 1.05 ms, sys: 1.21 ms, total: 2.26 ms</span>
+<span class="sd">Wall time: 4 s</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+
+<p>由于我们没办法知道协程将在什么时候调用及返回，<code>asyncio</code> 中提供了 <code>Future</code> 这一对象来追踪它的执行结果。</p>
+<h3>Future &amp; Task</h3>
+<p><code>Future</code> 相当于 <code>JavaScript</code> 中的 <code>Promise</code>，用于保存<strong>未来</strong>可能返回的结果。而 <code>Task</code> 则是 <code>Future</code> 的子类，与 <code>Future</code> 不同的是它包含了一个将要执行的协程（ 从而组成一个需要被调度的任务）。还以上面的程序为例，如果想要知道计算结果，可以通过 <code>asyncio.ensure_future()</code> 方法将协程包裹成 <code>Task</code>，最后再来读取结果：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">uvloop</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">uvloop</span><span class="o">.</span><span class="n">new_event_loop</span><span class="p">()</span>
+<span class="n">asyncio</span><span class="o">.</span><span class="n">set_event_loop</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span>
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Computing {} + {}...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+    <span class="n">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<span class="n">tasks</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">ensure_future</span><span class="p">(</span><span class="n">compute</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)))</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">tasks</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1">### OUTPUT</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">0 0</span>
+<span class="sd">1 1</span>
+<span class="sd">2 2</span>
+<span class="sd">Computing 0 + 0...</span>
+<span class="sd">Computing 1 + 1...</span>
+<span class="sd">Computing 2 + 2...</span>
+<span class="sd">0</span>
+<span class="sd">2</span>
+<span class="sd">4</span>
+<span class="sd">CPU times: user 1.62 ms, sys: 1.86 ms, total: 3.49 ms</span>
+<span class="sd">Wall time: 4.01 s</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+
+<h3>异步网络请求</h3>
+<p>Python 处理网络请求最好用的库就是 <a href="http://docs.python-requests.org/en/master/">requests</a>（应该没有之一），但由于它的请求过程是同步阻塞的，因此只好选用 <a href="https://aiohttp.readthedocs.io/en/stable/client.html">aiohttp</a>。为了对比同步与异步情况下的差异，先伪造一个假的异步处理服务器：</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">sanic</span> <span class="kn">import</span> <span class="n">Sanic</span>
+<span class="kn">from</span> <span class="nn">sanic.response</span> <span class="kn">import</span> <span class="n">text</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Sanic</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/&lt;word&gt;&quot;</span><span class="p">)</span>
+<span class="nd">@app.route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="n">async</span> <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">word</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span>
+    <span class="n">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">text</span><span class="p">(</span><span class="s2">&quot;It costs {}s to process `{}`!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">word</span><span class="p">))</span>
+<span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+
+<p>服务器处理耗时与请求参数（<code>word</code>）长度成正比，采用同步请求方式，运行结果如下：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">requests</span> <span class="kn">as</span> <span class="nn">req</span>
+
+<span class="n">URL</span> <span class="o">=</span> <span class="s2">&quot;http://127.0.0.1:8000/{}&quot;</span>
+<span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="s2">&quot;Python&quot;</span><span class="p">,</span> <span class="s2">&quot;Fans&quot;</span><span class="p">,</span> <span class="s2">&quot;!&quot;</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">word</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+<span class="c1">### OUTPUT</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">It costs 0.5s to process `Hello`!</span>
+<span class="sd">It costs 0.6s to process `Python`!</span>
+<span class="sd">It costs 0.4s to process `Fans`!</span>
+<span class="sd">It costs 0.1s to process `!`!</span>
+<span class="sd">CPU times: user 18.5 ms, sys: 2.98 ms, total: 21.4 ms</span>
+<span class="sd">Wall time: 1.64 s</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+
+<p>采用异步请求，运行结果如下：</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">aiohttp</span>
+<span class="kn">import</span> <span class="nn">uvloop</span>
+
+<span class="n">URL</span> <span class="o">=</span> <span class="s2">&quot;http://127.0.0.1:8000/{}&quot;</span>
+<span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="s2">&quot;Python&quot;</span><span class="p">,</span> <span class="s2">&quot;Fans&quot;</span><span class="p">,</span> <span class="s2">&quot;!&quot;</span><span class="p">]</span>
+
+<span class="n">async</span> <span class="k">def</span> <span class="nf">getPage</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">word</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">Timeout</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">word</span><span class="p">))</span> <span class="k">as</span> <span class="n">resp</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">await</span> <span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">uvloop</span><span class="o">.</span><span class="n">new_event_loop</span><span class="p">()</span>
+<span class="n">asyncio</span><span class="o">.</span><span class="n">set_event_loop</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">(</span><span class="n">loop</span><span class="o">=</span><span class="n">loop</span><span class="p">)</span>
+
+<span class="n">tasks</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">words</span><span class="p">:</span>
+    <span class="n">tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">getPage</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">word</span><span class="p">))</span>
+
+<span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">tasks</span><span class="p">))</span>
+
+<span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1">### OUTPUT</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">It costs 0.1s to process `!`!</span>
+<span class="sd">It costs 0.4s to process `Fans`!</span>
+<span class="sd">It costs 0.5s to process `Hello`!</span>
+<span class="sd">It costs 0.6s to process `Python`!</span>
+<span class="sd">CPU times: user 61.2 ms, sys: 18.2 ms, total: 79.3 ms</span>
+<span class="sd">Wall time: 732 ms</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+
+<p>从运行时间上来看效果是很明显的。</p>
+<p>### 未完待续</p>
+<p>接下来将对 <code>aiohttp</code> 进行简单封装，更有利于伪装成普通浏览器用户访问，从而服务于爬虫发送网络请求。</p>
+<h3>参考</h3>
+<ol>
+<li><a href="https://segmentfault.com/a/1190000001813992">Python 中的进程、线程、协程、同步、异步、回调</a></li>
+<li><a href="http://asyncio.readthedocs.io/en/latest/webscraper.html">Asyncio Document</a></li>
+<li><a href="https://aiohttp.readthedocs.io/en/stable/client.html">aiohttp - HTTP Client</a></li>
+</ol>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=Python 异步网络爬虫 I&amp;url=http://blog.rainy.im/2016/10/30/python-async-webscraper-i/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2016/10/30/python-async-webscraper-i/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2016/10/30/python-async-webscraper-i/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/python.html">Python</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>

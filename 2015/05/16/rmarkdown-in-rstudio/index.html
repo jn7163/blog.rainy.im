@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title>RStudio 中的 R Markdown</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="http://blog.rainy.im/" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://blog.rainy.im/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Full Atom Feed" />
+          <link href="http://blog.rainy.im/feeds/r.atom.xml" type="application/atom+xml" rel="alternate" title="Yu's Tech Lab Categories Atom Feed" />
+
+  <link href="http://blog.rainy.im/theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="http://blog.rainy.im/theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="http://blog.rainy.im/2015/05/16/rmarkdown-in-rstudio/" rel="canonical" />
+
+        <meta name="description" content="RStudio 另一个隐藏功能是可以当做 Markdown 编辑器来用（R Markdown），可以根据数据处理结果快速生成报告文档，这一功能主要通过 [Package Knit]及相关组件完成。">
+
+        <meta name="author" content="Yusheng">
+
+        <meta name="tags" content="R">
+        <meta name="tags" content="Markdown">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Yu's Tech Lab"/>
+<meta property="og:title" content="RStudio 中的 R Markdown"/>
+<meta property="og:description" content="RStudio 另一个隐藏功能是可以当做 Markdown 编辑器来用（R Markdown），可以根据数据处理结果快速生成报告文档，这一功能主要通过 [Package Knit]及相关组件完成。"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="http://blog.rainy.im/2015/05/16/rmarkdown-in-rstudio/"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2015-05-16 13:24:09+08:00"/>
+<meta property="article:modified_time" content="2015-05-16 13:24:09+08:00"/>
+<meta property="article:author" content="http://blog.rainy.im/author/yusheng.html">
+<meta property="article:section" content="R"/>
+<meta property="article:tag" content="R"/>
+<meta property="article:tag" content="Markdown"/>
+<meta property="og:image" content="http://blog.rainy.im/theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "RStudio 中的 R Markdown",
+  "headline": "RStudio 中的 R Markdown",
+  "datePublished": "2015-05-16 13:24:09+08:00",
+  "dateModified": "2015-05-16 13:24:09+08:00",
+  "author": {
+    "@type": "Person",
+    "name": "Yusheng",
+    "url": "http://blog.rainy.im/author/yusheng.html"
+  },
+  "image": "http://blog.rainy.im/theme/images/post-bg.jpg",
+  "url": "http://blog.rainy.im/2015/05/16/rmarkdown-in-rstudio/",
+  "description": "RStudio 另一个隐藏功能是可以当做 Markdown 编辑器来用（R Markdown），可以根据数据处理结果快速生成报告文档，这一功能主要通过 [Package Knit]及相关组件完成。"
+}
+</script>
+</head>
+<!-- TODO : Body class -->
+<body class="home-template">
+
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="http://blog.rainy.im/" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">RStudio 中的 R Markdown</h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="http://blog.rainy.im/author/yusheng.html">Yusheng</a>
+            | <time datetime="Sat 16 May 2015">Sat 16 May 2015</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <span class="post-meta"> | Updated on Sat 16 May 2015</span>
+            <div class="post-cover cover" style="background-image: url('http://blog.rainy.im/theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>RStudio 是 R 语言的一款开源的 GUI 软件，可以让“用不起Matlab只好用R”的用户体验到很像 Matlab 一样的开发环境，包括变量的显示、<a href="http://blog.rainy.im/2014/07/26/r-packages-guides/">package 的基本操作</a>、帮助文档等一系列图形界面。RStudio 另一个隐藏功能是可以当做 Markdown 编辑器来用（R Markdown），可以根据数据处理结果快速生成报告文档，这一功能主要通过 <a href="http://yihui.name/knitr/">Package Knit</a> 及相关组件完成。R Markdown 的两大特别之处，一是通过 <a href="http://pandoc.org/">Pandoc</a> 将 Markdown 转化成 LaTex，再由强大的 LaTex 转换成 HTML、PDF、Word，理论上来说借助 LaTex 可以生成学术论文、期刊杂志、数据报告等规范格式的文档；另一大特点是整合了 R 语言的环境，可以在 Markdown 语法中 code block 直接执行 R 语言代码并将结果插入文档。</p>
+<h3>安装 package rmarkdown</h3>
+<p>可以通过 RStudio 中的新建按钮创建 R Markdown 文件，此时可能提示安装 rmarkdown 包：</p>
+<div class="highlight"><pre>install.packages<span class="p">(</span>rmarkdown<span class="p">)</span>
+</pre></div>
+
+
+<p>创建文档可以选择文档标题、作者以及将要输出的文档格式等，这些也可以在之后更改：</p>
+<p><img alt="New R Markdown info" src="http://7xiijd.com1.z0.glb.clouddn.com/rmarkdown-create-info.png"></p>
+<p>第一次按 Kint PDF（或 Kint HTML）时可能出现错误：</p>
+<div class="highlight"><pre>Knit PDF <span class="o">:</span> pandoc document conversion failed with error <span class="m">43</span>
+</pre></div>
+
+
+<p>可以通过安装 github 上最新的版本解决：</p>
+<div class="highlight"><pre>install.packages<span class="p">(</span><span class="s">&quot;devtools&quot;</span><span class="p">)</span> <span class="c1"># 如果以前没有安装 devtools 包</span>
+devtools<span class="o">::</span>install_github<span class="p">(</span><span class="s">&quot;rstudio/rmarkdown&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>第二个问题当是文档中有中文的情况，可能提示：</p>
+<div class="highlight"><pre><span class="o">!</span> Package inputenc Error<span class="o">:</span> Unicode char \u8<span class="o">:</span>年 not set up <span class="kr">for</span> use with LaTeX.
+Try running pandoc with <span class="o">--</span>latex<span class="o">-</span>engine<span class="o">=</span>xelatex.
+</pre></div>
+
+
+<p>如果有中文，LaTex 引擎需要选择为 xelatex，可以通过下图的方式进行更改：</p>
+<p><img alt="R Markdown xelatex" src="http://7xiijd.com1.z0.glb.clouddn.com/rmarkdown-pdf.png"></p>
+<p>或者直接在文档头信息中加入：</p>
+<div class="highlight"><pre><span class="l l-Scalar l-Scalar-Plain">output</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pdf_document</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">latex_engine</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">xelatex</span>
+</pre></div>
+
+
+<p>这样就可以正常输出为 PDF 文档了，但是会发现所有的中文全部都是空白，这个主要是 LaTex 的配置问题，中文需要中文字体来渲染，可以通过在文件头中引入 LaTex 文件进行配置：</p>
+<div class="highlight"><pre><span class="l l-Scalar l-Scalar-Plain">outputs</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pdf_document</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">includes</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">in_header</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">header.tex</span>
+    <span class="l l-Scalar l-Scalar-Plain">latex_engine</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">xelatex</span>
+</pre></div>
+
+
+<p>其中 <code>header.tex</code> 可以是：</p>
+<div class="highlight"><pre><span class="k">\usepackage</span><span class="nb">{</span>xeCJK<span class="nb">}</span>
+<span class="k">\setCJKmainfont</span><span class="nb">{</span>楷体<span class="nb">}</span>  <span class="c">% 字体可以更换</span>
+<span class="k">\setmainfont</span><span class="nb">{</span>Georgia<span class="nb">}</span> <span class="c">% 設定英文字型</span>
+<span class="k">\setromanfont</span><span class="nb">{</span>Georgia<span class="nb">}</span> <span class="c">% 字型</span>
+<span class="k">\setmonofont</span><span class="nb">{</span>Courier New<span class="nb">}</span>
+</pre></div>
+
+
+<p>更多详细配置可以参考<a href="http://rmarkdown.rstudio.com/">官方文档</a>。</p>
+<h3>在 code block 中选择展示 R 语言执行结果</h3>
+<p>具体使用方式见下图：</p>
+<p><a href="http://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf"><img alt="rmarkdown cheat sheet" src="http://7xiijd.com1.z0.glb.clouddn.com/rmarkdown-cheatsheet.png"></a></p>
+<p>```{r, comment='# &gt;', collapse=TRUE}
+a &lt;- 1
+typeof(a);mode(a);class(a)</p>
+<div class="highlight"><pre>输出结果为：
+
+<span class="sb">``</span>`r
+a <span class="o">&lt;-</span> <span class="m">1</span>
+<span class="kp">typeof</span><span class="p">(</span>a<span class="p">);</span><span class="kp">mode</span><span class="p">(</span>a<span class="p">);</span><span class="kp">class</span><span class="p">(</span>a<span class="p">)</span>
+<span class="c1"># &gt; [1] &quot;double&quot;</span>
+<span class="c1"># &gt; [1] &quot;numeric&quot;</span>
+<span class="c1"># &gt; [1] &quot;numeric&quot;</span>
+</pre></div>
+
+
+<p>甚至可以直接生成图像并插入文档（当然结果这里是看不到了，可以在生成的 PDF 或 HTML 中看到绘图结果）：</p>
+<div class="highlight"><pre>x <span class="o">&lt;-</span> <span class="kp">seq</span><span class="p">(</span>from <span class="o">=</span> <span class="m">-5</span><span class="p">,</span> to <span class="o">=</span> <span class="m">5</span><span class="p">,</span> by <span class="o">=</span> <span class="m">0.01</span><span class="p">)</span>
+y <span class="o">&lt;-</span> dnorm<span class="p">(</span>x<span class="p">)</span>
+plot<span class="p">(</span>x<span class="p">,</span> y<span class="p">)</span>
+</pre></div>
+
+
+<p>本文内容在 R Markdown 中生成的 PDF 部分效果如下：</p>
+<p><img alt="Rmarkdown output PDF" src="http://7xiijd.com1.z0.glb.clouddn.com/rmarkdown-output.png"></p>
+<p><img alt="RMarkdown plot" src="http://7xiijd.com1.z0.glb.clouddn.com/rmarkdown-plot.png"></p>
+<p>参考：</p>
+<ol>
+<li><a href="https://github.com/yihui/knitr/issues/799#issuecomment-49585463">Github issues</a></li>
+</ol>
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=RStudio 中的 R Markdown&amp;url=http://blog.rainy.im/2015/05/16/rmarkdown-in-rstudio/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.rainy.im/2015/05/16/rmarkdown-in-rstudio/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=http://blog.rainy.im/2015/05/16/rmarkdown-in-rstudio/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="http://blog.rainy.im/tag/r.html">R</a><a href="http://blog.rainy.im/tag/markdown.html">Markdown</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="http://blog.rainy.im/theme/js/script.js"></script>
+
+</body>
+</html>
