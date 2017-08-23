@@ -727,261 +727,7 @@ apm install linter-mypy
 &lt;li&gt;&lt;a href="https://docs.python.org/3/howto/functional.html"&gt;Python HOWTOs » Functional Programming HOWTO&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="http://docs.hylang.org/en/latest/index.html"&gt;Hy's Doc&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://github.com/kachayev/fn.py"&gt;fn.py&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;</content><category term="Python"></category><category term="总结"></category></entry><entry><title>Python 语言参考 （TLDR 版）</title><link href="http://blog.rainy.im/2016/11/24/the-python-language-reference-tldr/" rel="alternate"></link><published>2016-11-24T04:06:07+08:00</published><updated>2016-11-24T04:06:07+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2016-11-24:/2016/11/24/the-python-language-reference-tldr/</id><summary type="html">&lt;p&gt;本参考手册描述 Python 的语法及“核心语义”，简洁但力图精准、完备。&lt;/p&gt;</summary><content type="html">&lt;p&gt;本参考手册描述 Python 的语法及“核心语义”，简洁但力图精准、完备，如需：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;内置对象类型、函数及模块，请参考&lt;a href="https://docs.python.org/3.5/library/index.html#library-index"&gt;Python 标准库&lt;/a&gt;；&lt;/li&gt;
-&lt;li&gt;Python 教程，请参考&lt;a href="https://docs.python.org/3.5/tutorial/index.html#tutorial-index"&gt;Python 教程&lt;/a&gt;；&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;总目录&lt;/h3&gt;
-&lt;ol&gt;
-&lt;li&gt;介绍 ✅&lt;/li&gt;
-&lt;li&gt;词法分析 ✅&lt;/li&gt;
-&lt;li&gt;数据模型 [50% ✅]&lt;/li&gt;
-&lt;li&gt;执行模型&lt;/li&gt;
-&lt;li&gt;导入系统&lt;/li&gt;
-&lt;li&gt;表达式&lt;/li&gt;
-&lt;li&gt;简单语句&lt;/li&gt;
-&lt;li&gt;复合语句&lt;/li&gt;
-&lt;li&gt;顶层组件&lt;/li&gt;
-&lt;li&gt;完整语法规范&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;1. 介绍&lt;/h3&gt;
-&lt;h4&gt;1.1. 实现&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;CPython：最常见常用的 C 语言实现，托管在 &lt;a href="https://github.com/python/cpython"&gt;GitHub&lt;/a&gt;；&lt;/li&gt;
-&lt;li&gt;Jython&lt;/li&gt;
-&lt;li&gt;Python for .NET&lt;/li&gt;
-&lt;li&gt;IronPython&lt;/li&gt;
-&lt;li&gt;PyPy：Python 实现的 Python，支持无堆栈和 JIT，官网&lt;a href="http://pypy.org/"&gt;PyPy&lt;/a&gt;。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;1.2. 记法说明&lt;/h4&gt;
-&lt;p&gt;本手册采用不严格的 BNF 语法标记法，如：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;name ::= lc_letter (lc_letter | &amp;quot;_&amp;quot;)*
-lc_letter ::= &amp;quot;a&amp;quot;...&amp;quot;z&amp;quot;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;::=&lt;/code&gt; 定义规则&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;|&lt;/code&gt; 表示可选，即“或”&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;*&lt;/code&gt; 表示前项重复0或多次&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;+&lt;/code&gt; 表示前项重复1到多次&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;[]&lt;/code&gt; 表示所包含项出现0或1次（即可有可无）&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;()&lt;/code&gt; 表示分组&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;""&lt;/code&gt; 表示字符&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;&lt;/code&gt; （空格）仅表示分隔&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;...&lt;/code&gt; 表示 ASCII 表中某范围内的所有符号&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;2. 词法分析&lt;/h3&gt;
-&lt;h4&gt;2.1. 行结构&lt;/h4&gt;
-&lt;p&gt;Python 程序由一系列&lt;strong&gt;逻辑行&lt;/strong&gt;组成；逻辑行以 &lt;code&gt;NEWLINE&lt;/code&gt; 结尾由一个或多个通过连接规则连接在一起的&lt;strong&gt;物理行&lt;/strong&gt;；&lt;strong&gt;物理行&lt;/strong&gt;以&lt;strong&gt;行尾序列&lt;/strong&gt;结尾。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;注释&lt;/strong&gt;：以 &lt;code&gt;#&lt;/code&gt; 开头的物理行。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;编码声明&lt;/strong&gt;：Python 3.5 默认源码文件编码方式为 UTF-8；若需指定编码方式，可在头两行加入能被正则&lt;code&gt;coding[=:]\s*([-\w.]+)&lt;/code&gt;捕捉的编码声明，若放在第二行，则第一行必须被注释，常用的声明方式为：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;# -*- coding: &amp;lt;encoding-name&amp;gt; -*-&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;&lt;strong&gt;显式行连接&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;通过反斜杠 &lt;code&gt;\&lt;/code&gt; 可以显式连接物理行，但不能与注释符 &lt;code&gt;#&lt;/code&gt; 同处一行；字面量中只有字符串可以使用反斜杠连接多行：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="mi"&gt;1900&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;year&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;2100&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="n"&gt;month&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="mi"&gt;12&lt;/span&gt; \
-   &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="n"&gt;day&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="mi"&gt;31&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="n"&gt;hour&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;24&lt;/span&gt; \
-   &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="n"&gt;minute&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;60&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="n"&gt;second&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;60&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;   &lt;span class="c1"&gt;# Looks like a valid date&lt;/span&gt;
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;&lt;strong&gt;隐式行连接&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;圆括号（元组）、方括号（列表）、花括号（字典）的内部可以直接跨多个物理行而被隐式连接为一个逻辑行，且可以在每行结尾添加注释：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;month_names&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Januari&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Februari&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Maart&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;      &lt;span class="c1"&gt;# These are the&lt;/span&gt;
-               &lt;span class="s1"&gt;&amp;#39;April&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;   &lt;span class="s1"&gt;&amp;#39;Mei&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;      &lt;span class="s1"&gt;&amp;#39;Juni&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;       &lt;span class="c1"&gt;# Dutch names&lt;/span&gt;
-               &lt;span class="s1"&gt;&amp;#39;Juli&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;    &lt;span class="s1"&gt;&amp;#39;Augustus&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;September&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;  &lt;span class="c1"&gt;# for the months&lt;/span&gt;
-               &lt;span class="s1"&gt;&amp;#39;Oktober&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;November&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;December&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;   &lt;span class="c1"&gt;# of the year&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;三引号的多行字符串形式也是一种隐式行连接，但注释行将失效。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;缩进&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;逻辑行是通过开头的空白符（空格或制表符）数量来计算该行的缩进层级的。&lt;strong&gt;不要混用制表符和空格&lt;/strong&gt;。&lt;/p&gt;
-&lt;p&gt;通过 &lt;code&gt;INDENT&lt;/code&gt; 和 &lt;code&gt;DEDENT&lt;/code&gt; 和栈结构来处理多行语法块。&lt;/p&gt;
-&lt;h4&gt;2.2. 其它&lt;/h4&gt;
-&lt;p&gt;除了 &lt;code&gt;NEWLINE&lt;/code&gt;、&lt;code&gt;INDENT&lt;/code&gt;、&lt;code&gt;DEDENT&lt;/code&gt; 之外，还包括如下几类符号（Token）：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;标识符&lt;/li&gt;
-&lt;li&gt;关键字&lt;/li&gt;
-&lt;li&gt;字面量&lt;/li&gt;
-&lt;li&gt;操作符&lt;/li&gt;
-&lt;li&gt;分隔符&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;空格只用于分隔符号，存在歧义时，取最长字符所代表的符号。&lt;/p&gt;
-&lt;h4&gt;2.3. 标识符与关键字&lt;/h4&gt;
-&lt;p&gt;&lt;strong&gt;标识符&lt;/strong&gt;：ASCII 中的大小写字母，数字 0 到 9，下划线&lt;code&gt;_&lt;/code&gt;，Python 3 引入 Unicode 字符也可合法。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;关键字&lt;/strong&gt;：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="bp"&gt;False&lt;/span&gt;      &lt;span class="k"&gt;class&lt;/span&gt;      &lt;span class="nc"&gt;finally&lt;/span&gt;    &lt;span class="ow"&gt;is&lt;/span&gt;         &lt;span class="k"&gt;return&lt;/span&gt;
-&lt;span class="bp"&gt;None&lt;/span&gt;       &lt;span class="k"&gt;continue&lt;/span&gt;   &lt;span class="k"&gt;for&lt;/span&gt;        &lt;span class="k"&gt;lambda&lt;/span&gt;     &lt;span class="k"&gt;try&lt;/span&gt;
-&lt;span class="bp"&gt;True&lt;/span&gt;       &lt;span class="k"&gt;def&lt;/span&gt;        &lt;span class="nf"&gt;from&lt;/span&gt;       &lt;span class="n"&gt;nonlocal&lt;/span&gt;   &lt;span class="k"&gt;while&lt;/span&gt;
-&lt;span class="ow"&gt;and&lt;/span&gt;        &lt;span class="k"&gt;del&lt;/span&gt;        &lt;span class="k"&gt;global&lt;/span&gt;     &lt;span class="ow"&gt;not&lt;/span&gt;        &lt;span class="k"&gt;with&lt;/span&gt;
-&lt;span class="k"&gt;as&lt;/span&gt;         &lt;span class="k"&gt;elif&lt;/span&gt;       &lt;span class="k"&gt;if&lt;/span&gt;         &lt;span class="ow"&gt;or&lt;/span&gt;         &lt;span class="k"&gt;yield&lt;/span&gt;
-&lt;span class="k"&gt;assert&lt;/span&gt;     &lt;span class="k"&gt;else&lt;/span&gt;       &lt;span class="kn"&gt;import&lt;/span&gt;     &lt;span class="nn"&gt;pass&lt;/span&gt;
-&lt;span class="k"&gt;break&lt;/span&gt;      &lt;span class="k"&gt;except&lt;/span&gt;     &lt;span class="ow"&gt;in&lt;/span&gt;         &lt;span class="k"&gt;raise&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;&lt;strong&gt;保留标识符&lt;/strong&gt;：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;_*&lt;/code&gt;：下划线开头的变量在 &lt;code&gt;from module import *&lt;/code&gt; 时不会被导入；&lt;code&gt;_&lt;/code&gt; 本身也是特殊标识符，在交互模式下用于表示上一次执行的结果，在非交互模式下，没有特殊含义，只用作占位符（如 &lt;code&gt;for _ in range(n)&lt;/code&gt;）；&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;__*__&lt;/code&gt;：参考&lt;strong&gt;特殊方法名&lt;/strong&gt;；&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;__*&lt;/code&gt;：类中的私有属性名。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;2.4. 字面量&lt;/h4&gt;
-&lt;p&gt;字面量表示某些内置类型常量，即“所见即值”。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;字符串与字节&lt;/strong&gt;&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;stringliteral   ::=  [stringprefix](shortstring | longstring)
-stringprefix    ::=  &amp;quot;r&amp;quot; | &amp;quot;u&amp;quot; | &amp;quot;R&amp;quot; | &amp;quot;U&amp;quot;
-shortstring     ::=  &amp;quot;&amp;#39;&amp;quot; shortstringitem* &amp;quot;&amp;#39;&amp;quot; | &amp;#39;&amp;quot;&amp;#39; shortstringitem* &amp;#39;&amp;quot;&amp;#39;
-longstring      ::=  &amp;quot;&amp;#39;&amp;#39;&amp;#39;&amp;quot; longstringitem* &amp;quot;&amp;#39;&amp;#39;&amp;#39;&amp;quot; | &amp;#39;&amp;quot;&amp;quot;&amp;quot;&amp;#39; longstringitem* &amp;#39;&amp;quot;&amp;quot;&amp;quot;&amp;#39;
-shortstringitem ::=  shortstringchar | stringescapeseq
-longstringitem  ::=  longstringchar | stringescapeseq
-shortstringchar ::=  &amp;lt;any source character except &amp;quot;\&amp;quot; or newline or the quote&amp;gt;
-longstringchar  ::=  &amp;lt;any source character except &amp;quot;\&amp;quot;&amp;gt;
-stringescapeseq ::=  &amp;quot;\&amp;quot; &amp;lt;any source character&amp;gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;div class="highlight"&gt;&lt;pre&gt;bytesliteral   ::=  bytesprefix(shortbytes | longbytes)
-bytesprefix    ::=  &amp;quot;b&amp;quot; | &amp;quot;B&amp;quot; | &amp;quot;br&amp;quot; | &amp;quot;Br&amp;quot; | &amp;quot;bR&amp;quot; | &amp;quot;BR&amp;quot; | &amp;quot;rb&amp;quot; | &amp;quot;rB&amp;quot; | &amp;quot;Rb&amp;quot; | &amp;quot;RB&amp;quot;
-shortbytes     ::=  &amp;quot;&amp;#39;&amp;quot; shortbytesitem* &amp;quot;&amp;#39;&amp;quot; | &amp;#39;&amp;quot;&amp;#39; shortbytesitem* &amp;#39;&amp;quot;&amp;#39;
-longbytes      ::=  &amp;quot;&amp;#39;&amp;#39;&amp;#39;&amp;quot; longbytesitem* &amp;quot;&amp;#39;&amp;#39;&amp;#39;&amp;quot; | &amp;#39;&amp;quot;&amp;quot;&amp;quot;&amp;#39; longbytesitem* &amp;#39;&amp;quot;&amp;quot;&amp;quot;&amp;#39;
-shortbytesitem ::=  shortbyteschar | bytesescapeseq
-longbytesitem  ::=  longbyteschar | bytesescapeseq
-shortbyteschar ::=  &amp;lt;any ASCII character except &amp;quot;\&amp;quot; or newline or the quote&amp;gt;
-longbyteschar  ::=  &amp;lt;any ASCII character except &amp;quot;\&amp;quot;&amp;gt;
-bytesescapeseq ::=  &amp;quot;\&amp;quot; &amp;lt;any ASCII character&amp;gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;单、双引号包围的短字符串和三引号包围的多行长字符串（字节），均可以&lt;code&gt;r""&lt;/code&gt;或&lt;code&gt;R""&lt;/code&gt;开头表示原始字符串，在这种情况下反斜杠&lt;code&gt;\&lt;/code&gt;不再起到转义功能；以&lt;code&gt;u""&lt;/code&gt;或&lt;code&gt;U""&lt;/code&gt;开头是为了表示 Unicode 字符，这在 Python 3 以后是没有必要的，只是为了兼容 2.x 以前的代码。&lt;/p&gt;
-&lt;p&gt;字符串可以通过如下形式跨行连接：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;re&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;compile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;[A-Za-z_]&amp;quot;&lt;/span&gt;       &lt;span class="c1"&gt;# letter or underscore&lt;/span&gt;
-           &lt;span class="s2"&gt;&amp;quot;[A-Za-z0-9_]*&amp;quot;&lt;/span&gt;   &lt;span class="c1"&gt;# letter, digit or underscore&lt;/span&gt;
-          &lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;&lt;strong&gt;整数&lt;/strong&gt;&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;integer        ::=  decimalinteger | octinteger | hexinteger | bininteger
-decimalinteger ::=  nonzerodigit digit* | &amp;quot;0&amp;quot;+
-nonzerodigit   ::=  &amp;quot;1&amp;quot;...&amp;quot;9&amp;quot;
-digit          ::=  &amp;quot;0&amp;quot;...&amp;quot;9&amp;quot;
-octinteger     ::=  &amp;quot;0&amp;quot; (&amp;quot;o&amp;quot; | &amp;quot;O&amp;quot;) octdigit+
-hexinteger     ::=  &amp;quot;0&amp;quot; (&amp;quot;x&amp;quot; | &amp;quot;X&amp;quot;) hexdigit+
-bininteger     ::=  &amp;quot;0&amp;quot; (&amp;quot;b&amp;quot; | &amp;quot;B&amp;quot;) bindigit+
-octdigit       ::=  &amp;quot;0&amp;quot;...&amp;quot;7&amp;quot;
-hexdigit       ::=  digit | &amp;quot;a&amp;quot;...&amp;quot;f&amp;quot; | &amp;quot;A&amp;quot;...&amp;quot;F&amp;quot;
-bindigit       ::=  &amp;quot;0&amp;quot; | &amp;quot;1&amp;quot;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;只要内存允许，长度没有限制；非 0 的十进制整数前不能有 0。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;浮点数&lt;/strong&gt;&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;floatnumber   ::=  pointfloat | exponentfloat
-pointfloat    ::=  [intpart] fraction | intpart &amp;quot;.&amp;quot;
-exponentfloat ::=  (intpart | pointfloat) exponent
-intpart       ::=  digit+
-fraction      ::=  &amp;quot;.&amp;quot; digit+
-exponent      ::=  (&amp;quot;e&amp;quot; | &amp;quot;E&amp;quot;) [&amp;quot;+&amp;quot; | &amp;quot;-&amp;quot;] digit+
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;科学计数法中整数与指数都是十进制的。浮点数值的范围与具体实现相关。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;虚数&lt;/strong&gt;&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;imagnumber ::=  (floatnumber | intpart) (&amp;quot;j&amp;quot; | &amp;quot;J&amp;quot;)
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;&lt;strong&gt;复数&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;将实数与虚数相加。&lt;/p&gt;
-&lt;h4&gt;2.5. 操作符&lt;/h4&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;+       -       *       **      /       //      %      @
-&amp;lt;&amp;lt;      &amp;gt;&amp;gt;      &amp;amp;       |       ^       ~
-&amp;lt;       &amp;gt;       &amp;lt;=      &amp;gt;=      ==      !=
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;h4&gt;2.6. 分隔符&lt;/h4&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;(       )       [       ]       {       }
-,       :       .       ;       @       =       -&amp;gt;
-+=      -=      *=      /=      //=     %=      @=
-&amp;amp;=      |=      ^=      &amp;gt;&amp;gt;=     &amp;lt;&amp;lt;=     **=
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;以下字符在字符串以外出现是非法的：&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;$       ?       &lt;span class="sb"&gt;`&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;hr&gt;
-&lt;blockquote&gt;
-&lt;p&gt;”一切皆为对象”是 Python 人尽皆知的一个重要概念，因为对于 Python 来说，无论是程序还是数据，都是以对象形式来表示的。第3小节数据模型即描述了 Python 中不同对象的特征与继承关系等，因此这一小节也有助于理解 Python 语法背后的原理。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h3&gt;3. 数据模型&lt;/h3&gt;
-&lt;h4&gt;3.1. 对象，类型与值&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;对象（Objects）是 Python 中对数据（Data）的抽象：Python 中所有数据都是通过对象或对象之间的关系来表示的。&lt;/li&gt;
-&lt;li&gt;一切对象都有唯一不变的 ID，通过 &lt;code&gt;is&lt;/code&gt; 可以比较两个对象的 ID  是否相同，也可以通过 &lt;code&gt;id()&lt;/code&gt; 方法直接查看对象的 ID。&lt;/li&gt;
-&lt;li&gt;一切对象都有&lt;strong&gt;不可变&lt;/strong&gt;类型（Type），类型决定该对象所支持的方法以及可能拥有的值，可以通过 &lt;code&gt;type()&lt;/code&gt; 方法查看对象的类型。&lt;/li&gt;
-&lt;li&gt;一切对象都有值（Value），某些对象的值是可变的（mutable），另外一些则是不可变的（immutable），是否可变取决于其类型。&lt;/li&gt;
-&lt;li&gt;容器对象（Container）包含对其它对象的引用，例如：元组、列表、字典；通常情况下我们讨论容器对象的值是指其真实值，只有在讨论可变性时才是指其对其它对象的引用。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-&lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;321&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;初始 t 值：&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;改动后的 t 值：&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;由于 t 中保存的实际上是对 l 的引用，因此 l 的值也被改变：&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;div class="highlight"&gt;&lt;pre&gt;初始 t 值： ([1, 2, 3], 321)
-改动后的 t 值： ([1, 2, 3, 4], 321)
-由于 t 中保存的实际上是对 l 的引用，因此 l 的值也被改变： [1, 2, 3, 4]
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;ul&gt;
-&lt;li&gt;类型几乎影响对象的一切行为，包括对象的 ID：&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;# 对于不可变对象，创建新对象可能与已有相同值的对象拥有相同 ID&lt;/span&gt;
-&lt;span class="c1"&gt;# （不同实现情况可能不同）&lt;/span&gt;
-&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;
-&lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;
-&lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
-&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
-&lt;span class="c1"&gt;# 但是对于可变对象，则新对象的 ID 一定不同&lt;/span&gt;
-&lt;span class="n"&gt;e&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
-&lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
-&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;e&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;div class="highlight"&gt;&lt;pre&gt;True
-False
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;h4&gt;3.2. 类型继承关系&lt;/h4&gt;
-&lt;p&gt;如上所述，Python 中一切皆为对象，而对象的类型至关重要。因此这一小节主要关于 Python 所有对象的继承关系及特性，如下图所示：&lt;/p&gt;
-&lt;p&gt;&lt;img alt="" src="http://qncdn.rainy.im/blog/类型继承.png"&gt;&lt;/p&gt;
-&lt;h4&gt;代码示例&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;函数对象&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;img alt="" src="http://qncdn.rainy.im/blog/function_objects.png"&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;实例方法对象&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;img alt="" src="http://qncdn.rainy.im/blog/instance_methods.png"&gt;&lt;/p&gt;</content><category term="Python"></category><category term="TLDR"></category><category term="文档"></category></entry><entry><title>Python 异步调用命令行工具</title><link href="http://blog.rainy.im/2016/11/17/asyncio-create_subprocess_shell/" rel="alternate"></link><published>2016-11-17T15:55:38+08:00</published><updated>2016-11-17T15:55:38+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2016-11-17:/2016/11/17/asyncio-create_subprocess_shell/</id><summary type="html">&lt;p&gt;当你在自己的 Python 程序中采用了基于事件循环的异步编程方法之后，你就会发现自己不自觉地被其牢牢吸引住，并不是说这一方法多么棒，而是因为你不得不想办法保证程序中的任意环节都不能是阻塞的！&lt;/p&gt;</summary><content type="html">&lt;p&gt;当你在自己的 Python 程序中采用了基于事件循环的异步编程方法之后，你就会发现自己不自觉地被其牢牢吸引住，并不是说这一方法多么棒，而是因为你不得不想办法保证程序中的任意环节都不能是阻塞的！&lt;/p&gt;
+&lt;/ol&gt;</content><category term="Python"></category><category term="总结"></category></entry><entry><title>Python 异步调用命令行工具</title><link href="http://blog.rainy.im/2016/11/17/asyncio-create_subprocess_shell/" rel="alternate"></link><published>2016-11-17T15:55:38+08:00</published><updated>2016-11-17T15:55:38+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2016-11-17:/2016/11/17/asyncio-create_subprocess_shell/</id><summary type="html">&lt;p&gt;当你在自己的 Python 程序中采用了基于事件循环的异步编程方法之后，你就会发现自己不自觉地被其牢牢吸引住，并不是说这一方法多么棒，而是因为你不得不想办法保证程序中的任意环节都不能是阻塞的！&lt;/p&gt;</summary><content type="html">&lt;p&gt;当你在自己的 Python 程序中采用了基于事件循环的异步编程方法之后，你就会发现自己不自觉地被其牢牢吸引住，并不是说这一方法多么棒，而是因为你不得不想办法保证程序中的任意环节都不能是阻塞的！&lt;/p&gt;
 &lt;p&gt;例如当前的场景是希望从 MongoDB 中读取每一条未处理过的数据，下载并保存其中的图片信息，然后更新数据库的内容。Python 常用的 MongoDB 异步驱动是 &lt;a href="https://motor.readthedocs.io/en/stable/tutorial-asyncio.html#iteration-in-python-3-3-and-3-4"&gt;Motor&lt;/a&gt;:&lt;/p&gt;
 &lt;p&gt;&lt;img alt="" src="http://qncdn.rainy.im/blog/motor.png-wm"&gt;&lt;/p&gt;
 &lt;p&gt;结合 &lt;code&gt;asyncio&lt;/code&gt; 使用方法如下：&lt;/p&gt;
@@ -1049,12 +795,7 @@ False
 &lt;p&gt;相关阅读：&lt;a href="http://mp.weixin.qq.com/s?__biz=MzI0NjIxMzE5OQ==&amp;amp;mid=2656697915&amp;amp;idx=1&amp;amp;sn=953ca8c2ce925d318814535b29eaaec8&amp;amp;chksm=f2efe11bc598680db8b658e16bdf975621d573880c3e23db6a6e18882b6d005457b41185a999#rd"&gt;Python 异步网络爬虫 I&lt;/a&gt; | &lt;a href="http://mp.weixin.qq.com/s?__biz=MzI0NjIxMzE5OQ==&amp;amp;mid=2656697929&amp;amp;idx=1&amp;amp;sn=dda0effb59865a3de02e47c70c3ba24a&amp;amp;chksm=f2efe169c598687fefaeb5a375497a59965565224519cdad42755d5e177af35cd062e8536613#rd"&gt;Python 异步网络爬虫 II&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;hr&gt;
-&lt;p&gt;【&lt;a href="http://mm.pyhub.cc"&gt;福利时间到，没时间解释了，赶紧上车！&lt;/a&gt;】&lt;/p&gt;</content><category term="Python"></category></entry><entry><title>About Me</title><link href="http://blog.rainy.im/2016/11/11/about/" rel="alternate"></link><published>2016-11-11T15:48:47+08:00</published><updated>2016-11-11T15:48:47+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2016-11-11:/2016/11/11/about/</id><summary type="html">&lt;p&gt;None&lt;/p&gt;</summary><content type="html">&lt;blockquote&gt;
-&lt;p&gt;技术，编程，随意做点试验&lt;/p&gt;
-&lt;p&gt;电影，读书，胡乱搞点设计&lt;/p&gt;
-&lt;p&gt;的&lt;/p&gt;
-&lt;p&gt;心理学，博士。&lt;/p&gt;
-&lt;/blockquote&gt;</content></entry><entry><title>Python 异步网络爬虫 II</title><link href="http://blog.rainy.im/2016/11/09/python-async-webscraper-ii/" rel="alternate"></link><published>2016-11-09T06:51:18+08:00</published><updated>2016-11-09T06:51:18+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2016-11-09:/2016/11/09/python-async-webscraper-ii/</id><summary type="html">&lt;p&gt;上一部分（[Python 异步网络爬虫 I]）整理了如何利用 &lt;code&gt;aiohttp&lt;/code&gt; 和 &lt;code&gt;asyncio&lt;/code&gt; 执行异步网络请求，接下来我们将在此基础上实现一个简洁、普适的爬虫框架。&lt;/p&gt;</summary><content type="html">&lt;p&gt;上一部分（&lt;a href="http://blog.rainy.im/2016/10/30/python-async-webscraper-i/"&gt;Python 异步网络爬虫 I&lt;/a&gt;）整理了如何利用 &lt;code&gt;aiohttp&lt;/code&gt; 和 &lt;code&gt;asyncio&lt;/code&gt; 执行异步网络请求，接下来我们将在此基础上实现一个简洁、普适的爬虫框架。&lt;/p&gt;
+&lt;p&gt;【&lt;a href="http://mm.pyhub.cc"&gt;福利时间到，没时间解释了，赶紧上车！&lt;/a&gt;】&lt;/p&gt;</content><category term="Python"></category></entry><entry><title>Python 异步网络爬虫 II</title><link href="http://blog.rainy.im/2016/11/09/python-async-webscraper-ii/" rel="alternate"></link><published>2016-11-09T06:51:18+08:00</published><updated>2016-11-09T06:51:18+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2016-11-09:/2016/11/09/python-async-webscraper-ii/</id><summary type="html">&lt;p&gt;上一部分（[Python 异步网络爬虫 I]）整理了如何利用 &lt;code&gt;aiohttp&lt;/code&gt; 和 &lt;code&gt;asyncio&lt;/code&gt; 执行异步网络请求，接下来我们将在此基础上实现一个简洁、普适的爬虫框架。&lt;/p&gt;</summary><content type="html">&lt;p&gt;上一部分（&lt;a href="http://blog.rainy.im/2016/10/30/python-async-webscraper-i/"&gt;Python 异步网络爬虫 I&lt;/a&gt;）整理了如何利用 &lt;code&gt;aiohttp&lt;/code&gt; 和 &lt;code&gt;asyncio&lt;/code&gt; 执行异步网络请求，接下来我们将在此基础上实现一个简洁、普适的爬虫框架。&lt;/p&gt;
 &lt;p&gt;一般网站抓取的流程是这样的：&lt;/p&gt;
 &lt;p&gt;&lt;img alt="avgot_spider_flow.jpg" src="http://qncdn.rainy.im/blog/avgot_spider_flow.jpg-wm"&gt;&lt;/p&gt;
 &lt;p&gt;从入口页面开始提取一组下一级页面的链接，然后递归地执行下去，直到最后一层页面为止。唯一不同的是对每一级页面所要抓取的信息，也就是需要的正则表达式不同，除此之外，请求页面、分析内容、正则匹配的步骤是重复的，因此可以将上面的过程简化为：&lt;/p&gt;
@@ -2203,23 +1944,7 @@ dict   ==&amp;gt; str        ==&amp;gt; binary ==&amp;gt; string      ==&amp;gt;
 
 
 &lt;h3&gt;总结&lt;/h3&gt;
-&lt;p&gt;JSON 是很好用的数据格式，但是在不同语言环境之间切换还是有很多细节问题需要注意。此外，&lt;strong&gt;遵循传统规则，出现特例的时候，改变自身适应规则，而不是试图改变规则&lt;/strong&gt;，这一条不一定适应所有问题，但对于那些已被公认的规则，请勿轻易挑战。&lt;/p&gt;</content><category term="Python"></category><category term="Js"></category><category term="总结"></category></entry><entry><title>Python 爱好者专用技术头条</title><link href="http://blog.rainy.im/2016/05/06/hacker-news-for-pythoners/" rel="alternate"></link><published>2016-05-06T14:23:59+08:00</published><updated>2016-05-06T14:23:59+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2016-05-06:/2016/05/06/hacker-news-for-pythoners/</id><summary type="html">&lt;p&gt;在写公众号自动回复的时候就有想法进一步扩展这一平台的应用，中间断断续续写了几个爬虫，这两天把流程整理了一下，做了一个纯 Python 版本的 Hacker News 🐍🐍🎉🎉，所谓纯 Python 是指只收集、分享与 Python 有关的链接！&lt;/p&gt;</summary><content type="html">&lt;h3&gt;又做了新玩具！&lt;/h3&gt;
-&lt;p&gt;在写公众号自动回复的时候就有想法进一步扩展这一平台的应用，中间断断续续写了几个爬虫，这两天把流程整理了一下，做了一个纯 Python 版本的 Hacker News 🐍🐍🎉🎉，所谓纯 Python 是指只收集、分享与 Python 有关的链接！&lt;/p&gt;
-&lt;p&gt;&lt;img alt="" src="http://qncdn.rainy.im/pyhubcc-screenshot.png"&gt;&lt;/p&gt;
-&lt;p&gt;技术分享的网站有很多，每天涌入的信息也越来越多，我希望可以把筛选信息的工作交给程序。考虑到版权等问题，网站只保留了链接信息，不抓取全文；用户登录只对接了 GitHub 登入，域名没有备案，所以国内服务大部分不可用。&lt;/p&gt;
-&lt;p&gt;目前只完成了首页和收藏等基本操作，但是我对是否有人真的会去读收藏过的文章保留怀疑态度，相比于 Read-It-Later 我更愿意相信 Read-It-Now-Or-Never 😀，当然还是会继续完善网页，包括加入更多数据来源。&lt;/p&gt;
-&lt;p&gt;除了爬虫之外暂时开放了一个简单的分享入口，就是在公众号中回复 &lt;code&gt;2+链接&lt;/code&gt;：&lt;/p&gt;
-&lt;p&gt;&lt;img alt="" src="http://qncdn.rainy.im/share-with-pyhub.png"&gt;&lt;/p&gt;
-&lt;p&gt;（说明：由于个人公众号无法获取用户数据，因此无法署名）&lt;/p&gt;
-&lt;h3&gt;技术栈&lt;/h3&gt;
-&lt;p&gt;网站到现在可能连半成品都算不上，但蚂蚁虽小五脏俱全，基本功能是完善的，数据信息来源也是可靠的（但不保证正式完成前不会清空数据库😜），欢迎使用、测试甚至捣乱。这篇文章的主要目的是简单介绍一下生产过程和技术栈的简单笔记，除了爬虫和一些敏感信息以外，网站全部代码开源。&lt;/p&gt;
-&lt;p&gt;服务端依然是基于 Tornado + Motor + MongoDB 的标配。&lt;/p&gt;
-&lt;p&gt;爬虫本来想用 Scrapy，后来觉得没有必要，但是其架构还是值得借鉴的：将不同来源的爬虫划分为不同模块，公用模块处理请求和入库等操作；还是习惯用正则匹配，更精准方便；最爱前后端分离的网站，用正确的姿势打开后，json.loads() 就搞定了（好像我写的网站也是这样，不过爬人者必被爬，这也算一种荣幸吧🙃）。&lt;/p&gt;
-&lt;p&gt;前端真是让人又爱又恨，显然我不想再在一个小项目上一个人吭哧吭哧啃 React 了，国产的 Vue 似乎是个不错的选择，但我最终选择了更短小精悍的 Riot！&lt;/p&gt;
-&lt;p&gt;&lt;img alt="" src="http://riotjs.com/img/logo/riot960x.png"&gt;&lt;/p&gt;
-&lt;p&gt;大家最初排斥 React 将 HTML 和 JavaScript 混在一起的做法，认为这是一种倒退，但是 Riot 不但继承了这一反骨，甚至将其发挥到极致。不再需要额外的工具，无需容忍编译，不再忍受啰嗦到像 Android 一样的语法，Riot 做到了像 Python 一样简练的语法同时兼容了 React 的思想，简直功德无量！事实上如果你有过 React 的经验只要看一下 Riot 版本的 TODO App 就知道该怎么做了，简直是小项目的不二之选。&lt;/p&gt;
-&lt;p&gt;感谢 Material Design Lite，感谢 Material Icons，感谢 Devicons，感谢 BootCDN，让我尽可能避免跟 CSS 打交道。&lt;/p&gt;
-&lt;p&gt;哦对了，地址是：&lt;a href="https://pyhub.cc"&gt;https://pyhub.cc&lt;/a&gt; 或 原文链接。&lt;/p&gt;</content></entry><entry><title>可视化图的基本算法</title><link href="http://blog.rainy.im/2016/04/25/graph-algos/" rel="alternate"></link><published>2016-04-25T13:51:22+08:00</published><updated>2016-04-25T13:51:22+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2016-04-25:/2016/04/25/graph-algos/</id><summary type="html">&lt;p&gt;关于图的基本表示与基本算法，包括图的邻接表和邻接矩阵表示法；图的广度优先（BFS）与深度优先（DFS）搜索算法；最小权生成树问题的 Kruskal 算法与 Prim 算法；单源最短路径的 Dijkstra 算法。&lt;/p&gt;</summary><content type="html">&lt;h3&gt;0. About&lt;/h3&gt;
+&lt;p&gt;JSON 是很好用的数据格式，但是在不同语言环境之间切换还是有很多细节问题需要注意。此外，&lt;strong&gt;遵循传统规则，出现特例的时候，改变自身适应规则，而不是试图改变规则&lt;/strong&gt;，这一条不一定适应所有问题，但对于那些已被公认的规则，请勿轻易挑战。&lt;/p&gt;</content><category term="Python"></category><category term="Js"></category><category term="总结"></category></entry><entry><title>可视化图的基本算法</title><link href="http://blog.rainy.im/2016/04/25/graph-algos/" rel="alternate"></link><published>2016-04-25T13:51:22+08:00</published><updated>2016-04-25T13:51:22+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2016-04-25:/2016/04/25/graph-algos/</id><summary type="html">&lt;p&gt;关于图的基本表示与基本算法，包括图的邻接表和邻接矩阵表示法；图的广度优先（BFS）与深度优先（DFS）搜索算法；最小权生成树问题的 Kruskal 算法与 Prim 算法；单源最短路径的 Dijkstra 算法。&lt;/p&gt;</summary><content type="html">&lt;h3&gt;0. About&lt;/h3&gt;
 &lt;p&gt;关于图的基本表示与基本算法，包括图的邻接表和邻接矩阵表示法；图的广度优先（BFS）与深度优先（DFS）搜索算法；最小权生成树问题的 Kruskal 算法与 Prim 算法；单源最短路径的 Dijkstra 算法。&lt;/p&gt;
 &lt;h3&gt;1. 邻接表与邻接矩阵表示&lt;/h3&gt;
 &lt;p&gt;邻接表表示法就是将图的每个节点保存在数组中，每个节点指向与之相邻的节点所组成的链表：&lt;/p&gt;
@@ -5901,17 +5626,7 @@ ooo.getName();  // -&amp;gt; &amp;quot;ooo&amp;quot;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;&lt;a href="https://www.coinbase.com/rainyear"&gt;&lt;img alt="BitCoin donate button" src="https://img.shields.io/badge/Bitcoin-donate-2b71b1.svg?style=flat"&gt;&lt;/a&gt; &lt;a href="https://github.com/rainyear/lolita/wiki/Donation#tenpay"&gt;&lt;img alt="Tenpay donate button" src="https://img.shields.io/badge/Tenpay-donate-brightgreen.svg?style=flat"&gt;&lt;/a&gt; &lt;a href="https://github.com/rainyear/lolita/wiki/Donation#alipay"&gt;&lt;img alt="Alipay donate button" src="https://img.shields.io/badge/Alipay-donate-orange.svg?style=flat"&gt;&lt;/a&gt;&lt;/p&gt;</content><category term="Go"></category><category term="React"></category><category term="前后端分离"></category><category term="JWT"></category></entry><entry><title>D-Day 杭州一日行程记录</title><link href="http://blog.rainy.im/2015/05/30/d-day-hangzhou/" rel="alternate"></link><published>2015-05-30T12:39:36+08:00</published><updated>2015-05-30T12:39:36+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2015-05-30:/2015/05/30/d-day-hangzhou/</id><summary type="html">&lt;p&gt;今天去了 &lt;a href="http://sf.gg"&gt;segmentfault&lt;/a&gt; 的 D-Day 杭州，三周年技术大会，简单记录一下一天的行程与收获。&lt;/p&gt;</summary><content type="html">&lt;p&gt;今天去了 &lt;a href="http://sf.gg"&gt;segmentfault&lt;/a&gt; 的 D-Day 杭州，三周年技术大会，简单记录一下一天的行程与收获。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="d-day" src="http://segmentfault.com/img/bVlXcb"&gt;&lt;/p&gt;
-&lt;p&gt;这次来报名参加主要是奔着移动开发跟 react 相关的报告去的，最近前端果然是炙手可热，下午前端分会场直接爆满挤都挤不进去。&lt;/p&gt;
-&lt;p&gt;&lt;img alt="frontend" src="http://segmentfault.com/img/bVlXce"&gt;&lt;/p&gt;
-&lt;p&gt;首先说会场设施安排，好歹也是收了102.4的报名费，现场不但不提供WIFI，而且到处都是各种传单，愣是连一张会场日程的目录都没有。不过茶歇的零食还是很充足的。&lt;/p&gt;
-&lt;p&gt;上午第一个 SegmentFault CTO 祁宁的后端开场演讲还是有很多干货的，介绍 segmentfault 从一开始一个人一台 VPS 逐渐迁移到云服务上，分享了创业过程中遇到的一些技术问题以及解决方案等，非常适合刚刚开始创业或者正打算创业的小伙伴参考借鉴。而且更重要的是他用 segmentfault 作为活生生的例子告诉我们，如果有创业的想法或者很棒的 idea，其实创业的成本并没有想象中那么高，只要开始动手做，把遇到的问题当做是历练自己的考验，总能完成从0到1的飞跃。&lt;/p&gt;
-&lt;p&gt;第二场《移动 App 技术架构的“四段论”》，我就不知道该说什么了。我们在学校自己都做过 presentation，也听过无数次别人的报告，如果演讲的人没有用心准备，PPT 还要看一页想一会，演讲内容前后啰嗦充满了没有实质性意义的零碎词汇，这对听众来说非常好辨认，因为你自己都不知道在说什么，听众更是听得云里雾里。我不知道主讲嘉宾是因为什么特殊情况导致今天这样的状态，当然也有可能是内容太高深我没有听懂，但还是希望主办方能够把控一下演讲嘉宾的状况，不然浪费所有人的时间真的是一件很让人恼火的事情。&lt;/p&gt;
-&lt;p&gt;接下来是玉伯的《如何打造优秀的技术产品》，我记得上一次杭·JS玉伯大哥讲得是个人情绪控制……这次是穿插着一些js社区的“宫斗黑幕”等，涵盖了企业中人才培养以及其它深奥的哲学问题等……说实在的提到的很多内容还是很有启发性很值得深思的，已经脱离了简单的技术层面的细节了。只不过由于口音问题有些句子比较难follow，只能听个一知半解吧。&lt;/p&gt;
-&lt;p&gt;下午先听了移动分会场，网易云音乐的基于 Webkit 的 Hybrid Mac App，我最近在做的一个项目可能用得上，因此听得比较仔细。主要介绍了在 Mac 系统中调用系统 Webkit，实现 Native 跟 Js App 的通信、交互以及安全性操作等。因为我本来也是要做Linux中基于 Web 的 Hybrid App，C++ 跟 Js 的交互我有尝试用 Websocket 去通信，因此在 QA 环节有向主讲提问，但是似乎他们并没有试用过类似的方法，而且我也觉得 C++ 做 Websocket client 还要再建 Websocket server 挺麻烦的，因此可能会先尝试一下他们的方法，只是不知道在 Linux 环境下 Webkit 的封装是否方便。&lt;/p&gt;
-&lt;p&gt;后面两场分别听了《天猫 React Native 实践与探索》跟《基于 React.js 的大规模网站开发实践》，来自 Facebook 的 React 最近确实红得发紫，天猫客户端敢率先尝试线上产品试用确实够胆。在此之前我还没有对 react native 进行深入了解，但从主讲嘉宾的实践经验来看，性能跟稳定性可以介于 Native 与 Web App 之间，同时又兼具了 Web 开发的优势，感觉确实很值得尝试一下。等下半年 Android 版本放出再来做做试试，在此之前还是先熟悉一下 react.js 的部分。来自蘑菇街的《基于 React.js 的大规模网站开发实践》算是对 react.js 的一个入门介绍，标题中的“大规模”并不是指淘宝这种大流量的网站，而是指大量使用 react 框架的意思……主讲内容其实跟 react 官网实例差不太多，我本来是想听关于 react 使用中 flux 架构的一些实践以及大家对前后端分离的实践状况，看来这次并没有这个机会。&lt;/p&gt;
-&lt;p&gt;总的来说今天还是有所收获，包括体验了一把功夫熊的推拿服务！&lt;/p&gt;</content><category term="Node"></category><category term="React"></category></entry><entry><title>用树莓派搭建网络摄像头</title><link href="http://blog.rainy.im/2015/05/26/webcam-on-raspberry-pi/" rel="alternate"></link><published>2015-05-26T13:47:58+08:00</published><updated>2015-05-26T13:47:58+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2015-05-26:/2015/05/26/webcam-on-raspberry-pi/</id><summary type="html">&lt;p&gt;用树莓派加上相机模块，可以实现实时监控的功能，再将时时视频流导入到 Web 界面中，就变成简单的网络摄像头（Webcam）。Web 端用 Nodejs + WebSocket，既可以进行实时播放，同时又方便进功能的扩展。&lt;/p&gt;</summary><content type="html">&lt;p&gt;用树莓派加上相机模块，可以实现实时监控的功能，再将时时视频流导入到 Web 界面中，就变成简单的网络摄像头（Webcam）。Web 端用 Nodejs + WebSocket，既可以进行实时播放，同时又方便进功能的扩展。&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://www.coinbase.com/rainyear"&gt;&lt;img alt="BitCoin donate button" src="https://img.shields.io/badge/Bitcoin-donate-2b71b1.svg?style=flat"&gt;&lt;/a&gt; &lt;a href="https://github.com/rainyear/lolita/wiki/Donation#tenpay"&gt;&lt;img alt="Tenpay donate button" src="https://img.shields.io/badge/Tenpay-donate-brightgreen.svg?style=flat"&gt;&lt;/a&gt; &lt;a href="https://github.com/rainyear/lolita/wiki/Donation#alipay"&gt;&lt;img alt="Alipay donate button" src="https://img.shields.io/badge/Alipay-donate-orange.svg?style=flat"&gt;&lt;/a&gt;&lt;/p&gt;</content><category term="Go"></category><category term="React"></category><category term="前后端分离"></category><category term="JWT"></category></entry><entry><title>用树莓派搭建网络摄像头</title><link href="http://blog.rainy.im/2015/05/26/webcam-on-raspberry-pi/" rel="alternate"></link><published>2015-05-26T13:47:58+08:00</published><updated>2015-05-26T13:47:58+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2015-05-26:/2015/05/26/webcam-on-raspberry-pi/</id><summary type="html">&lt;p&gt;用树莓派加上相机模块，可以实现实时监控的功能，再将时时视频流导入到 Web 界面中，就变成简单的网络摄像头（Webcam）。Web 端用 Nodejs + WebSocket，既可以进行实时播放，同时又方便进功能的扩展。&lt;/p&gt;</summary><content type="html">&lt;p&gt;用树莓派加上相机模块，可以实现实时监控的功能，再将时时视频流导入到 Web 界面中，就变成简单的网络摄像头（Webcam）。Web 端用 Nodejs + WebSocket，既可以进行实时播放，同时又方便进功能的扩展。&lt;/p&gt;
 &lt;p&gt;&lt;img alt="raspberry pi 2b" src="http://7xiijd.com1.z0.glb.clouddn.com/raspberry-pi-2.png"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a href="https://www.raspberrypi.org/products/raspberry-pi-2-model-b/"&gt;Raspberry PI 2B&lt;/a&gt; 在硬件上比第一代有很大提升，多了两个 USB 接口，存储换成了 Micro SD。&lt;a href="https://www.raspberrypi.org/products/camera-module/"&gt;摄像模块&lt;/a&gt; 支持1&amp;amp;2代，通过 HDMI 旁边的 CSI CONNECTOR 接口接入。&lt;/p&gt;
 &lt;p&gt;下面介绍 Webcam 的搭建过程。&lt;/p&gt;
@@ -6493,4 +6208,4 @@ sudo rm -R /System/Library/Extensions/PsychtoolboxKernelDriver.kext
 &lt;p&gt;另外 OSX 10.10 需要额外的步骤：&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;sudo nvram boot-args&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;kext-dev-mode=1&amp;quot;&lt;/span&gt;
 reboot
-&lt;/pre&gt;&lt;/div&gt;</content><category term="Learning"></category><category term="Psychology"></category><category term="Matlab"></category></entry><entry><title>On Ghost</title><link href="http://blog.rainy.im/2015/04/29/on-ghost/" rel="alternate"></link><published>2015-04-29T05:46:03+08:00</published><updated>2015-04-29T05:46:03+08:00</updated><author><name>Yusheng</name></author><id>tag:blog.rainy.im,2015-04-29:/2015/04/29/on-ghost/</id><summary type="html">&lt;p&gt;From Github Pages to Ghost.&lt;/p&gt;</summary><content type="html">&lt;p&gt;之前一直放在&lt;a href="http://rainy.im"&gt;Github Pages&lt;/a&gt;，虽然不用考虑服务器的问题，但其实每次写完生成静态网站然后push的流程，对于比较懒的人来说徒增写作的难度，得不偿失。最近看到Github上一个用Go重写Ghost的项目：&lt;a href="http://kabukky.github.io/journey/"&gt;Journey&lt;/a&gt;，几乎无须配置，下载二进制文件就可以执行是Go的优势，同时又兼容Ghost的后台管理功能与主题功能，只可惜项目还在进行中，所以先试一下用Ghost。采用主题&lt;a href="https://github.com/rainyear/solar-rain"&gt;Solar-rain&lt;/a&gt;，跟Iterm 2、VIM的配色相一致。&lt;/p&gt;</content><category term="Blog"></category></entry></feed>
+&lt;/pre&gt;&lt;/div&gt;</content><category term="Learning"></category><category term="Psychology"></category><category term="Matlab"></category></entry></feed>
